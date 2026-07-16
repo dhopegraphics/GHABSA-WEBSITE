@@ -1,4 +1,4 @@
-import  { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { FaBars, FaTimes, FaChevronDown } from "react-icons/fa";
 import logo from "../assets/logo.png";
 import { Link } from "react-router-dom";
@@ -9,7 +9,24 @@ import { BRAND } from "../config/brand";
 function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [isFloating, setIsFloating] = useState(false);
   const { openLoginModal } = useAuthModals();
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsFloating((currentlyFloating) => {
+        // Different thresholds keep the navbar from flickering at the boundary.
+        if (!currentlyFloating && window.scrollY > 48) return true;
+        if (currentlyFloating && window.scrollY < 16) return false;
+        return currentlyFloating;
+      });
+    };
+
+    handleScroll();
+    window.addEventListener("scroll", handleScroll, { passive: true });
+
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   const toggleMenu = () => {
     setMenuOpen(!menuOpen);
@@ -25,9 +42,7 @@ function Navbar() {
   const priorityNavItems = [
     { to: "/events", label: "Events" },
     { href: "/#resources", label: "Resources" },
-    { to: "/el-mercado", label: "El Mercado" },
     { to: "/purchase-merchandise", label: "Merchandise" },
-    { to: "/projects", label: "Projects" },
   ];
 
   // Secondary navigation items (in dropdown on smaller screens)
@@ -37,7 +52,14 @@ function Navbar() {
   ];
 
   return (
-    <div className="w-full h-[60px] sm:h-[65px] md:h-[70px] lg:h-[75px] bg-[#ffffff80] fixed left-0 z-50 top-0 backdrop-blur-xl shadow px-3 sm:px-4 md:px-6 lg:px-8 xl:px-10 2xl:px-12 flex flex-row justify-between items-center">
+    <nav
+      className={`fixed left-1/2 z-50 flex h-[60px] -translate-x-1/2 flex-row items-center justify-between bg-[#ffffffd9] px-3 backdrop-blur-xl transition-[top,width,border-radius,box-shadow] duration-500 ease-out sm:h-[65px] sm:px-4 md:h-[70px] md:px-6 lg:h-[75px] lg:px-8 xl:px-10 2xl:px-12 ${
+        isFloating
+          ? "top-3 w-[calc(100%-1.5rem)] rounded-full shadow-[0_12px_35px_rgba(15,23,42,0.18)] sm:top-4 sm:w-[calc(100%-2rem)] lg:w-[min(1180px,calc(100%-3rem))]"
+          : "top-0 w-full rounded-none shadow"
+      }`}
+      aria-label="Main navigation"
+    >
       <Link to={"/"} className="w-[55px] sm:w-[65px] md:w-[75px] lg:w-[80px] flex-shrink-0">
         <img src={logo} className="object-contain w-full h-auto" alt={`${BRAND.shortName} Logo`} />
       </Link>
@@ -179,7 +201,7 @@ function Navbar() {
           )}
         </div>
       )}
-    </div>
+    </nav>
   );
 }
 

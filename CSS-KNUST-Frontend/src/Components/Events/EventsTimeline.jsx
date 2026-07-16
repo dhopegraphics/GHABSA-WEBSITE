@@ -70,16 +70,17 @@ export function EventsTimeline() {
   const displayEvents = getEventsToDisplay();
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-16">
+    <section className="bg-white px-5 py-20 text-slate-950 sm:px-8 sm:py-28 lg:px-10">
+      <div className="mx-auto max-w-5xl">
       <motion.h1
         variants={fadeIn("up", 0.5, 0)}
         initial="offscreen"
         whileInView="onscreen"
         viewport={{ once: true, amount: 0 }}
-        className="text-4xl md:text-5xl mb-10 font-bold text-gray-900 text-center"
+        className="max-w-3xl text-4xl font-semibold leading-tight tracking-[-0.04em] text-slate-950 sm:text-5xl"
       >
-        <span className="relative text-blue-600">
-          Event
+        <span className="relative text-blue-400">
+          Show up.
           <motion.div
             variants={underlineAnimation(0.7)}
             initial="offscreen"
@@ -89,15 +90,15 @@ export function EventsTimeline() {
             style={{ width: "0%", height: "3px" }}
           />
         </span>{" "}
-        Timeline
+        Something good is happening.
       </motion.h1>
-      <p className="text-center text-gray-600 mb-12">
+      <p className="mb-14 mt-5 max-w-2xl text-base leading-7 text-slate-600 sm:text-lg">
         Join us in celebrating knowledge, innovation, and collaboration through
-        a variety of events. From coding hackathons to insightful workshops,
-        networking opportunities to inspiring guest lectures.
+        a variety of events—from laboratory workshops and academic seminars to
+        networking opportunities, socials and inspiring guest lectures.
       </p>
 
-      <div className="relative">
+      <div className="relative rounded-[32px] border border-slate-200 bg-[#f8fafc] p-5 text-slate-950 shadow-[0_18px_55px_rgba(15,23,42,0.07)] sm:p-8">
         {!events
           ? Array(3)
               .fill(0)
@@ -121,11 +122,12 @@ export function EventsTimeline() {
       <div className="mt-12  text-center justify-center md:justify-start">
         <Link
           to={"/events"}
-          className="border-2 border-blue-700 text-blue-700 px-6 py-3 font-medium rounded hover:bg-blue-700 hover:text-white transition"
+          className="inline-flex items-center gap-2 rounded-full bg-blue-600 px-6 py-3 font-semibold text-white hover:bg-blue-700"
         >
           See More <FiArrowUpRight className="inline" />
         </Link>
       </div>
-    </div>
+      </div>
+    </section>
   );
 }

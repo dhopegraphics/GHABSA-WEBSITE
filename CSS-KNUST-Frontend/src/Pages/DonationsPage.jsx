@@ -2,8 +2,8 @@
  * Public Donations Page
  * Display donation statistics, recent donations, withdrawals, and donation form
  */
-import React, { useState, useEffect, useContext } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useState, useEffect, useContext } from "react";
+import { useSearchParams } from "react-router-dom";
 import {
   Heart,
   Users,
@@ -14,14 +14,16 @@ import {
   Gift,
   Eye,
   EyeOff,
-  Clock,
   CheckCircle,
   AlertCircle,
   Loader2,
   ChevronDown,
   ChevronUp,
   Receipt,
+  ShieldCheck,
 } from "lucide-react";
+import Navbar from "../Components/Navbar";
+import { Footer } from "../Components/Footer/Footer";
 import { UserContext } from "../Context/UserContext";
 import {
   getPublicDonationData,
@@ -64,14 +66,14 @@ const timeAgo = (dateString) => {
 
 // Stat Card Component
 const StatCard = ({ icon: Icon, title, value, subtitle, color }) => (
-  <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition-shadow">
+  <div className="rounded-[24px] border border-slate-200 bg-white p-5 shadow-[0_12px_35px_rgba(15,23,42,0.05)] transition-shadow hover:shadow-md sm:p-6">
     <div className="flex items-center justify-between">
       <div>
         <p className="text-sm font-medium text-gray-500">{title}</p>
         <p className="text-2xl font-bold text-gray-900 mt-1">{value}</p>
         {subtitle && <p className="text-sm text-gray-400 mt-1">{subtitle}</p>}
       </div>
-      <div className={`p-3 rounded-full ${color}`}>
+      <div className={`rounded-2xl p-3 ${color}`}>
         <Icon className="w-6 h-6 text-white" />
       </div>
     </div>
@@ -89,7 +91,7 @@ const DonationItem = ({ donation }) => (
         <p className="font-medium text-gray-900">{donation.display_name}</p>
         {donation.message && (
           <p className="text-sm text-gray-500 truncate max-w-[200px]">
-            "{donation.message}"
+            &ldquo;{donation.message}&rdquo;
           </p>
         )}
       </div>
@@ -134,7 +136,7 @@ const WithdrawalItem = ({ withdrawal }) => (
 );
 
 // Donation Form Component
-const DonationForm = ({ user, onSuccess }) => {
+const DonationForm = ({ user }) => {
   // Extract actual user data (user context stores { access, refresh, user })
   const userData = user?.user || user;
 
@@ -206,7 +208,7 @@ const DonationForm = ({ user, onSuccess }) => {
             : result.error || "Failed to initialize donation"
         );
       }
-    } catch (err) {
+    } catch {
       setError("An error occurred. Please try again.");
     } finally {
       setLoading(false);
@@ -235,8 +237,8 @@ const DonationForm = ({ user, onSuccess }) => {
               onClick={() => handleAmountClick(amount)}
               className={`py-3 px-4 rounded-lg border-2 font-semibold transition-all ${
                 formData.amount === amount.toString()
-                  ? "border-blue-500 bg-blue-50 text-blue-700"
-                  : "border-gray-200 hover:border-blue-300 text-gray-700"
+                  ? "border-blue-600 bg-blue-50 text-blue-700"
+                  : "border-slate-200 bg-white hover:border-blue-300 text-slate-700"
               }`}
             >
               GH₵{amount}
@@ -262,7 +264,7 @@ const DonationForm = ({ user, onSuccess }) => {
             min="1"
             step="0.01"
             placeholder="0.00"
-            className="w-full pl-14 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            className="w-full rounded-2xl border border-slate-300 py-3 pl-14 pr-4 focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
           />
         </div>
       </div>
@@ -279,7 +281,7 @@ const DonationForm = ({ user, onSuccess }) => {
             value={formData.donor_name}
             onChange={handleChange}
             placeholder="John Doe"
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            className="w-full rounded-2xl border border-slate-300 px-4 py-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
           />
         </div>
         <div>
@@ -293,7 +295,7 @@ const DonationForm = ({ user, onSuccess }) => {
             onChange={handleChange}
             required
             placeholder="john@example.com"
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            className="w-full rounded-2xl border border-slate-300 px-4 py-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
           />
         </div>
       </div>
@@ -309,7 +311,7 @@ const DonationForm = ({ user, onSuccess }) => {
           value={formData.phone}
           onChange={handleChange}
           placeholder="+233XXXXXXXXX"
-          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+          className="w-full rounded-2xl border border-slate-300 px-4 py-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
         />
       </div>
 
@@ -324,12 +326,12 @@ const DonationForm = ({ user, onSuccess }) => {
           onChange={handleChange}
           rows={3}
           placeholder="Leave a message of support..."
-          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none"
+          className="w-full resize-none rounded-2xl border border-slate-300 px-4 py-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
         />
       </div>
 
       {/* Privacy Option */}
-      <div className="bg-gray-50 p-4 rounded-lg">
+      <div className="rounded-2xl bg-slate-50 p-4">
         <label className="flex items-center gap-3 cursor-pointer">
           <input
             type="checkbox"
@@ -354,7 +356,7 @@ const DonationForm = ({ user, onSuccess }) => {
       <button
         type="submit"
         disabled={loading}
-        className="w-full py-4 bg-gradient-to-r from-pink-500 to-red-500 hover:from-pink-600 hover:to-red-600 text-white font-bold rounded-lg transition-all flex items-center justify-center gap-2 disabled:opacity-70"
+        className="flex w-full items-center justify-center gap-2 rounded-full bg-blue-600 py-4 font-bold text-white transition-all hover:bg-blue-700 disabled:opacity-70"
       >
         {loading ? (
           <Loader2 className="w-5 h-5 animate-spin" />
@@ -413,13 +415,12 @@ const VerificationModal = ({ result, onClose }) => (
 
 // Main Page Component
 export default function DonationsPage() {
-  const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const { user } = useContext(UserContext);
 
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState(null);
-  const [error, setError] = useState("");
+  const [, setError] = useState("");
   const [showAllDonations, setShowAllDonations] = useState(false);
   const [showAllWithdrawals, setShowAllWithdrawals] = useState(false);
   const [verificationResult, setVerificationResult] = useState(null);
@@ -484,7 +485,8 @@ export default function DonationsPage() {
   const topDonors = data?.top_donors || [];
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-[#f5f7fa] pt-[60px] sm:pt-[65px] md:pt-[70px] lg:pt-[75px]">
+      <Navbar />
       {/* Verification Modal */}
       {verificationResult && (
         <VerificationModal
@@ -493,40 +495,27 @@ export default function DonationsPage() {
         />
       )}
 
-      {/* Back to Homepage Button */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">
-        <button
-          onClick={() => navigate("/")}
-          className="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg font-medium shadow-sm mb-4"
-        >
-          <ArrowDownRight className="w-5 h-5" />
-          Back to Homepage
-        </button>
-      </div>
-
       {/* Hero Section */}
-      <div className="bg-gradient-to-br from-blue-600 via-purple-600 to-pink-500 text-white py-16">
+      <header className="relative overflow-hidden bg-[#07162f] py-20 text-white sm:py-24 lg:py-28">
+        <div className="absolute -right-24 -top-40 h-[430px] w-[430px] rounded-full border-[70px] border-blue-400/10" />
+        <div className="absolute left-[15%] top-1/2 h-56 w-56 rounded-full bg-blue-500/20 blur-[100px]" />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center max-w-3xl mx-auto">
-            <div className="flex items-center justify-center mb-6">
-              <div className="p-4 bg-white/20 rounded-full backdrop-blur-sm">
-                <Heart className="w-10 h-10" />
-              </div>
-            </div>
-            <h1 className="text-4xl md:text-5xl font-bold mb-4">
-              Support Student Welfare 💙
+          <div className="relative max-w-4xl">
+            <h1 className="max-w-4xl text-5xl font-semibold leading-[1.02] tracking-[-0.05em] sm:text-6xl lg:text-7xl">
+              A little support can <span className="text-blue-400">change a student’s story.</span>
             </h1>
-            <p className="text-xl text-white/90 mb-8">
+            <p className="mt-6 max-w-2xl text-base leading-8 text-slate-300 sm:text-lg">
               Your donations go directly to supporting students in need —
               helping with medical emergencies, financial hardships, and
-              critical welfare support. Every contribution touches a life!
+              critical welfare support.
             </p>
+            <div className="mt-8 flex flex-wrap gap-5 text-sm text-slate-300"><span className="flex items-center gap-2"><ShieldCheck className="h-4 w-4 text-lime-300" /> Secure payment</span><span className="flex items-center gap-2"><Eye className="h-4 w-4 text-lime-300" /> Transparent utilization</span></div>
           </div>
         </div>
-      </div>
+      </header>
 
       {/* Stats Section */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-8">
+      <div className="relative mx-auto -mt-8 max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <StatCard
             icon={Wallet}
@@ -557,11 +546,12 @@ export default function DonationsPage() {
       </div>
 
       {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <main className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 lg:py-24">
+        <div className="mb-10 max-w-2xl"><h2 className="text-4xl font-semibold tracking-[-0.04em] text-slate-950 sm:text-5xl">Your generosity, clearly accounted for.</h2></div>
+        <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
           {/* Donation Form */}
           <div className="lg:col-span-1">
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 sticky top-8">
+            <div className="sticky top-28 rounded-[28px] border border-slate-200 bg-white p-6 shadow-[0_18px_55px_rgba(15,23,42,0.08)]">
               <h2 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
                 <Gift className="w-5 h-5 text-pink-500" />
                 Make a Donation
@@ -573,7 +563,7 @@ export default function DonationsPage() {
           {/* Activity Feed */}
           <div className="lg:col-span-2 space-y-6">
             {/* Recent Donations */}
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+            <div className="rounded-[28px] border border-slate-200 bg-white p-6 shadow-[0_12px_40px_rgba(15,23,42,0.05)]">
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
                   <Heart className="w-5 h-5 text-pink-500" />
@@ -613,7 +603,7 @@ export default function DonationsPage() {
             </div>
 
             {/* Withdrawals/Expenses */}
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+            <div className="rounded-[28px] border border-slate-200 bg-white p-6 shadow-[0_12px_40px_rgba(15,23,42,0.05)]">
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
                   <Receipt className="w-5 h-5 text-orange-500" />
@@ -657,7 +647,7 @@ export default function DonationsPage() {
 
             {/* Top Donors */}
             {topDonors.length > 0 && (
-              <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+              <div className="rounded-[28px] border border-slate-200 bg-white p-6 shadow-[0_12px_40px_rgba(15,23,42,0.05)]">
                 <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
                   <Users className="w-5 h-5 text-purple-500" />
                   Top Supporters
@@ -700,16 +690,16 @@ export default function DonationsPage() {
             )}
           </div>
         </div>
-      </div>
+      </main>
 
       {/* FAQ Section */}
-      <div className="bg-white border-t border-gray-100 py-16">
+      <div className="border-t border-slate-200 bg-white py-20">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-2xl font-bold text-gray-900 text-center mb-8">
             Frequently Asked Questions
           </h2>
           <div className="space-y-4">
-            <details className="group bg-gray-50 rounded-lg">
+            <details className="group rounded-2xl bg-slate-50">
               <summary className="flex items-center justify-between p-4 cursor-pointer font-medium text-gray-900">
                 How is my donation used?
                 <ChevronDown className="w-5 h-5 text-gray-500 group-open:rotate-180 transition-transform" />
@@ -720,22 +710,22 @@ export default function DonationsPage() {
                 medical emergencies, unexpected financial hardships, bereavement
                 support, and other critical needs. We believe in taking care of
                 our own. All expenses are transparently recorded and visible in
-                the "Fund Utilization" section.
+                the &ldquo;Fund Utilization&rdquo; section.
               </p>
             </details>
-            <details className="group bg-gray-50 rounded-lg">
+            <details className="group rounded-2xl bg-slate-50">
               <summary className="flex items-center justify-between p-4 cursor-pointer font-medium text-gray-900">
                 Can I donate anonymously?
                 <ChevronDown className="w-5 h-5 text-gray-500 group-open:rotate-180 transition-transform" />
               </summary>
               <p className="px-4 pb-4 text-gray-600">
                 Yes! You can choose to make your donation anonymous by checking
-                the "Make my donation anonymous" option. Your name will be
-                hidden publicly, but we'll still have your email for the
+                the &ldquo;Make my donation anonymous&rdquo; option. Your name will be
+                hidden publicly, but we&apos;ll still have your email for the
                 receipt.
               </p>
             </details>
-            <details className="group bg-gray-50 rounded-lg">
+            <details className="group rounded-2xl bg-slate-50">
               <summary className="flex items-center justify-between p-4 cursor-pointer font-medium text-gray-900">
                 What payment methods are accepted?
                 <ChevronDown className="w-5 h-5 text-gray-500 group-open:rotate-180 transition-transform" />
@@ -746,7 +736,7 @@ export default function DonationsPage() {
                 gateway.
               </p>
             </details>
-            <details className="group bg-gray-50 rounded-lg">
+            <details className="group rounded-2xl bg-slate-50">
               <summary className="flex items-center justify-between p-4 cursor-pointer font-medium text-gray-900">
                 Is my payment secure?
                 <ChevronDown className="w-5 h-5 text-gray-500 group-open:rotate-180 transition-transform" />
@@ -760,6 +750,7 @@ export default function DonationsPage() {
           </div>
         </div>
       </div>
+      <Footer />
     </div>
   );
 }

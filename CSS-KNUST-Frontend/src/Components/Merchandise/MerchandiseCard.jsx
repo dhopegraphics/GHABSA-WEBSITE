@@ -57,7 +57,6 @@ export function MerchandiseCard({
   const [severity, setSeverity] = useState();
   const [showVariantModal, setShowVariantModal] = useState(false);
   const [variantAction, setVariantAction] = useState(null); // 'cart' or 'buy'
-  const [selectedVariants, setSelectedVariants] = useState([]);
   const [selectedColorId, setSelectedColorId] = useState(null);
   const [displayImage, setDisplayImage] = useState(product_image);
   const [showImageGallery, setShowImageGallery] = useState(false);
@@ -316,8 +315,6 @@ export function MerchandiseCard({
 
   const handleVariantConfirm = (selections, giftData = null) => {
 
-    setSelectedVariants(selections);
-
     if (variantAction === "cart") {
       addProductToCart(selections);
       setShowVariantModal(false);
@@ -376,16 +373,6 @@ export function MerchandiseCard({
     // If user is not logged in, we allow them to see the product
     // They'll be prompted to login when trying to purchase
     return true;
-  };
-
-  // Get the appropriate unavailability message
-  const getUnavailabilityMessage = () => {
-    // Check eligibility first (for logged-in users)
-    if (user && eligibility_info && !eligibility_info.is_eligible) {
-      return eligibility_info.eligibility_message || "You are not eligible to purchase this product";
-    }
-    // Fall back to availability message
-    return availability_message;
   };
 
   const productForModal = {
@@ -500,7 +487,7 @@ export function MerchandiseCard({
           </div>
         </div>
       )}
-      <div className="group bg-white rounded-xl overflow-hidden transition-all duration-300 hover:shadow-xl relative">
+      <article className="group relative h-full overflow-hidden rounded-[28px] border border-slate-200 bg-white shadow-[0_12px_40px_rgba(15,23,42,0.05)] transition-all duration-300 hover:-translate-y-1 hover:border-blue-200 hover:shadow-[0_22px_55px_rgba(15,23,42,0.1)]">
         {/* Overlay for unavailable products or ineligible users */}
         {!canPurchase() && (
           <div className="absolute inset-0 bg-gray-900/60 z-10 flex items-center justify-center backdrop-blur-sm">
@@ -534,13 +521,13 @@ export function MerchandiseCard({
         )}
 
         <div
-          className="relative h-48 rounded-xl overflow-hidden cursor-pointer"
+          className="relative h-64 cursor-pointer overflow-hidden bg-slate-100"
           onClick={handleOpenGallery}
         >
           <img
             src={displayImage}
             alt={product_name}
-            className="w-full h-full object-cover object-top group-hover:scale-110 scale-105 transition-all "
+            className="h-full w-full object-cover object-top transition-transform duration-700 group-hover:scale-105"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-gray-900/60 via-transparent to-transparent"></div>
 
@@ -562,8 +549,8 @@ export function MerchandiseCard({
           </div>
         </div>
 
-        <div className="p-4 flex flex-col gap-3">
-          <h3 className="font-semibold text-lg text-gray-900 truncate">
+        <div className="flex flex-col gap-4 p-5">
+          <h3 className="truncate text-lg font-semibold tracking-tight text-slate-950">
             {product_name}
           </h3>
 
@@ -601,7 +588,7 @@ export function MerchandiseCard({
           <div className="space-y-2">
             <div className="flex items-center justify-between">
               <div className="flex flex-col">
-                <span className="text-xl md:text-lg font-semibold text-blue-600">
+                <span className="text-xl font-semibold text-slate-950">
                   GH₵{price}
                 </span>
                 {has_discount && original_price && (
@@ -626,7 +613,7 @@ export function MerchandiseCard({
               <div className="flex flex-col xs:flex-row gap-2">
                 <button
                   onClick={handleAddToCart}
-                  className="flex-1 min-w-0 px-2 sm:px-3 py-2 bg-white border-2 border-blue-600 text-blue-600 rounded-lg hover:bg-blue-50 active:bg-blue-100 transition flex items-center justify-center gap-1.5 sm:gap-2 text-xs sm:text-sm font-medium"
+                  className="flex min-w-0 flex-1 items-center justify-center gap-2 rounded-full border border-slate-300 bg-white px-3 py-2.5 text-xs font-semibold text-slate-700 hover:border-blue-600 hover:text-blue-700 sm:text-sm"
                 >
                   <ShoppingCart className="w-3.5 h-3.5 sm:w-4 sm:h-4 flex-shrink-0" />
                   <span className="truncate">Add to Cart</span>
@@ -638,7 +625,7 @@ export function MerchandiseCard({
                     setShowVariantModal(true);
                   }}
                   disabled={isLoading}
-                  className="flex-1 min-w-0 px-2 sm:px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 active:bg-blue-800 transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-1.5 sm:gap-2 text-xs sm:text-sm font-medium shadow-sm"
+                  className="flex min-w-0 flex-1 items-center justify-center gap-2 rounded-full bg-blue-600 px-3 py-2.5 text-xs font-semibold text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50 sm:text-sm"
                 >
                   <ShoppingBag className="w-3.5 h-3.5 sm:w-4 sm:h-4 flex-shrink-0" />
                   <span className="truncate">Buy Now</span>
@@ -670,7 +657,7 @@ export function MerchandiseCard({
               </div>
             )}
         </div>
-      </div>
+      </article>
     </>
   );
 }

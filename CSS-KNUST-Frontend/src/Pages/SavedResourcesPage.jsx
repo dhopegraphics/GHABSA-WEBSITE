@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext, useCallback } from "react";
+import { useEffect, useState, useContext, useCallback } from "react";
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from '@headlessui/react'
 import useAxiosWithRefresh from "../Hooks/useAxiosWithRefresh";
 import { BACKEND_HOST } from "../utils/config";
@@ -39,14 +39,9 @@ export function SavedResourcesPage() {
 
   const { setCourses } = useCourses();
 
-  // Fetch courses filtered by user's program
+  // Courses belong to one programme and are filtered by year/semester in the UI.
   const fetchCourses = async () => {
-    const userProgram = user?.user?.program;
-    if (!userProgram) return;
-    
-    const { response, error } = await getData(
-      `/academics/courses/?program=${userProgram}`
-    );
+    const { response, error } = await getData(`/academics/courses/`);
     if (error) {
       console.error("Error fetching Courses:", error);
     }
@@ -57,10 +52,8 @@ export function SavedResourcesPage() {
 
   useEffect(() => {
     fetchSavedResources();
-    if (user?.user?.program) {
-      fetchCourses();
-    }
-  }, [user?.user?.program]);
+    fetchCourses();
+  }, [user?.access]);
 
   const renderSkeletons = () =>
     Array.from({ length: 6 }).map((_, idx) => (

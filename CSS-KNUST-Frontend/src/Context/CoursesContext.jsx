@@ -1,31 +1,16 @@
-import { createContext, useContext, useState, useRef } from "react";
+import { createContext, useContext, useState } from "react";
+import { normalizeCourses } from "../utils/courseSchema";
 
 const CoursesContext = createContext();
 
 export const CoursesProvider = ({ children }) => {
-  const [courses, setCourses] = useState([]);
-  // Track which program the courses belong to, to prevent mixing
-  const coursesProgram = useRef(null);
-
-  const setCoursesForProgram = (newCourses, program) => {
-    coursesProgram.current = program;
-    setCourses(newCourses);
-  };
-
-  const clearCoursesIfDifferentProgram = (program) => {
-    if (coursesProgram.current && coursesProgram.current !== program) {
-      setCourses([]);
-      coursesProgram.current = null;
-    }
-  };
+  const [courses, setCourseState] = useState([]);
+  const setCourses = (newCourses) => setCourseState(normalizeCourses(newCourses));
 
   return (
     <CoursesContext.Provider value={{ 
       courses, 
       setCourses, 
-      setCoursesForProgram,
-      clearCoursesIfDifferentProgram,
-      currentProgram: coursesProgram.current
     }}>
       {children}
     </CoursesContext.Provider>

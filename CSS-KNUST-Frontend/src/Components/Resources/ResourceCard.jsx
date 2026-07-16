@@ -1,3 +1,4 @@
+import { ArrowUpRight } from "lucide-react";
 import { Link } from "react-router-dom";
 
 export function ResourceCard({
@@ -5,46 +6,44 @@ export function ResourceCard({
   courses,
   icon: Icon,
   description,
-  topics,
 }) {
   return (
     <Link
       to={`/resources?year=${year}`}
       state={{ courses }}
-      className="bg-white group overflow-hidden relative cursor-pointer rounded-xl shadow-lg p-6 border border-gray-100 hover:border-blue-500 transition-colors"
+      className="group relative flex min-h-[330px] flex-1 cursor-pointer flex-col overflow-hidden rounded-[28px] border border-slate-200 bg-white p-6 shadow-[0_12px_40px_rgba(15,23,42,0.05)] transition-all duration-300 hover:-translate-y-1 hover:border-blue-200 hover:shadow-[0_20px_50px_rgba(15,23,42,0.09)]"
     >
-      <div className="absolute group-hover:-bottom-12 group-hover:-right-12 -bottom-48 -right-48 transition-all duration-500 ">
-        <Icon className="opacity-20 md:w-[200px] md:h-[200px] w-[180px] h-[180px] text-blue-700" />
+      <div className="absolute -bottom-14 -right-12 transition-all duration-500 group-hover:-rotate-6 group-hover:scale-110">
+        <Icon className="h-40 w-40 text-blue-50" />
       </div>
 
-      <div className="flex items-center gap-4 mb-4 z-10">
-        <div className="p-3 bg-blue-50 rounded-lg">
+      <div className="z-10 flex items-center justify-between gap-4">
+        <div className="rounded-2xl bg-blue-50 p-3">
           <Icon className="w-6 h-6 text-blue-600" />
         </div>
-        <div>
-          <h3 className="text-xl font-semibold text-gray-900">Year {year}</h3>
-          <p className="text-blue-600 font-medium">{courses?.length} Courses</p>
-        </div>
+        <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-500">{courses?.length || 0} courses</span>
       </div>
+      <p className="z-10 mt-8 text-xs font-semibold uppercase tracking-[0.18em] text-blue-600">Academic level</p>
+      <h3 className="z-10 mt-2 text-3xl font-semibold tracking-[-0.03em] text-slate-950">Year {year}</h3>
+      <p className="z-10 mt-3 text-sm leading-6 text-slate-600">{description}</p>
 
-      <p className="text-gray-600 mb-4 z-10">{description}</p>
-
-      <div className="flex flex-wrap gap-2 z-10">
+      <div className="z-10 mt-5 flex flex-wrap gap-2">
         {courses?.slice(1, 3).map((topic, index) => (
           <p
             key={index}
-            className="px-3 py-1 bg-blue-50 text-gray-600 text-[12px] w-max rounded-full"
+            className="w-max rounded-full bg-slate-100 px-3 py-1 text-[11px] text-slate-600"
           >
             {topic?.course_name}
           </p>
         ))}
         {courses?.length > 0 && (
-          <p className="px-3 py-1 bg-blue-50 text-gray-600 text-[12px] w-max rounded-full">
+          <p className="w-max rounded-full bg-slate-100 px-3 py-1 text-[11px] text-slate-600">
             + {courses?.length >= 2 ? courses?.length - 2 : courses?.length}{" "}
             more
           </p>
         )}
       </div>
+      <span className="z-10 mt-auto flex items-center gap-2 pt-7 text-sm font-semibold text-blue-700">Open resources <ArrowUpRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" /></span>
     </Link>
   );
 }

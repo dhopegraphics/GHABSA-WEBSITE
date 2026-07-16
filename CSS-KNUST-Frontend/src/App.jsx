@@ -1,4 +1,4 @@
-import { Route, Routes, Navigate } from "react-router-dom";
+import { Route, Routes, } from "react-router-dom";
 import { UserProvider } from "./Context/UserContext";
 import { AuthModalsProvider } from "./Context/AuthModalsContext";
 import { VotingProvider } from "./Context/VotingContext";
@@ -38,12 +38,6 @@ import { MentorshipProvider } from "./Context/MentorshipContext";
 import { FAQPage } from "./Pages/FAQPage";
 import { StaffPage } from "./Pages/StaffPage";
 import ProjectsPage from "./Pages/ProjectsPage";
-import CodeQuestPage from "./Pages/CodeQuestPage";
-import CodeQuestPortalLogin from "./Pages/CodeQuest/CodeQuestPortalLogin";
-import ParticipantDashboard from "./features/codequest/participant/ParticipantDashboard";
-import ConsultantDashboard from "./features/codequest/consultant/ConsultantDashboard";
-import FacilitatorLogin from "./Pages/CodeQuestFacilitator/FacilitatorLogin";
-import FacilitatorDashboard from "./Pages/CodeQuestFacilitator/FacilitatorDashboard";
 import DocumentViewer from "./Pages/DocumentViewer";
 import { VotingPage } from "./Pages/VotingPage";
 import { VotingDetailPage } from "./Pages/VotingDetailPage";
@@ -144,34 +138,8 @@ function App() {
                                     path="/projects"
                                     element={<ProjectsPage />}
                                   />
-                                  <Route
-                                    path="/code-quest"
-                                    element={<CodeQuestPage />}
-                                  />
-                                  <Route
-                                    path="/code-quest-portal"
-                                    element={<Navigate to="/code-quest-portal/login" replace />}
-                                  />
-                                  <Route
-                                    path="/code-quest-portal/login"
-                                    element={<CodeQuestPortalLogin />}
-                                  />
-                                  <Route
-                                    path="/code-quest-portal/participant"
-                                    element={<ParticipantDashboard />}
-                                  />
-                                  <Route
-                                    path="/code-quest-portal/consultant"
-                                    element={<ConsultantDashboard />}
-                                  />
-                                  <Route
-                                    path="/code-quest-facilitators/login"
-                                    element={<FacilitatorLogin />}
-                                  />
-                                  <Route
-                                    path="/code-quest-facilitators/dashboard"
-                                    element={<FacilitatorDashboard />}
-                                  />
+                              
+                          
                                   <Route
                                     path="/blog/:id"
                                     element={<BlogDetailPage />}

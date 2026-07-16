@@ -44,22 +44,22 @@ export function TeamCard({ name, role, imageUrl, socialLinks }) {
   const rightLinks = validLinks.slice(midPoint);
 
   return (
-    <div className="relative group">
-      <div className="w-full h-96 lg:h-80 relative overflow-hidden">
+    <article className="group relative overflow-hidden rounded-[28px] bg-[#0b2347] shadow-[0_16px_45px_rgba(6,20,43,0.14)]">
+      <div className="relative h-[390px] w-full overflow-hidden lg:h-[410px]">
         <img
           src={imageUrl}
           alt={name}
-          className="w-full h-full object-cover object-top transform scale-105 transition-transform duration-500"
+          className="h-full w-full object-cover object-top transition-transform duration-700 group-hover:scale-105"
         />
-        <div className="absolute w-full scale-x-0 h-full bg-[#282cadb4] top-0 left-0 group-hover:scale-x-100 transition-all duration-500 origin-left"></div>
+        <div className="absolute inset-0 bg-gradient-to-t from-[#06142b] via-[#06142b]/10 to-transparent" />
 
-        <div className="opacity-50 group-hover:opacity-100 transition-all duration-500 group-hover:-translate-y-6 absolute bottom-0 left-[8%]">
-          <p className="text-white text-[14px]">{role}</p>
-          <h4 className="text-white text-[24px]">{name}</h4>
+        <div className="absolute bottom-0 left-0 right-0 p-6">
+          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-blue-300">{role}</p>
+          <h4 className="mt-2 text-2xl font-semibold tracking-tight text-white">{name}</h4>
         </div>
 
         {/* Left Social Icons */}
-        <div className="absolute left-[6%] top-0 translate-y-[-125px] group-hover:delay-200 grid gap-2 transition-all duration-700 group-hover:translate-y-4">
+        <div className="absolute left-4 top-4 flex gap-2">
           {leftLinks.map((item, index) => {
             const iconData = getSocialIcon(item?.platform);
 
@@ -73,16 +73,17 @@ export function TeamCard({ name, role, imageUrl, socialLinks }) {
                 href={item?.link}
                 target="_blank"
                 rel="noopener noreferrer"
-                className={`text-white transition-colors duration-300 ${color}`}
+                aria-label={`${name} on ${item?.platform}`}
+                className={`flex h-9 w-9 items-center justify-center rounded-full border border-white/20 bg-slate-950/30 text-white backdrop-blur-md transition-colors duration-300 ${color}`}
               >
-                <Icon className="w-6 h-6" />
+                <Icon className="h-4 w-4" />
               </a>
             );
           })}
         </div>
 
         {/* Right Social Icons */}
-        <div className="absolute right-[6%] top-0 translate-y-[-125px] group-hover:delay-200 grid gap-2 transition-all duration-700 group-hover:translate-y-4">
+        <div className="absolute right-4 top-4 flex gap-2">
           {rightLinks.map((item, index) => {
             const iconData = getSocialIcon(item?.platform);
 
@@ -96,14 +97,15 @@ export function TeamCard({ name, role, imageUrl, socialLinks }) {
                 href={item?.link}
                 target="_blank"
                 rel="noopener noreferrer"
-                className={`text-white transition-colors duration-300 ${color}`}
+                aria-label={`${name} on ${item?.platform}`}
+                className={`flex h-9 w-9 items-center justify-center rounded-full border border-white/20 bg-slate-950/30 text-white backdrop-blur-md transition-colors duration-300 ${color}`}
               >
-                <Icon className="w-6 h-6" />
+                <Icon className="h-4 w-4" />
               </a>
             );
           })}
         </div>
       </div>
-    </div>
+    </article>
   );
 }

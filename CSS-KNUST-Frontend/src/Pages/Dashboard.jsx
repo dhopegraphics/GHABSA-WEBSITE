@@ -29,7 +29,7 @@ import { CalendarSyncButton } from "../Components/CalendarSync/CalendarSyncModal
 
 export function DashboardPage() {
   const { user } = useContext(UserContext);
-  const { courses, setCourses, clearCoursesIfDifferentProgram } = useCourses();
+  const { courses, setCourses } = useCourses();
   const { enrichedCourses, loading: resourcesLoading } =
     useCourseResources(courses);
   const [show, setShow] = useState(true);
@@ -43,20 +43,11 @@ export function DashboardPage() {
   const [showNotificationPrompt, setShowNotificationPrompt] = useState(false);
   const axiosInstance = useAxiosWithRefresh();
 
-  // Fetch courses if not already loaded (filtered by user's program)
+  // Fetch the single programme curriculum; year/semester filtering happens in the UI.
   useEffect(() => {
     const fetchCourses = async () => {
-      // Only fetch if we have the user's program
-      const userProgram = user?.user?.program;
-      if (!userProgram) return;
-      
-      // Clear courses if they belong to a different program
-      clearCoursesIfDifferentProgram(userProgram);
-      
       if (!courses || courses.length === 0) {
-        const { response, error } = await getData(
-          `/academics/courses/?program=${userProgram}`
-        );
+        const { response, error } = await getData(`/academics/courses/`);
         if (error) {
           console.error("Error fetching courses:", error);
         }
@@ -66,7 +57,7 @@ export function DashboardPage() {
       }
     };
     fetchCourses();
-  }, [courses, setCourses, clearCoursesIfDifferentProgram, user?.user?.program]);
+  }, [courses, setCourses]);
 
   // Check for incomplete profile fields
   const getIncompleteFields = () => {
@@ -427,7 +418,7 @@ export function DashboardPage() {
                       📱 Sync Your Schedule to Phone
                     </h3>
                     <p className="text-blue-100 text-sm mt-1">
-                      Add your class timetable, exam schedule, and events directly to your phone's calendar app
+                      Add your class timetable, exam schedule, and events directly to your phone&apos;s calendar app
                     </p>
                   </div>
                 </div>

@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 import { BlogCard } from "./BlogCard";
 import { motion } from "framer-motion";
 import { fadeIn, underlineAnimation } from "../../utils/framerVariants";
@@ -93,18 +93,18 @@ export function BlogSection() {
   }, [currentIndex, isAutoPlaying, displayBlogs, handleNext]);
 
   return (
-    <div className="py-16 px-4 bg-gray-50">
-      <div className="max-w-7xl mx-auto">
+    <section className="bg-[#f4f7fb] px-5 py-20 sm:px-8 sm:py-28 lg:px-10">
+      <div className="mx-auto max-w-7xl">
         <motion.h1
           variants={fadeIn("up", 0.5, 0)}
           initial="offscreen"
           whileInView="onscreen"
           viewport={{ once: true, amount: 0 }}
-          className="text-4xl md:text-5xl mb-10 font-bold text-gray-900 text-center"
+          className="max-w-3xl text-4xl font-semibold leading-tight tracking-[-0.04em] text-slate-950 sm:text-5xl"
         >
-          Latest{" "}
+          Stories from our{" "}
           <span className="relative text-blue-600">
-            Blogs
+            community.
             <motion.div
               variants={underlineAnimation(0.7)}
               initial="offscreen"
@@ -115,42 +115,32 @@ export function BlogSection() {
             />
           </span>
         </motion.h1>
-        <p className="text-center text-gray-600 mb-12">
-          Discover the latest in computer science, technology trends, and
-          innovations. Dive into insights, tutorials, and stories that inspire
-          growth, spark creativity, and fuel your passion for problem-solving.
+        <p className="mb-12 mt-5 max-w-2xl text-base leading-7 text-slate-600 sm:text-lg">
+          Explore science, student life and new perspectives through stories
+          created for the Biochemistry community.
         </p>
 
         {/* Carousel Container */}
         <div className="relative">
           {displayBlogs ? (
             <>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-center">
-                {displayBlogs.map((blog, index) => {
-                  const position =
-                    (index - currentIndex + displayBlogs.length) %
-                    displayBlogs.length;
-                  const isCenter = position === 0;
-                  const isLeft = position === displayBlogs.length - 1;
-                  const isRight = position === 1;
-
+              <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
+                {displayBlogs.map((blog) => {
                   return (
                     <motion.div
                       key={blog?.news_id}
                       initial={false}
                       animate={{
-                        scale: isCenter ? 1.05 : 0.85,
-                        opacity: isCenter ? 1 : 0.5,
-                        zIndex: isCenter ? 10 : 1,
-                        x: isCenter ? 0 : isLeft ? -20 : isRight ? 20 : 0,
+                        scale: 1,
+                        opacity: 1,
+                        zIndex: 1,
+                        x: 0,
                       }}
                       transition={{
                         duration: 0.5,
                         ease: "easeInOut",
                       }}
-                      className={`transform transition-all duration-500 ${
-                        !isCenter ? "pointer-events-none" : ""
-                      }`}
+                      className="h-full"
                     >
                       <BlogCard
                         blog={blog}
@@ -164,7 +154,7 @@ export function BlogSection() {
               </div>
 
               {/* Navigation Controls */}
-              <div className="flex items-center justify-center gap-4 mt-8">
+              <div className="mt-8 hidden items-center justify-center gap-4">
                 <button
                   onClick={handlePrev}
                   onMouseEnter={() => setIsAutoPlaying(false)}
@@ -214,12 +204,12 @@ export function BlogSection() {
         <div className="mt-12 text-center justify-center md:justify-start">
           <Link
             to={"/blogs?page=1"}
-            className="border-2 border-blue-700 text-blue-700 px-6 py-3 font-medium rounded hover:bg-blue-700 hover:text-white transition"
+                  className="inline-flex items-center gap-2 rounded-full bg-[#0b2347] px-6 py-3 font-semibold text-white hover:bg-blue-800"
           >
             See More <FiArrowUpRight className="inline" />
           </Link>
         </div>
       </div>
-    </div>
+    </section>
   );
 }

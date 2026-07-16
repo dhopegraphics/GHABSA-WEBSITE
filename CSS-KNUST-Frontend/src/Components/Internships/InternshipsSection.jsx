@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { InternshipCard } from "./InternshipCard";
 import { motion } from "framer-motion";
 import { fadeIn, underlineAnimation } from "../../utils/framerVariants";
@@ -7,7 +7,7 @@ import { InternshipCardSkeleton } from "./InternshipCardSkeleton";
 import { getData } from "../../utils/apiHandler";
 import { FiArrowUpRight } from "react-icons/fi";
 import { Link } from "react-router-dom";
-import { Briefcase, Calendar, X } from "lucide-react";
+import { Briefcase, Calendar } from "lucide-react";
 
 export function InternshipsSection() {
   const { internships, setInternships } = useInternships();
@@ -30,18 +30,18 @@ export function InternshipsSection() {
   const hasInternships = internships && internships.length > 0;
 
   return (
-    <section id="internships" className="py-16 px-4 bg-gray-50">
-      <div className="max-w-7xl mx-auto">
+    <section id="internships" className="bg-white px-5 py-20 sm:px-8 sm:py-28 lg:px-10">
+      <div className="mx-auto max-w-7xl">
         <motion.h1
           variants={fadeIn("up", 0.5, 0)}
           initial="offscreen"
           whileInView="onscreen"
           viewport={{ once: true, amount: 0 }}
-          className="text-4xl md:text-5xl mb-10 font-bold text-gray-900 text-center"
+          className="max-w-3xl text-4xl font-semibold leading-tight tracking-[-0.04em] text-slate-950 sm:text-5xl"
         >
-          Open{" "}
+          Turn knowledge into{" "}
           <span className="relative text-blue-600">
-            Internships
+            experience.
             <motion.div
               variants={underlineAnimation(0.7)}
               initial="offscreen"
@@ -52,14 +52,14 @@ export function InternshipsSection() {
             />
           </span>
         </motion.h1>
-        <p className="text-gray-600 text-center mb-12">
-          Explore exciting internship opportunities from leading companies in
-          the tech industry
+        <p className="mb-12 mt-5 max-w-2xl text-base leading-7 text-slate-600 sm:text-lg">
+          Discover practical training, research placements and industry
+          opportunities that complement your Biochemistry journey.
         </p>
 
         {!internships ? (
           // Loading state
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {Array.from({ length: 4 }).map((_, index) => (
               <InternshipCardSkeleton key={index} />
             ))}
@@ -67,7 +67,7 @@ export function InternshipsSection() {
         ) : hasInternships ? (
           // Has internships
           <>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
               {internships.slice(0, 4).map((internship) => (
                 <InternshipCard
                   key={internship.internship_id}
@@ -80,7 +80,7 @@ export function InternshipsSection() {
               <div className="mt-12 text-center justify-center md:justify-start">
                 <Link
                   to={"/internships"}
-                  className="border-2 border-blue-700 text-blue-700 px-6 py-3 font-medium rounded hover:bg-blue-700 hover:text-white transition"
+                  className="inline-flex items-center gap-2 rounded-full bg-emerald-700 px-6 py-3 font-semibold text-white hover:bg-emerald-800"
                 >
                   See More <FiArrowUpRight className="inline" />
                 </Link>

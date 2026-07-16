@@ -1,6 +1,5 @@
 import  { useEffect, useState, useContext } from "react";
-import { motion } from "framer-motion";
-import { fadeIn, underlineAnimation } from "../utils/framerVariants";
+import { ArrowDown, PackageCheck, ShieldCheck, ShoppingBag } from "lucide-react";
 import { Footer } from "../Components/Footer/Footer";
 import Navbar from "../Components/Navbar";
 import { scrollToTop } from "../utils/scrollToTop";
@@ -87,42 +86,40 @@ export function MerchandisePage() {
     setIsExecutiveOpen(false);
   };
   return (
-    <div className="relative mt-[70px] bg-gray-50">
+    <div className="relative bg-[#f5f7fa] pt-[60px] sm:pt-[65px] md:pt-[70px] lg:pt-[75px]">
       <Navbar onSignInClick={handleOpenLoginModal} />
-      <div className="max-w-7xl mx-auto px-4 py-16">
-        <motion.h1
-          variants={fadeIn("up", 0.5, 0)}
-          initial="offscreen"
-          whileInView="onscreen"
-          viewport={{ once: true, amount: 0 }}
-          className="text-4xl md:text-5xl mb-10 font-bold text-gray-900 text-center"
-        >
-          Our{" "}
-          <span className="relative text-blue-600">
-            {" "}
-            Merchandise
-            <motion.div
-              variants={underlineAnimation(0.7)}
-              initial="offscreen"
-              whileInView="onscreen"
-              exit="reverse"
-              className="absolute left-0 bottom-0 h-1 bg-blue-600"
-              style={{ width: "0%", height: "3px" }}
-            />
-          </span>
-        </motion.h1>
-        <p className="text-center text-gray-600 mb-12">
-          Discover unique apparel and accessories that let you express yourself.
-          Crafted with care, designed for you—our merchandise celebrates your
-          individuality and style.
-        </p>
+      <header className="relative overflow-hidden bg-[#07162f] px-5 py-20 text-white sm:px-8 sm:py-24 lg:px-10 lg:py-28">
+        <div className="absolute -right-24 -top-44 h-[430px] w-[430px] rounded-full border-[70px] border-blue-400/10" />
+        <div className="absolute bottom-0 right-[20%] h-52 w-52 rounded-full bg-blue-500/20 blur-[90px]" />
+        <div className="relative mx-auto max-w-7xl lg:grid lg:grid-cols-[1fr_0.55fr] lg:items-end">
+          <div>
+            <h1 className="max-w-4xl text-5xl font-semibold leading-[1.02] tracking-[-0.05em] sm:text-6xl lg:text-7xl">Wear the community.<br /><span className="text-blue-400">Carry the story.</span></h1>
+            <p className="mt-6 max-w-2xl text-base leading-8 text-slate-300 sm:text-lg">Thoughtfully selected apparel and essentials created for Biochemistry students, alumni and supporters.</p>
+          </div>
+          <a href="#collection" className="mt-9 inline-flex items-center gap-3 rounded-full bg-lime-300 px-6 py-4 font-semibold text-[#07162f] hover:bg-lime-200 lg:justify-self-end">Shop the collection <ArrowDown className="h-5 w-5" /></a>
+        </div>
+      </header>
 
-        <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+      <div className="border-b border-slate-200 bg-white">
+        <div className="mx-auto grid max-w-7xl grid-cols-1 divide-y divide-slate-200 px-5 sm:grid-cols-3 sm:divide-x sm:divide-y-0 sm:px-8 lg:px-10">
+          {[{ icon: ShoppingBag, text: "Official society products" }, { icon: ShieldCheck, text: "Secure Paystack checkout" }, { icon: PackageCheck, text: "Clear stock availability" }].map(({ icon: Icon, text }) => (
+            <div key={text} className="flex items-center justify-center gap-3 py-5 text-sm font-medium text-slate-600"><Icon className="h-5 w-5 text-blue-600" />{text}</div>
+          ))}
+        </div>
+      </div>
+
+      <section id="collection" className="mx-auto max-w-7xl px-5 py-20 sm:px-8 sm:py-24 lg:px-10">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+          <h2 className="text-4xl font-semibold tracking-[-0.04em] text-slate-950 sm:text-5xl">Made to belong.</h2>
+          <p className="max-w-md text-sm leading-6 text-slate-600">Choose your product, select available variants and check out securely.</p>
+        </div>
+
+        <ul className="mt-12 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
           {merchandise?.length == 0
             ? Array.from({ length: 4 }).map((_, index) => (
                 <MerchandiseCardSkeleton key={index} />
               ))
-            : merchandise?.map((item, index) => (
+            : merchandise?.map((item) => (
                 <li key={item?.product_id}>
                   <MerchandiseCard
                     product_image={item?.product_image}
@@ -153,7 +150,7 @@ export function MerchandisePage() {
                 </li>
               ))}
         </ul>
-      </div>
+      </section>
       <Footer />
       {isLoginModalOpen && (
         <Login

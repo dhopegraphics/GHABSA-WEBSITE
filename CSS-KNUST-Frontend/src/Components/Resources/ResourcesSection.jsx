@@ -12,12 +12,12 @@ let yearResources = [
     courses: null,
     icon: Book,
     description:
-      "Foundation courses covering programming basics, mathematics, and computer architecture.",
+      "Core foundations in chemistry, biology and the principles of biochemistry.",
     topics: [
-      "Programming Fundamentals",
-      "Calculus",
-      "Digital Logic",
-      "Linear Algebra",
+      "General Chemistry",
+      "Cell Biology",
+      "Organic Chemistry",
+      "Mathematics",
     ],
   },
   {
@@ -25,20 +25,20 @@ let yearResources = [
     courses: null,
     icon: Database,
     description:
-      "Core programming concepts, databases, and software development principles.",
-    topics: ["Data Structures", "OOP", "Algorithms", "Web Development"],
+      "Build a deeper understanding of biomolecules, metabolism and laboratory methods.",
+    topics: ["Biomolecules", "Metabolism", "Microbiology", "Lab Methods"],
   },
   {
     year: 3,
     courses: null,
     icon: Code2,
     description:
-      "Advanced computing concepts, and specialized programming domains.",
+      "Explore advanced molecular systems and applied biochemical techniques.",
     topics: [
-      "Database Systems",
-      "Operating Systems",
-      "Networks",
-      "Software Engineering",
+      "Molecular Biology",
+      "Enzymology",
+      "Immunology",
+      "Biotechnology",
     ],
   },
   {
@@ -46,13 +46,13 @@ let yearResources = [
     courses: null,
     icon: Brain,
     description:
-      "Specialized electives, advanced topics, and final year project.",
-    topics: ["AI/ML", "Cloud Computing", "Project", "Cybersecurity"],
+      "Specialised study, research practice and the final-year project experience.",
+    topics: ["Research", "Bioinformatics", "Project", "Seminars"],
   },
 ];
 
 export function ResourcesSection() {
-  const { courses, setCourses } = useCourses();
+  const { setCourses } = useCourses();
 
   const fetchCourses = async () => {
     const { response, error } = await getData("/academics/courses/");
@@ -85,18 +85,18 @@ export function ResourcesSection() {
   }, []);
 
   return (
-    <section id="resources" className="py-16 px-4 bg-gray-50">
-      <div className="max-w-7xl mx-auto">
+    <section id="resources" className="bg-[#f4f7fb] px-5 py-20 sm:px-8 sm:py-28 lg:px-10">
+      <div className="mx-auto max-w-7xl">
         <motion.h1
           variants={fadeIn("up", 0.5, 0)}
           initial="offscreen"
           whileInView="onscreen"
           viewport={{ once: true, amount: 0 }}
-          className="text-4xl md:text-5xl mb-10 font-bold text-gray-900 text-center"
+          className="max-w-3xl text-4xl font-semibold leading-tight tracking-[-0.04em] text-slate-950 sm:text-5xl"
         >
-          Academic{" "}
+          Study with more{" "}
           <span className="relative text-blue-600">
-            Resources
+            direction.
             <motion.div
               variants={underlineAnimation(0.7)}
               initial="offscreen"
@@ -107,12 +107,12 @@ export function ResourcesSection() {
             />
           </span>
         </motion.h1>
-        <p className="text-center text-gray-600 mb-12">
+        <p className="mb-12 mt-5 max-w-2xl text-base leading-7 text-slate-600 sm:text-lg">
           Comprehensive course materials and resources organized by year to
-          support your academic journey in computer science.
+          support your academic journey in biochemistry.
         </p>
 
-        <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <ul className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
           {yearResources.map((resource) => (
             <li key={resource.year} className="flex">
               <ResourceCard key={resource.year} {...resource} />

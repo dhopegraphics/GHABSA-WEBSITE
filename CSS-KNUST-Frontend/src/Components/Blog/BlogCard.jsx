@@ -12,7 +12,7 @@ export function BlogCard({ blog, saved, isRecent, daysAgo }) {
   };
 
   return (
-    <div className="bg-white overflow-hidden transition-transform group shadow-lg rounded-lg relative">
+    <article className="group relative h-full overflow-hidden rounded-[28px] border border-slate-200 bg-white shadow-[0_12px_40px_rgba(15,23,42,0.05)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_20px_50px_rgba(15,23,42,0.09)]">
       {/* NEW Badge for recent blogs */}
       {isRecent && (
         <div className="absolute top-4 right-4 z-10 bg-gradient-to-r from-green-500 to-emerald-600 text-white px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1 shadow-lg animate-pulse">
@@ -29,13 +29,13 @@ export function BlogCard({ blog, saved, isRecent, daysAgo }) {
         </div>
       )}
 
-      <div className="h-48 overflow-hidden relative">
+      <div className="relative h-56 overflow-hidden">
         <img
           src={blog?.head_image_url}
           alt={blog?.title}
-          className="w-full h-full object-cover"
+          className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
         />
-        <div className="absolute w-full scale-x-0 h-full bg-[#18192e77] top-0 left-0 group-hover:scale-x-100 transition-all duration-500 origin-left"></div>
+        <div className="absolute inset-0 bg-gradient-to-t from-slate-950/35 to-transparent" />
       </div>
 
       <div className="p-6">
@@ -55,18 +55,18 @@ export function BlogCard({ blog, saved, isRecent, daysAgo }) {
             <span className="text-[12px]">by {blog?.reported_by}</span>
           </div>
         </div>
-        <h3 className="text-xl font-semibold mb-2 text-gray-900 line-clamp-2">
+        <h3 className="mb-3 line-clamp-2 text-xl font-semibold leading-snug tracking-tight text-slate-950">
           {blog?.title}
         </h3>
-        <p className="text-gray-600 mb-4 line-clamp-3">{blog?.report}</p>
+        <p className="mb-5 line-clamp-3 text-sm leading-6 text-slate-600">{blog?.report}</p>
         <Link
           to={`/blog/${blog?.news_id}`}
           state={{ blog, saved }}
-          className="text-blue-600 font-medium hover:text-blue-700"
+          className="inline-flex items-center font-semibold text-blue-700 hover:text-blue-800"
         >
-          Read More →
+          Read story&nbsp; →
         </Link>
       </div>
-    </div>
+    </article>
   );
 }

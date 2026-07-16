@@ -9,7 +9,7 @@ import { BookOpen, GraduationCap, Loader } from "lucide-react";
 
 export function AcademicResourcesPage() {
   const { user } = useContext(UserContext);
-  const { courses, setCourses, clearCoursesIfDifferentProgram } = useCourses();
+  const { courses, setCourses } = useCourses();
 
   // Fetch detailed resources for all courses
   const { enrichedCourses, loading: resourcesLoading } =
@@ -19,20 +19,11 @@ export function AcademicResourcesPage() {
     scrollToTop();
   }, []);
 
-  // Fetch courses if not already loaded (filtered by user's program)
+  // The department has one programme; courses are organised by year/semester.
   useEffect(() => {
     const fetchCourses = async () => {
-      // Only fetch if we have the user's program
-      const userProgram = user?.user?.program;
-      if (!userProgram) return;
-      
-      // Clear courses if they belong to a different program
-      clearCoursesIfDifferentProgram(userProgram);
-      
       if (!courses || courses.length === 0) {
-        const { response, error } = await getData(
-          `/academics/courses/?program=${userProgram}`
-        );
+        const { response, error } = await getData(`/academics/courses/`);
         if (error) {
           console.error("Error fetching courses:", error);
         }
@@ -42,7 +33,7 @@ export function AcademicResourcesPage() {
       }
     };
     fetchCourses();
-  }, [courses, setCourses, clearCoursesIfDifferentProgram, user?.user?.program]);
+  }, [courses, setCourses]);
 
   return (
     <div className="min-h-screen bg-gray-50 py-8">
@@ -74,8 +65,7 @@ export function AcademicResourcesPage() {
                     {user?.user?.first_name} {user?.user?.last_name}
                   </h2>
                   <p className="text-blue-100 mt-1">
-                    {user?.user?.program_display || "Program not set"} • Year{" "}
-                    {user?.user?.year || "N/A"} • Semester{" "}
+                    Year {user?.user?.year || "N/A"} • Semester{" "}
                     {user?.user?.current_semester || "N/A"}
                   </p>
                 </div>

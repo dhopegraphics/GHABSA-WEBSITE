@@ -36,28 +36,7 @@ export function CourseCard({ course }) {
     return badges[course.semester] || badges["both"];
   };
 
-  // Determine program badge color and text
-  const getProgramBadge = () => {
-    if (!course?.program) return null;
-
-    const badges = {
-      CS: {
-        text: "CS",
-        color: "bg-indigo-100 text-indigo-700 border-indigo-200",
-        icon: "💻",
-      },
-      IT: {
-        text: "IT",
-        color: "bg-cyan-100 text-cyan-700 border-cyan-200",
-        icon: "🌐",
-      },
-    };
-
-    return badges[course.program] || badges["CS"];
-  };
-
   const semesterBadge = getSemesterBadge();
-  const programBadge = getProgramBadge();
 
   // Calculate total files count
   const getTotalFilesCount = () => {
@@ -103,7 +82,7 @@ export function CourseCard({ course }) {
       <Link
         to={`/resources/courses/${course?.course_id}`}
         state={{ course }}
-        className="block bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 p-6 border border-gray-100 hover:border-blue-300"
+        className="block h-full rounded-[28px] border border-slate-200 bg-white p-6 shadow-[0_12px_40px_rgba(15,23,42,0.05)] transition-all duration-300 hover:-translate-y-1 hover:border-blue-200 hover:shadow-[0_20px_50px_rgba(15,23,42,0.09)]"
       >
         {/* Header: Course Code and Badges */}
         <div className="flex items-center justify-between mb-3 flex-wrap gap-2">
@@ -114,14 +93,6 @@ export function CourseCard({ course }) {
             </span>
           </div>
           <div className="flex items-center gap-2">
-            {programBadge && (
-              <span
-                className={`px-2 py-1 rounded-full text-xs font-medium border ${programBadge.color} flex items-center gap-1`}
-              >
-                <span>{programBadge.icon}</span>
-                {programBadge.text}
-              </span>
-            )}
             {semesterBadge && (
               <span
                 className={`px-3 py-1 rounded-full text-xs font-medium border ${semesterBadge.color}`}
@@ -264,8 +235,7 @@ CourseCard.propTypes = {
     course_id: PropTypes.number,
     course_code: PropTypes.string,
     course_name: PropTypes.string,
-    semester: PropTypes.string,
-    program: PropTypes.string,
+    semester: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     description: PropTypes.string,
     credit_hours: PropTypes.number,
     slides_count: PropTypes.number,

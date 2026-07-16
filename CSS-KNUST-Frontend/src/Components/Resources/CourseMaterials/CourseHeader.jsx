@@ -23,28 +23,7 @@ export function CourseHeader({
     return badges[course.semester] || badges["both"];
   };
 
-  // Determine program badge
-  const getProgramInfo = () => {
-    if (!course?.program) return null;
-
-    const badges = {
-      CS: {
-        text: "Computer Science",
-        color: "bg-indigo-600 text-white",
-        icon: "💻",
-      },
-      IT: {
-        text: "Information Technology",
-        color: "bg-cyan-600 text-white",
-        icon: "🌐",
-      },
-    };
-
-    return badges[course.program] || badges["CS"];
-  };
-
   const semesterInfo = getSemesterInfo();
-  const programInfo = getProgramInfo();
 
   return (
     <div className="py-8">
@@ -58,14 +37,6 @@ export function CourseHeader({
               <Code className="w-5 h-5 text-blue-600" />
               <span className="font-medium text-blue-600">{courseCode}</span>
             </div>
-            {programInfo && (
-              <span
-                className={`px-4 py-1 rounded-full text-xs font-semibold ${programInfo.color} flex items-center gap-2`}
-              >
-                <span>{programInfo.icon}</span>
-                {programInfo.text}
-              </span>
-            )}
             {semesterInfo && (
               <span
                 className={`px-3 py-1 rounded-full text-xs font-semibold ${semesterInfo.color} flex items-center gap-1`}
@@ -130,8 +101,7 @@ CourseHeader.propTypes = {
   materials: PropTypes.number,
   online: PropTypes.number,
   course: PropTypes.shape({
-    semester: PropTypes.string,
-    program: PropTypes.string,
+    semester: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     description: PropTypes.string,
     lecturer: PropTypes.shape({
       full_name: PropTypes.string,

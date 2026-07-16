@@ -11,12 +11,16 @@ import Navbar from "../../Navbar";
 import SignUp from "../../../Pages/SignUp";
 import ForgotPasswordModal from "../../../Pages/ForgotPasswordModal";
 import ExecutiveLogin from "../../../Pages/ExecutiveLogin";
+import { getData } from "../../../utils/apiHandler";
+import { courseMatchesSemester, normalizeCourses, SEMESTERS } from "../../../utils/courseSchema";
 
 export function YearCoursesPage() {
   const navigate = useNavigate();
 
   const location = useLocation();
-  const { courses } = location.state || {};
+  const { courses: stateCourses } = location.state || {};
+  const [courses, setCourses] = useState(() => normalizeCourses(stateCourses));
+  const [isLoading, setIsLoading] = useState(!stateCourses);
 
   const [searchParams] = useSearchParams();
   const paramValue = searchParams.get("year");
@@ -28,10 +32,29 @@ export function YearCoursesPage() {
     scrollToTop();
   }, [paramValue]);
 
+  useEffect(() => {
+    if (stateCourses) {
+      setCourses(normalizeCourses(stateCourses));
+      setIsLoading(false);
+      return;
+    }
+
+    const fetchCourses = async () => {
+      setIsLoading(true);
+      const { response, error } = await getData(
+        `/academics/courses/${paramValue ? `?year=${paramValue}` : ""}`
+      );
+      if (error) console.error("Error fetching courses:", error);
+      setCourses(normalizeCourses(response));
+      setIsLoading(false);
+    };
+
+    fetchCourses();
+  }, [paramValue, stateCourses]);
+
   const [searchTerm, setSearchTerm] = useState("");
   const [year, setYear] = useState("");
   const [selectedSemester, setSelectedSemester] = useState("all");
-  const [selectedProgram, setSelectedProgram] = useState("all");
 
   const filteredCourses = useMemo(() => {
     return courses?.filter((course) => {
@@ -39,17 +62,9 @@ export function YearCoursesPage() {
         course.course_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         course.course_code.toLowerCase().includes(searchTerm.toLowerCase());
 
-      const matchesSemester =
-        selectedSemester === "all" ||
-        course.semester === selectedSemester ||
-        course.semester === "both";
-
-      const matchesProgram =
-        selectedProgram === "all" || course.program === selectedProgram;
-
-      return matchesSearch && matchesSemester && matchesProgram;
+      return matchesSearch && courseMatchesSemester(course, selectedSemester);
     });
-  }, [courses, searchTerm, selectedSemester, selectedProgram]);
+  }, [courses, searchTerm, selectedSemester]);
 
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [isSignupModalOpen, setIsSignupModalOpen] = useState(false);
@@ -92,9 +107,9 @@ export function YearCoursesPage() {
   };
 
   return (
-    <div className="relative mt-[50px]">
+    <div className="relative bg-[#f5f7fa] pt-[60px] sm:pt-[65px] md:pt-[70px] lg:pt-[75px]">
       <Navbar onSignInClick={handleOpenLoginModal} />
-      <div className="min-h-screen bg-gray-50 py-12 px-4">
+      <div className="min-h-screen px-5 py-16 sm:px-8 lg:px-10">
         <div className="max-w-7xl mx-auto">
           <a
             href="/#resources"
@@ -104,62 +119,31 @@ export function YearCoursesPage() {
             <span>Back to Resources</span>
           </a>
 
-          <div className="text-center mb-12">
-            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-blue-100 mb-4">
-              <GraduationCap className="w-8 h-8 text-blue-600" />
-            </div>
-            <h1 className="text-4xl font-bold text-gray-900 mb-2">
-              Year {year} Courses
+          <div className="mb-12 max-w-3xl">
+            <h1 className="text-4xl font-semibold tracking-[-0.04em] text-slate-950 sm:text-5xl">
+              Year {year} resources
             </h1>
-            <p className="text-gray-600">
+            <p className="mt-4 text-lg text-slate-600">
               {courses?.length} {courses?.length === 1 ? "Course" : "Courses"}{" "}
-              Available
+              available across two semesters.
             </p>
           </div>
 
-          <div className="max-w-xl mx-auto mb-12">
+          <div className="mb-6 max-w-xl">
             <SearchBar searchTerm={searchTerm} onSearchChange={setSearchTerm} />
           </div>
 
-          {/* Program Filter Tabs */}
-          <div className="flex justify-center mb-6">
-            <div className="inline-flex bg-white rounded-lg shadow-md p-1 border border-gray-200">
-              {[
-                { value: "all", label: "All Programs", icon: "🎓" },
-                { value: "CS", label: "Computer Science", icon: "💻" },
-                { value: "IT", label: "Information Technology", icon: "🌐" },
-              ].map((filter) => (
-                <button
-                  key={filter.value}
-                  onClick={() => setSelectedProgram(filter.value)}
-                  className={`px-6 py-2 rounded-md text-sm font-medium transition-all duration-200 flex items-center gap-2 ${
-                    selectedProgram === filter.value
-                      ? "bg-blue-600 text-white shadow-sm"
-                      : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
-                  }`}
-                >
-                  <span>{filter.icon}</span>
-                  {filter.label}
-                </button>
-              ))}
-            </div>
-          </div>
-
           {/* Semester Filter Tabs */}
-          <div className="flex justify-center mb-8">
-            <div className="inline-flex bg-white rounded-lg shadow-md p-1 border border-gray-200">
-              {[
-                { value: "all", label: "All Semesters" },
-                { value: "1", label: "1st Semester" },
-                { value: "2", label: "2nd Semester" },
-              ].map((filter) => (
+          <div className="mb-10 flex overflow-x-auto">
+            <div className="inline-flex rounded-full border border-slate-200 bg-white p-1.5 shadow-sm">
+              {SEMESTERS.map((filter) => (
                 <button
                   key={filter.value}
                   onClick={() => setSelectedSemester(filter.value)}
-                  className={`px-6 py-2 rounded-md text-sm font-medium transition-all duration-200 ${
+                  className={`whitespace-nowrap rounded-full px-5 py-2.5 text-sm font-semibold transition-all ${
                     selectedSemester === filter.value
-                      ? "bg-purple-600 text-white shadow-sm"
-                      : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+                      ? "bg-blue-600 text-white shadow-sm"
+                      : "text-slate-600 hover:bg-slate-50 hover:text-slate-950"
                   }`}
                 >
                   {filter.label}
@@ -169,35 +153,8 @@ export function YearCoursesPage() {
           </div>
 
           {/* Active Filters Display */}
-          {(selectedProgram !== "all" || selectedSemester !== "all") && (
+          {selectedSemester !== "all" && (
             <div className="flex justify-center mb-6 gap-3">
-              {selectedProgram !== "all" && (
-                <div className="inline-flex items-center gap-2 bg-blue-50 text-blue-700 px-4 py-2 rounded-full text-sm font-medium border border-blue-200">
-                  <span>
-                    {selectedProgram === "CS"
-                      ? "💻 Computer Science"
-                      : "🌐 Information Technology"}
-                  </span>
-                  <button
-                    onClick={() => setSelectedProgram("all")}
-                    className="hover:bg-blue-100 rounded-full p-0.5 transition-colors"
-                  >
-                    <svg
-                      className="w-4 h-4"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M6 18L18 6M6 6l12 12"
-                      />
-                    </svg>
-                  </button>
-                </div>
-              )}
               {selectedSemester !== "all" && (
                 <div className="inline-flex items-center gap-2 bg-purple-50 text-purple-700 px-4 py-2 rounded-full text-sm font-medium border border-purple-200">
                   <span>
@@ -238,8 +195,10 @@ export function YearCoursesPage() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredCourses?.length > 0 ? (
+          <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
+            {isLoading ? (
+              Array.from({ length: 6 }).map((_, index) => <div key={index} className="h-72 animate-pulse rounded-[28px] bg-slate-200" />)
+            ) : filteredCourses?.length > 0 ? (
               filteredCourses.map((course) => (
                 <CourseCard key={course.course_id} course={course} />
               ))
