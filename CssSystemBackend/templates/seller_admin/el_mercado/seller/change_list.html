@@ -778,7 +778,7 @@
                     <div class="detail-content">
                         <label>Store URL</label>
                         <div class="store-url-box">
-                            <code>{{ FRONTEND_URL|default:"https://thecssknust.com" }}/el-mercado/store/<span class="slug">{{ seller.slug }}</span></code>
+                            <code>{{ FRONTEND_URL|default:"https://biochemknust.com" }}/el-mercado/store/<span class="slug">{{ seller.slug }}</span></code>
                             <button type="button" class="copy-url-btn" onclick="copyStoreUrl('{{ seller.slug }}')">
                                 <i class="ri-file-copy-line"></i> Copy
                             </button>
@@ -1050,7 +1050,7 @@
                     <p>See customer feedback</p>
                 </div>
             </a>
-            <a href="{{ FRONTEND_URL|default:'https://thecssknust.com' }}/el-mercado/seller-guide" target="_blank" class="action-card">
+            <a href="{{ FRONTEND_URL|default:'https://biochemknust.com' }}/el-mercado/seller-guide" target="_blank" class="action-card">
                 <div class="action-icon">
                     <i class="ri-book-open-line"></i>
                 </div>
@@ -1059,7 +1059,7 @@
                     <p>Learn how to sell effectively</p>
                 </div>
             </a>
-            <a href="{{ FRONTEND_URL|default:'https://thecssknust.com' }}/el_mercado/commission-policy" target="_blank" class="action-card">
+            <a href="{{ FRONTEND_URL|default:'https://biochemknust.com' }}/el_mercado/commission-policy" target="_blank" class="action-card">
                 <div class="action-icon">
                     <i class="ri-percent-line"></i>
                 </div>
@@ -1068,7 +1068,7 @@
                     <p>Understand fees & earnings</p>
                 </div>
             </a>
-            <a href="{{ FRONTEND_URL|default:'https://thecssknust.com' }}/el_mercado/seller-terms" target="_blank" class="action-card">
+            <a href="{{ FRONTEND_URL|default:'https://biochemknust.com' }}/el_mercado/seller-terms" target="_blank" class="action-card">
                 <div class="action-icon">
                     <i class="ri-file-list-3-line"></i>
                 </div>
@@ -1083,7 +1083,7 @@
 
 <script>
 function copyStoreUrl(slug) {
-    const url = '{{ FRONTEND_URL|default:"https://thecssknust.com" }}/el-mercado/store/' + slug;
+    const url = '{{ FRONTEND_URL|default:"https://biochemknust.com" }}/el-mercado/store/' + slug;
     navigator.clipboard.writeText(url).then(() => {
         const btn = event.target.closest('.copy-url-btn');
         const originalHtml = btn.innerHTML;

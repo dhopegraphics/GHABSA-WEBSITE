@@ -1,4 +1,4 @@
-CSS KNUST MEETING
+BIO-CHEM KNUST MEETING
 
 {{ meeting_type }}: {{ meeting_title }}
 Date: {{ meeting_date }}

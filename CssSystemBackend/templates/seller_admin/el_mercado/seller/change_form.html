@@ -752,7 +752,7 @@
                     </div>
                 </div>
                 <div class="quick-links">
-                    <a href="{{ FRONTEND_URL|default:'https://thecssknust.com' }}/el-mercado/store/{{ original.slug }}" target="_blank" class="quick-link">
+                    <a href="{{ FRONTEND_URL|default:'https://biochemknust.com' }}/el-mercado/store/{{ original.slug }}" target="_blank" class="quick-link">
                         <i class="ri-external-link-line"></i>
                         View Public Store
                     </a>
@@ -821,7 +821,7 @@
                             <span>Your Store URL</span>
                         </div>
                         <div class="store-url">
-                            <span>{{ FRONTEND_URL|default:"https://thecssknust.com" }}/el-mercado/store/<span class="slug">{{ original.slug|default:"your-store" }}</span></span>
+                            <span>{{ FRONTEND_URL|default:"https://biochemknust.com" }}/el-mercado/store/<span class="slug">{{ original.slug|default:"your-store" }}</span></span>
                             <button type="button" class="copy-btn" onclick="copyStoreUrl()">
                                 <i class="ri-file-copy-line"></i>
                                 Copy
@@ -1095,7 +1095,7 @@
 
 <script>
 function copyStoreUrl() {
-    const url = '{{ FRONTEND_URL|default:"https://thecssknust.com" }}/el-mercado/store/{{ original.slug|default:"your-store" }}';
+    const url = '{{ FRONTEND_URL|default:"https://biochemknust.com" }}/el-mercado/store/{{ original.slug|default:"your-store" }}';
     navigator.clipboard.writeText(url).then(() => {
         const btn = document.querySelector('.copy-btn');
         btn.innerHTML = '<i class="ri-check-line"></i> Copied!';
