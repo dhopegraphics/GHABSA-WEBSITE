@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Order - El Mercado</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 650px;
+            margin: 20px auto;
+            background-color: #ffffff;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+        .header {
+            background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+            color: #fff;
+            padding: 30px;
+            text-align: center;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 28px;
+        }
+        .header p {
+            margin: 10px 0 0;
+            font-size: 16px;
+            opacity: 0.9;
+        }
+        .content {
+            padding: 30px;
+        }
+        .greeting {
+            font-size: 18px;
+            margin-bottom: 20px;
+            color: #555;
+        }
+        
+        /* Alert Banner */
+        .alert-banner {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            color: #92400e;
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 4px solid #f59e0b;
+            font-weight: 500;
+        }
+        .alert-banner.auto-accept {
+            background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+            color: #065f46;
+            border-left-color: #10b981;
+        }
+        
+        /* Order Header */
+        .order-header {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 4px solid #22c55e;
+        }
+        .order-number {
+            font-size: 20px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        .order-meta {
+            font-size: 14px;
+            color: #666;
+            margin: 5px 0;
+        }
+        
+        /* Customer Info */
+        .customer-info {
+            background-color: #f0fdf4;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        .customer-info h3 {
+            margin: 0 0 15px;
+            color: #166534;
+            font-size: 16px;
+        }
+        .customer-detail {
+            margin: 8px 0;
+            font-size: 14px;
+            color: #333;
+        }
+        .customer-detail strong {
+            color: #166534;
+        }
+        
+        /* Order Items */
+        .order-items {
+            margin: 25px 0;
+        }
+        .order-items h3 {
+            color: #333;
+            border-bottom: 2px solid #22c55e;
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+        }
+        .item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            margin: 10px 0;
+        }
+        .item-details {
+            flex: 1;
+        }
+        .item-name {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 5px;
+        }
+        .item-variant {
+            font-size: 13px;
+            color: #666;
+        }
+        .item-qty {
+            font-size: 13px;
+            color: #666;
+            margin-top: 3px;
+        }
+        .item-price {
+            text-align: right;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        /* Order Total */
+        .order-total {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            font-size: 14px;
+            color: #666;
+        }
+        .total-row.earnings {
+            border-top: 2px solid #22c55e;
+            margin-top: 10px;
+            padding-top: 15px;
+            font-size: 18px;
+            font-weight: bold;
+            color: #166534;
+        }
+        
+        /* Shipping Info */
+        .shipping-info {
+            background-color: #eff6ff;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        .shipping-info h3 {
+            margin: 0 0 15px;
+            color: #1e40af;
+            font-size: 16px;
+        }
+        .shipping-detail {
+            margin: 8px 0;
+            font-size: 14px;
+            color: #333;
+        }
+        
+        /* Order Notes */
+        .order-notes {
+            background-color: #fef3c7;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 4px solid #f59e0b;
+        }
+        .order-notes h3 {
+            margin: 0 0 10px;
+            color: #92400e;
+            font-size: 16px;
+        }
+        .order-notes p {
+            margin: 0;
+            font-style: italic;
+            color: #78350f;
+        }
+        
+        /* CTA Button */
+        .cta-container {
+            text-align: center;
+            margin: 30px 0;
+        }
+        .cta-button {
+            display: inline-block;
+            background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+            color: #ffffff !important;
+            padding: 15px 40px;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 16px;
+        }
+        
+        /* Footer */
+        .footer {
+            background-color: #1f2937;
+            color: #9ca3af;
+            padding: 20px;
+            text-align: center;
+            font-size: 12px;
+        }
+        .footer a {
+            color: #22c55e;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>🛒 New Order Received!</h1>
+            <p>Order #{{ order_number }}</p>
+        </div>
+        
+        <!-- Content -->
+        <div class="content">
+            <p class="greeting">Hi {{ seller_name }},</p>
+            
+            <p>Great news! You've received a new order. Here are the details:</p>
+            
+            {% if auto_accepted %}
+            <div class="alert-banner auto-accept">
+                ✅ This order has been <strong>auto-accepted</strong> based on your settings. Please prepare it for shipping.
+            </div>
+            {% else %}
+            <div class="alert-banner">
+                ⏳ Please <strong>accept or decline</strong> this order in your seller dashboard.
+            </div>
+            {% endif %}
+            
+            <!-- Order Header -->
+            <div class="order-header">
+                <div class="order-number">Order #{{ order_number }}</div>
+                <div class="order-meta">📅 {{ order_date|date:"F j, Y, g:i A" }}</div>
+            </div>
+            
+            <!-- Customer Information -->
+            <div class="customer-info">
+                <h3>👤 Customer Information</h3>
+                <div class="customer-detail"><strong>Name:</strong> {{ buyer_name }}</div>
+                <div class="customer-detail"><strong>Phone:</strong> {{ buyer_phone }}</div>
+            </div>
+            
+            <!-- Order Items -->
+            <div class="order-items">
+                <h3>📦 Order Items</h3>
+                {% for item in order_items %}
+                <div class="item">
+                    <div class="item-details">
+                        <div class="item-name">{{ item.product_name }}</div>
+                        {% if item.variant_name %}
+                        <div class="item-variant">{{ item.variant_name }}</div>
+                        {% endif %}
+                        <div class="item-qty">Qty: {{ item.quantity }} × GHS {{ item.unit_price }}</div>
+                    </div>
+                    <div class="item-price">GHS {{ item.total_price }}</div>
+                </div>
+                {% endfor %}
+            </div>
+            
+            <!-- Order Total -->
+            <div class="order-total">
+                <div class="total-row">
+                    <span>Subtotal</span>
+                    <span>GHS {{ subtotal }}</span>
+                </div>
+                <div class="total-row">
+                    <span>Shipping Fee</span>
+                    <span>GHS {{ shipping_fee }}</span>
+                </div>
+                <div class="total-row">
+                    <span>Order Total</span>
+                    <span><strong>GHS {{ total_amount }}</strong></span>
+                </div>
+                <div class="total-row earnings">
+                    <span>💰 Your Earnings</span>
+                    <span>GHS {{ seller_earnings }}</span>
+                </div>
+            </div>
+            
+            <!-- Shipping Info -->
+            <div class="shipping-info">
+                <h3>🚚 Delivery Information</h3>
+                <div class="shipping-detail"><strong>Method:</strong> {{ delivery_method }}</div>
+                <div class="shipping-detail"><strong>Address:</strong> {{ shipping_address }}</div>
+            </div>
+            
+            {% if order_notes %}
+            <!-- Order Notes -->
+            <div class="order-notes">
+                <h3>📝 Customer Notes</h3>
+                <p>"{{ order_notes }}"</p>
+            </div>
+            {% endif %}
+            
+            <!-- CTA -->
+            <div class="cta-container">
+                <a href="{{ orders_url }}" class="cta-button">
+                    View Order in Dashboard
+                </a>
+            </div>
+            
+            <p style="color: #666; font-size: 14px; text-align: center;">
+                Please ensure timely processing of this order to maintain good customer relations.
+            </p>
+        </div>
+        
+        <!-- Footer -->
+        <div class="footer">
+            <p>This email was sent from <strong>El Mercado</strong> by CSS KNUST</p>
+            <p>You received this because you have a seller account on El Mercado.</p>
+            <p>
+                <a href="{{ dashboard_url }}">Seller Dashboard</a> |
+                <a href="{{ frontend_url }}">CSS KNUST</a>
+            </p>
+            <p style="margin: 10px 0 0 0; font-size: 11px; color: #6b7280;">
+                © {{ year }} CSS KNUST El Mercado. All rights reserved.
+            </p>
+        </div>
+    </div>
+</body>
+</html>

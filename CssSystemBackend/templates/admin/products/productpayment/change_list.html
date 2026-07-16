@@ -1,0 +1,33 @@
+{% extends "admin/change_list.html" %}
+{% load static %}
+
+{% block content_title %}
+<h1>{{ title }}</h1>
+
+<!-- Security Notice -->
+{% if security_notice %}
+<div style="margin: 15px 0; padding: 15px; background: #fff3cd; border-left: 4px solid #ffc107; border-radius: 4px;">
+    <strong>🔒 Security Notice:</strong> {{ security_notice }}
+</div>
+{% endif %}
+
+<!-- Action Buttons -->
+<div style="margin: 20px 0; padding: 15px; background: #f8f9fa; border-radius: 8px; display: flex; gap: 15px;">
+    <a href="{% url 'admin:products_analytics' %}"
+        style="display: inline-block; padding: 12px 24px; background: #417690; color: white; text-decoration: none; border-radius: 4px; font-weight: bold; transition: background 0.3s;">
+        📊 View Sales Analytics & Reports
+    </a>
+
+    <a href="{% url 'admin:products_validate' %}"
+        style="display: inline-block; padding: 12px 24px; background: #28a745; color: white; text-decoration: none; border-radius: 4px; font-weight: bold; transition: background 0.3s;">
+        ✅ Validate & Collect Merchandise
+    </a>
+</div>
+
+<style>
+    .custom-action-buttons a:hover {
+        opacity: 0.9;
+        transform: translateY(-1px);
+    }
+</style>
+{% endblock %}

@@ -1,0 +1,2729 @@
+{% extends "seller_admin/seller_base_site.html" %}
+{% load i18n static admin_urls %}
+
+{% block extrastyle %}
+{{ block.super }}
+<style>
+    .listing-form-container {
+        max-width: 1400px;
+    }
+
+    /* Page Header */
+    .form-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 32px;
+        flex-wrap: wrap;
+        gap: 16px;
+    }
+
+    .form-header-left {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+    }
+
+    .back-btn {
+        width: 44px;
+        height: 44px;
+        border-radius: 12px;
+        background: white;
+        border: 1px solid var(--gray-200);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--gray-600);
+        text-decoration: none;
+        transition: all 0.2s ease;
+    }
+
+    .back-btn:hover {
+        background: var(--gray-50);
+        color: var(--primary);
+        border-color: var(--primary);
+    }
+
+    .form-header h1 {
+        font-size: 26px;
+        font-weight: 800;
+        color: var(--gray-900);
+        margin: 0;
+    }
+
+    .form-header h1 small {
+        display: block;
+        font-size: 13px;
+        font-weight: 500;
+        color: var(--gray-500);
+        margin-top: 4px;
+    }
+
+    .header-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 8px 16px;
+        border-radius: 100px;
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    .badge-draft { background: rgba(148, 163, 184, 0.2); color: var(--gray-600); }
+    .badge-active { background: rgba(16, 185, 129, 0.2); color: var(--success); }
+    .badge-pending_review { background: rgba(245, 158, 11, 0.2); color: var(--warning); }
+    .badge-rejected { background: rgba(239, 68, 68, 0.2); color: var(--danger); }
+
+    /* Buttons */
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 12px 24px;
+        border-radius: 12px;
+        font-size: 14px;
+        font-weight: 600;
+        text-decoration: none;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        border: none;
+        font-family: inherit;
+    }
+
+    .btn-primary,
+    .btn-primary:link,
+    .btn-primary:visited,
+    a.btn-primary {
+        background: var(--gradient-primary);
+        color: #ffffff !important;
+    }
+
+    .btn-primary:hover,
+    a.btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(124, 58, 237, 0.4);
+        color: #ffffff !important;
+    }
+
+    .btn-primary i {
+        color: #ffffff !important;
+    }
+
+    .btn-secondary {
+        background: white;
+        color: var(--gray-700);
+        border: 2px solid var(--gray-200);
+    }
+
+    .btn-secondary:hover {
+        background: var(--gray-50);
+        border-color: var(--gray-300);
+    }
+
+    .btn-danger {
+        background: white;
+        color: var(--danger);
+        border: 2px solid var(--danger);
+    }
+
+    .btn-danger:hover {
+        background: var(--danger);
+        color: white;
+    }
+
+    .btn-lg {
+        padding: 14px 32px;
+        font-size: 15px;
+    }
+
+    /* Error Messages */
+    .error-banner {
+        background: rgba(239, 68, 68, 0.1);
+        border: 1px solid rgba(239, 68, 68, 0.3);
+        border-radius: 16px;
+        padding: 20px 24px;
+        margin-bottom: 24px;
+        display: flex;
+        align-items: flex-start;
+        gap: 16px;
+    }
+
+    .error-banner-icon {
+        width: 44px;
+        height: 44px;
+        border-radius: 12px;
+        background: var(--danger);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 20px;
+        flex-shrink: 0;
+    }
+
+    .error-banner-content h4 {
+        font-size: 15px;
+        font-weight: 600;
+        color: var(--danger);
+        margin: 0 0 8px 0;
+    }
+
+    .error-banner-content ul {
+        margin: 0;
+        padding: 0 0 0 18px;
+        color: var(--gray-700);
+        font-size: 14px;
+    }
+
+    /* Form Layout */
+    .form-layout {
+        display: grid;
+        grid-template-columns: 1fr 380px;
+        gap: 32px;
+        align-items: start;
+    }
+
+    @media (max-width: 1200px) {
+        .form-layout {
+            grid-template-columns: 1fr;
+        }
+        
+        .form-sidebar {
+            order: -1;
+        }
+    }
+
+    /* Form Cards */
+    .form-card {
+        background: white;
+        border-radius: 20px;
+        border: 1px solid var(--gray-200);
+        overflow: hidden;
+        margin-bottom: 24px;
+        transition: all 0.2s ease;
+    }
+
+    .form-card:hover {
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+    }
+
+    .form-card-header {
+        padding: 20px 24px;
+        border-bottom: 1px solid var(--gray-100);
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .form-card-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+    }
+
+    .form-card-icon.purple { background: linear-gradient(135deg, rgba(124, 58, 237, 0.15), rgba(236, 72, 153, 0.15)); color: var(--primary); }
+    .form-card-icon.blue { background: rgba(59, 130, 246, 0.15); color: #3b82f6; }
+    .form-card-icon.green { background: rgba(16, 185, 129, 0.15); color: var(--success); }
+    .form-card-icon.orange { background: rgba(245, 158, 11, 0.15); color: var(--warning); }
+    .form-card-icon.red { background: rgba(239, 68, 68, 0.15); color: var(--danger); }
+    .form-card-icon.indigo { background: rgba(99, 102, 241, 0.15); color: #6366f1; }
+
+    .form-card-title h3 {
+        font-size: 16px;
+        font-weight: 700;
+        color: var(--gray-900);
+        margin: 0;
+    }
+
+    .form-card-title p {
+        font-size: 13px;
+        color: var(--gray-500);
+        margin: 4px 0 0 0;
+    }
+
+    .form-card-body {
+        padding: 24px;
+    }
+
+    /* Form Groups */
+    .form-group {
+        margin-bottom: 24px;
+    }
+
+    .form-group:last-child {
+        margin-bottom: 0;
+    }
+
+    .form-row-2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+    }
+
+    @media (max-width: 600px) {
+        .form-row-2 {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    .form-label {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-weight: 600;
+        font-size: 14px;
+        color: var(--gray-700);
+        margin-bottom: 10px;
+    }
+
+    .form-label .required {
+        color: var(--danger);
+        font-size: 16px;
+    }
+
+    .form-label .optional {
+        font-size: 12px;
+        font-weight: 400;
+        color: var(--gray-400);
+    }
+
+    .form-label i {
+        color: var(--gray-400);
+        font-size: 16px;
+    }
+
+    /* Input Styles */
+    .form-input {
+        width: 100%;
+        padding: 14px 18px;
+        border: 2px solid var(--gray-200);
+        border-radius: 12px;
+        font-size: 15px;
+        font-family: inherit;
+        transition: all 0.2s ease;
+        background: white;
+        color: var(--gray-900);
+    }
+
+    .form-input:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.1);
+    }
+
+    .form-input::placeholder {
+        color: var(--gray-400);
+    }
+
+    .form-input.error {
+        border-color: var(--danger);
+    }
+
+    .form-input-lg {
+        padding: 16px 20px;
+        font-size: 18px;
+        font-weight: 600;
+    }
+
+    textarea.form-input {
+        min-height: 140px;
+        resize: vertical;
+        line-height: 1.6;
+    }
+
+    select.form-input {
+        cursor: pointer;
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 14px center;
+        background-size: 18px;
+        padding-right: 48px;
+    }
+
+    .form-help {
+        font-size: 13px;
+        color: var(--gray-500);
+        margin-top: 8px;
+        display: flex;
+        align-items: flex-start;
+        gap: 6px;
+    }
+
+    .form-help i {
+        margin-top: 2px;
+        color: var(--gray-400);
+    }
+
+    .field-error {
+        font-size: 13px;
+        color: var(--danger);
+        margin-top: 8px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    /* Price Input */
+    .price-input-group {
+        position: relative;
+    }
+
+    .price-currency {
+        position: absolute;
+        left: 18px;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 15px;
+        font-weight: 600;
+        color: var(--gray-500);
+        pointer-events: none;
+    }
+
+    .price-input-group .form-input {
+        padding-left: 65px;
+    }
+
+    .discount-preview {
+        margin-top: 12px;
+        padding: 12px 16px;
+        background: rgba(16, 185, 129, 0.1);
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 14px;
+        color: var(--success);
+        font-weight: 600;
+    }
+
+    /* Image Upload */
+    .image-upload-area {
+        display: block;
+        border: 2px dashed var(--gray-300);
+        border-radius: 16px;
+        padding: 48px 32px;
+        text-align: center;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        background: linear-gradient(135deg, var(--gray-50), white);
+    }
+
+    .image-upload-area:hover {
+        border-color: var(--primary);
+        background: linear-gradient(135deg, rgba(124, 58, 237, 0.05), rgba(236, 72, 153, 0.05));
+    }
+
+    .image-upload-area.dragover {
+        border-color: var(--primary);
+        background: rgba(124, 58, 237, 0.1);
+        transform: scale(1.01);
+    }
+
+    .image-upload-icon {
+        width: 80px;
+        height: 80px;
+        margin: 0 auto 20px;
+        border-radius: 50%;
+        background: var(--gradient-primary);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .image-upload-icon i {
+        font-size: 36px;
+        color: white;
+    }
+
+    .image-upload-area h4 {
+        font-size: 18px;
+        font-weight: 700;
+        color: var(--gray-900);
+        margin: 0 0 8px 0;
+        display: block;
+    }
+
+    .image-upload-area p {
+        font-size: 14px;
+        color: var(--gray-500);
+        margin: 0 0 20px 0;
+        display: block;
+    }
+
+    .browse-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 12px 24px;
+        background: var(--primary);
+        color: white;
+        border-radius: 10px;
+        font-size: 14px;
+        font-weight: 600;
+        margin: 0 0 16px 0;
+    }
+
+    .upload-formats {
+        margin: 0;
+        padding: 0;
+        font-size: 12px;
+        color: var(--gray-400);
+        display: block;
+    }
+
+    .current-image {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        padding: 16px;
+        background: var(--gray-50);
+        border-radius: 12px;
+        border: 1px solid var(--gray-200);
+    }
+
+    .current-image img {
+        width: 100px;
+        height: 100px;
+        object-fit: cover;
+        border-radius: 10px;
+    }
+
+    .current-image-info h5 {
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--gray-900);
+        margin: 0 0 4px 0;
+    }
+
+    .current-image-info p {
+        font-size: 13px;
+        color: var(--gray-500);
+        margin: 0;
+    }
+
+    /* Checkbox */
+    .checkbox-group {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    .checkbox-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 14px;
+        padding: 16px 20px;
+        background: var(--gray-50);
+        border-radius: 12px;
+        border: 2px solid transparent;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .checkbox-item:hover {
+        background: white;
+        border-color: var(--gray-200);
+    }
+
+    .checkbox-item.checked {
+        background: rgba(124, 58, 237, 0.05);
+        border-color: var(--primary);
+    }
+
+    .checkbox-item input[type="checkbox"] {
+        width: 22px;
+        height: 22px;
+        accent-color: var(--primary);
+        cursor: pointer;
+        margin-top: 2px;
+    }
+
+    .checkbox-content label {
+        font-size: 15px;
+        font-weight: 600;
+        color: var(--gray-900);
+        cursor: pointer;
+        display: block;
+        margin-bottom: 4px;
+    }
+
+    .checkbox-content p {
+        font-size: 13px;
+        color: var(--gray-500);
+        margin: 0;
+    }
+
+    /* Sidebar */
+    .form-sidebar {
+        position: sticky;
+        top: 100px;
+    }
+
+    .sidebar-card {
+        background: white;
+        border-radius: 20px;
+        border: 1px solid var(--gray-200);
+        overflow: hidden;
+        margin-bottom: 24px;
+    }
+
+    .sidebar-card-header {
+        padding: 18px 20px;
+        border-bottom: 1px solid var(--gray-100);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .sidebar-card-header i {
+        color: var(--primary);
+        font-size: 18px;
+    }
+
+    .sidebar-card-header h4 {
+        font-size: 15px;
+        font-weight: 700;
+        color: var(--gray-900);
+        margin: 0;
+    }
+
+    .sidebar-card-body {
+        padding: 20px;
+    }
+
+    /* Tips */
+    .tips-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .tips-list li {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        padding: 14px 0;
+        border-bottom: 1px solid var(--gray-100);
+        font-size: 14px;
+        color: var(--gray-600);
+        line-height: 1.5;
+    }
+
+    .tips-list li:last-child {
+        border-bottom: none;
+        padding-bottom: 0;
+    }
+
+    .tips-list li:first-child {
+        padding-top: 0;
+    }
+
+    .tips-list li i {
+        color: var(--success);
+        margin-top: 2px;
+        font-size: 16px;
+        flex-shrink: 0;
+    }
+
+    /* Preview */
+    .preview-card {
+        background: linear-gradient(135deg, var(--gray-50), white);
+        border-radius: 16px;
+        padding: 20px;
+        border: 1px solid var(--gray-200);
+    }
+
+    .preview-placeholder {
+        text-align: center;
+        padding: 32px;
+        color: var(--gray-400);
+    }
+
+    .preview-placeholder i {
+        font-size: 48px;
+        margin-bottom: 12px;
+    }
+
+    .preview-placeholder p {
+        font-size: 14px;
+        margin: 0;
+    }
+
+    .preview-product {
+        text-align: center;
+    }
+
+    .preview-image {
+        width: 100%;
+        height: 180px;
+        object-fit: cover;
+        border-radius: 12px;
+        margin-bottom: 16px;
+        background: var(--gray-200);
+    }
+
+    .preview-title {
+        font-size: 16px;
+        font-weight: 700;
+        color: var(--gray-900);
+        margin: 0 0 8px 0;
+    }
+
+    .preview-price {
+        font-size: 22px;
+        font-weight: 800;
+        color: var(--primary);
+    }
+
+    .preview-price .original {
+        font-size: 14px;
+        color: var(--gray-400);
+        text-decoration: line-through;
+        margin-left: 8px;
+        font-weight: 500;
+    }
+
+    /* Progress */
+    .form-progress {
+        background: white;
+        border-radius: 16px;
+        border: 1px solid var(--gray-200);
+        padding: 20px 24px;
+        margin-bottom: 24px;
+    }
+
+    .progress-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 12px;
+    }
+
+    .progress-header span {
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--gray-700);
+    }
+
+    .progress-bar {
+        height: 8px;
+        background: var(--gray-200);
+        border-radius: 100px;
+        overflow: hidden;
+    }
+
+    .progress-fill {
+        height: 100%;
+        background: var(--gradient-primary);
+        border-radius: 100px;
+        transition: width 0.3s ease;
+    }
+
+    .progress-steps {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 12px;
+    }
+
+    .progress-step {
+        font-size: 12px;
+        color: var(--gray-400);
+    }
+
+    .progress-step.completed {
+        color: var(--success);
+    }
+
+    /* Info Alert */
+    .info-alert {
+        display: flex;
+        align-items: flex-start;
+        gap: 14px;
+        padding: 18px 20px;
+        background: rgba(99, 102, 241, 0.1);
+        border-radius: 12px;
+        border: 1px solid rgba(99, 102, 241, 0.2);
+        margin-bottom: 24px;
+    }
+
+    .info-alert-icon {
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+        background: #6366f1;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+        flex-shrink: 0;
+    }
+
+    .info-alert-content h5 {
+        font-size: 14px;
+        font-weight: 600;
+        color: #4f46e5;
+        margin: 0 0 4px 0;
+    }
+
+    .info-alert-content p {
+        font-size: 13px;
+        color: var(--gray-600);
+        margin: 0;
+        line-height: 1.5;
+    }
+
+    /* Form Actions */
+    .form-actions {
+        background: white;
+        border-radius: 20px;
+        border: 1px solid var(--gray-200);
+        padding: 24px;
+        margin-top: 32px;
+    }
+
+    .form-actions-inner {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 16px;
+    }
+
+    .form-actions-left {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+    }
+
+    .form-actions-right {
+        display: flex;
+        gap: 12px;
+    }
+
+    /* Stats Grid */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+    }
+
+    .stat-item {
+        text-align: center;
+        padding: 16px;
+        background: var(--gray-50);
+        border-radius: 12px;
+    }
+
+    .stat-item .value {
+        font-size: 24px;
+        font-weight: 800;
+        color: var(--gray-900);
+    }
+
+    .stat-item .label {
+        font-size: 12px;
+        color: var(--gray-500);
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .form-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        
+        .form-actions-inner {
+            flex-direction: column;
+        }
+        
+        .form-actions-left, .form-actions-right {
+            width: 100%;
+        }
+        
+        .btn {
+            flex: 1;
+            justify-content: center;
+        }
+    }
+
+    /* Override Django select widgets - FORCE VISIBLE TEXT */
+    .listing-form-container select,
+    .form-card select,
+    .form-card-body select,
+    .form-group select,
+    #listing-form select {
+        display: block !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        padding: 14px 48px 14px 18px !important;
+        border: 2px solid #e2e8f0 !important;
+        border-radius: 12px !important;
+        font-size: 15px !important;
+        font-weight: 500 !important;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif !important;
+        background-color: #ffffff !important;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E") !important;
+        background-repeat: no-repeat !important;
+        background-position: right 14px center !important;
+        background-size: 18px !important;
+        cursor: pointer !important;
+        -webkit-appearance: none !important;
+        -moz-appearance: none !important;
+        appearance: none !important;
+        /* FORCE TEXT COLOR */
+        color: #0f172a !important;
+        -webkit-text-fill-color: #0f172a !important;
+        text-shadow: none !important;
+        opacity: 1 !important;
+        line-height: 1.5 !important;
+    }
+
+    .listing-form-container select:focus,
+    .form-card select:focus,
+    #listing-form select:focus {
+        outline: none !important;
+        border-color: #7c3aed !important;
+        box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.1) !important;
+    }
+
+    .listing-form-container select option,
+    .form-card select option,
+    #listing-form select option {
+        padding: 12px !important;
+        background-color: #ffffff !important;
+        color: #0f172a !important;
+        font-weight: 500 !important;
+    }
+
+    /* Fix for Django's related widget wrapper */
+    .listing-form-container .related-widget-wrapper,
+    #listing-form .related-widget-wrapper {
+        display: block !important;
+        width: 100% !important;
+    }
+
+    .listing-form-container .related-widget-wrapper select,
+    #listing-form .related-widget-wrapper select {
+        width: 100% !important;
+        color: #0f172a !important;
+        -webkit-text-fill-color: #0f172a !important;
+    }
+
+    /* Hide Django's add/change/delete links */
+    .related-widget-wrapper .related-lookup,
+    .related-widget-wrapper .change-related,
+    .related-widget-wrapper .add-related,
+    .related-widget-wrapper .delete-related {
+        display: none !important;
+    }
+
+    /* Ensure form-group doesn't block select */
+    .form-group {
+        position: relative;
+    }
+
+    /* Make sure selected text is always visible */
+    select:not(:placeholder-shown),
+    select:valid,
+    select[value]:not([value=""]) {
+        color: #111827 !important;
+        -webkit-text-fill-color: #111827 !important;
+    }
+
+    /* Custom Select - Pure CSS styling with guaranteed visibility */
+    .custom-select {
+        display: block;
+        width: 100%;
+        padding: 14px 48px 14px 18px;
+        border: 2px solid #e2e8f0;
+        border-radius: 12px;
+        font-size: 15px;
+        font-weight: 500;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        background-color: #ffffff;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 14px center;
+        background-size: 18px;
+        cursor: pointer;
+        appearance: none;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        color: #0f172a;
+        line-height: 1.5;
+        transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .custom-select:focus {
+        outline: none;
+        border-color: #7c3aed;
+        box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.1);
+    }
+
+    .custom-select option {
+        padding: 12px;
+        background-color: #ffffff;
+        color: #0f172a;
+        font-weight: 500;
+    }
+
+    /* Wrapper for Django-generated selects */
+    .custom-select-wrapper {
+        width: 100%;
+    }
+
+    .custom-select-wrapper select,
+    .custom-select-wrapper .related-widget-wrapper,
+    .custom-select-wrapper .related-widget-wrapper select {
+        display: block;
+        width: 100%;
+        padding: 14px 48px 14px 18px;
+        border: 2px solid #e2e8f0;
+        border-radius: 12px;
+        font-size: 15px;
+        font-weight: 500;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        background-color: #ffffff;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 14px center;
+        background-size: 18px;
+        cursor: pointer;
+        appearance: none;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        color: #0f172a;
+        line-height: 1.5;
+    }
+
+    .custom-select-wrapper select:focus,
+    .custom-select-wrapper .related-widget-wrapper select:focus {
+        outline: none;
+        border-color: #7c3aed;
+        box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.1);
+    }
+
+    .custom-select-wrapper .related-widget-wrapper {
+        display: block;
+        padding: 0;
+        border: none;
+        background: none;
+    }
+
+    /* ========== TAG SELECTOR (Radio-style) ========== */
+    .tag-selector {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .tag-option {
+        position: relative;
+    }
+
+    .tag-option input[type="radio"] {
+        position: absolute;
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+
+    .tag-option label {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 12px 20px;
+        border: 2px solid #e2e8f0;
+        border-radius: 50px;
+        font-size: 14px;
+        font-weight: 600;
+        color: #64748b;
+        background: #ffffff;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        user-select: none;
+    }
+
+    .tag-option label:hover {
+        border-color: #a78bfa;
+        color: #7c3aed;
+        background: rgba(124, 58, 237, 0.05);
+    }
+
+    .tag-option input[type="radio"]:checked + label {
+        border-color: #7c3aed;
+        background: linear-gradient(135deg, #7c3aed 0%, #a78bfa 100%);
+        color: #ffffff;
+        box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);
+    }
+
+    .tag-option input[type="radio"]:checked + label i {
+        color: #ffffff;
+    }
+
+    .tag-option label i {
+        font-size: 16px;
+        color: #94a3b8;
+        transition: color 0.2s ease;
+    }
+
+    .tag-option input[type="radio"]:focus + label {
+        box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.15);
+    }
+
+    /* Status-specific tag colors */
+    .tag-option.status-draft input[type="radio"]:checked + label {
+        background: linear-gradient(135deg, #64748b 0%, #94a3b8 100%);
+        border-color: #64748b;
+    }
+
+    .tag-option.status-pending input[type="radio"]:checked + label {
+        background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);
+        border-color: #f59e0b;
+    }
+
+    .tag-option.status-active input[type="radio"]:checked + label {
+        background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
+        border-color: #10b981;
+    }
+
+    .tag-option.status-inactive input[type="radio"]:checked + label {
+        background: linear-gradient(135deg, #6b7280 0%, #9ca3af 100%);
+        border-color: #6b7280;
+    }
+
+    .tag-option.status-soldout input[type="radio"]:checked + label {
+        background: linear-gradient(135deg, #ef4444 0%, #f87171 100%);
+        border-color: #ef4444;
+    }
+
+    .tag-option.status-archived input[type="radio"]:checked + label {
+        background: linear-gradient(135deg, #1e293b 0%, #475569 100%);
+        border-color: #1e293b;
+    }
+
+    /* Condition-specific tag colors */
+    .tag-option.condition-new input[type="radio"]:checked + label {
+        background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
+        border-color: #10b981;
+    }
+
+    .tag-option.condition-likenew input[type="radio"]:checked + label {
+        background: linear-gradient(135deg, #06b6d4 0%, #22d3ee 100%);
+        border-color: #06b6d4;
+    }
+
+    .tag-option.condition-good input[type="radio"]:checked + label {
+        background: linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%);
+        border-color: #3b82f6;
+    }
+
+    .tag-option.condition-fair input[type="radio"]:checked + label {
+        background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);
+        border-color: #f59e0b;
+    }
+
+    .tag-option.condition-used input[type="radio"]:checked + label {
+        background: linear-gradient(135deg, #64748b 0%, #94a3b8 100%);
+        border-color: #64748b;
+    }
+
+    /* Listing type-specific colors */
+    .tag-option.type-product input[type="radio"]:checked + label {
+        background: linear-gradient(135deg, #7c3aed 0%, #a78bfa 100%);
+        border-color: #7c3aed;
+    }
+
+    .tag-option.type-digital input[type="radio"]:checked + label {
+        background: linear-gradient(135deg, #06b6d4 0%, #22d3ee 100%);
+        border-color: #06b6d4;
+    }
+
+    .tag-option.type-service input[type="radio"]:checked + label {
+        background: linear-gradient(135deg, #ec4899 0%, #f472b6 100%);
+        border-color: #ec4899;
+    }
+
+    /* Grid layout for tags on larger screens */
+    @media (min-width: 640px) {
+        .tag-selector.compact {
+            gap: 8px;
+        }
+        .tag-selector.compact .tag-option label {
+            padding: 10px 16px;
+            font-size: 13px;
+        }
+    }
+
+    /* ========== CUSTOM SEARCHABLE DROPDOWN ========== */
+    .custom-dropdown {
+        position: relative;
+        width: 100%;
+    }
+
+    .custom-dropdown-trigger {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
+        padding: 14px 18px;
+        border: 2px solid #e2e8f0;
+        border-radius: 12px;
+        font-size: 15px;
+        font-weight: 500;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        background-color: #ffffff;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        min-height: 52px;
+    }
+
+    .custom-dropdown-trigger:hover {
+        border-color: #a78bfa;
+    }
+
+    .custom-dropdown.open .custom-dropdown-trigger {
+        border-color: #7c3aed;
+        box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.1);
+        border-bottom-left-radius: 0;
+        border-bottom-right-radius: 0;
+    }
+
+    .custom-dropdown-selected {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        color: #1e293b;
+        flex: 1;
+        overflow: hidden;
+    }
+
+    .custom-dropdown-selected.placeholder {
+        color: #94a3b8;
+    }
+
+    .custom-dropdown-selected-text {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .custom-dropdown-arrow {
+        color: #64748b;
+        font-size: 12px;
+        transition: transform 0.2s ease;
+        flex-shrink: 0;
+    }
+
+    .custom-dropdown.open .custom-dropdown-arrow {
+        transform: rotate(180deg);
+    }
+
+    .custom-dropdown-menu {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: #ffffff;
+        border: 2px solid #7c3aed;
+        border-top: none;
+        border-radius: 0 0 12px 12px;
+        max-height: 320px;
+        overflow: hidden;
+        display: none;
+        z-index: 1000;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+    }
+
+    .custom-dropdown.open .custom-dropdown-menu {
+        display: block;
+    }
+
+    .custom-dropdown-search {
+        padding: 12px 16px;
+        border-bottom: 1px solid #e2e8f0;
+        position: sticky;
+        top: 0;
+        background: #ffffff;
+        z-index: 1;
+    }
+
+    .custom-dropdown-search input {
+        width: 100%;
+        padding: 10px 14px 10px 38px;
+        border: 2px solid #e2e8f0;
+        border-radius: 8px;
+        font-size: 14px;
+        font-family: inherit;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='8'%3E%3C/circle%3E%3Cline x1='21' y1='21' x2='16.65' y2='16.65'%3E%3C/line%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: 12px center;
+        transition: border-color 0.2s ease;
+    }
+
+    .custom-dropdown-search input:focus {
+        outline: none;
+        border-color: #7c3aed;
+    }
+
+    .custom-dropdown-options {
+        max-height: 250px;
+        overflow-y: auto;
+        padding: 8px;
+    }
+
+    .custom-dropdown-option {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px 14px;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.15s ease;
+        color: #334155;
+        font-size: 14px;
+        font-weight: 500;
+    }
+
+    .custom-dropdown-option:hover {
+        background: #f1f5f9;
+    }
+
+    .custom-dropdown-option.selected {
+        background: linear-gradient(135deg, #7c3aed 0%, #a78bfa 100%);
+        color: #ffffff;
+    }
+
+    .custom-dropdown-option.selected:hover {
+        background: linear-gradient(135deg, #6d28d9 0%, #8b5cf6 100%);
+    }
+
+    .custom-dropdown-option-icon {
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        background: #f1f5f9;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #64748b;
+        font-size: 14px;
+        flex-shrink: 0;
+    }
+
+    .custom-dropdown-option.selected .custom-dropdown-option-icon {
+        background: rgba(255, 255, 255, 0.2);
+        color: #ffffff;
+    }
+
+    .custom-dropdown-option-text {
+        flex: 1;
+        overflow: hidden;
+    }
+
+    .custom-dropdown-option-label {
+        display: block;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .custom-dropdown-option-sub {
+        display: block;
+        font-size: 12px;
+        color: #94a3b8;
+        margin-top: 2px;
+    }
+
+    .custom-dropdown-option.selected .custom-dropdown-option-sub {
+        color: rgba(255, 255, 255, 0.7);
+    }
+
+    .custom-dropdown-empty {
+        padding: 24px;
+        text-align: center;
+        color: #94a3b8;
+    }
+
+    .custom-dropdown-empty i {
+        font-size: 32px;
+        margin-bottom: 8px;
+        display: block;
+    }
+
+    /* Hidden original select */
+    .custom-dropdown-hidden {
+        position: absolute;
+        opacity: 0;
+        pointer-events: none;
+        width: 0;
+        height: 0;
+        overflow: hidden;
+    }
+
+    /* Hide errorlist inside hidden containers - it will be shown separately */
+    .custom-dropdown-hidden .errorlist,
+    .custom-dropdown-hidden ul.errorlist {
+        display: none !important;
+    }
+
+    /* Style Django's default errorlist to be compact inline like the discount preview */
+    ul.errorlist,
+    .errorlist {
+        list-style: none !important;
+        padding: 8px 12px !important;
+        margin: 8px 0 0 0 !important;
+        font-size: 13px !important;
+        color: var(--danger) !important;
+        display: inline-block !important;
+        white-space: normal !important;
+        background: rgba(239, 68, 68, 0.1) !important;
+        border-radius: 8px !important;
+        width: fit-content !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+    }
+
+    ul.errorlist li,
+    .errorlist li {
+        display: inline !important;
+        white-space: normal !important;
+    }
+
+    ul.errorlist li::before,
+    .errorlist li::before {
+        content: "\f06a";
+        font-family: "Font Awesome 6 Free";
+        font-weight: 900;
+        font-size: 12px;
+        margin-right: 6px;
+    }
+</style>
+{% endblock %}
+
+{% block breadcrumbs %}
+<a href="{% url 'seller_admin:index' %}">Dashboard</a>
+<span>/</span>
+<a href="{% url 'seller_admin:el_mercado_listing_changelist' %}">Listings</a>
+<span>/</span>
+<span>{% if add %}Add New Listing{% else %}{{ original.title|truncatechars:30 }}{% endif %}</span>
+{% endblock %}
+
+{% block content %}
+<div class="listing-form-container">
+    <!-- Page Header -->
+    <div class="form-header">
+        <div class="form-header-left">
+            <a href="{% url 'seller_admin:el_mercado_listing_changelist' %}" class="back-btn" title="Back to Listings">
+                <i class="fas fa-arrow-left"></i>
+            </a>
+            <h1>
+                {% if add %}
+                Create New Listing
+                <small>Fill in the details below to list your product</small>
+                {% else %}
+                Edit Listing
+                <small>Update your listing information</small>
+                {% endif %}
+            </h1>
+        </div>
+        {% if not add %}
+        <span class="header-badge badge-{{ original.status|lower }}">
+            <i class="fas {% if original.status == 'ACTIVE' %}fa-check-circle{% elif original.status == 'DRAFT' %}fa-file{% elif original.status == 'PENDING_REVIEW' %}fa-clock{% else %}fa-times-circle{% endif %}"></i>
+            {{ original.get_status_display }}
+        </span>
+        {% endif %}
+    </div>
+
+    <!-- Error Messages -->
+    {% if errors %}
+    <div class="error-banner">
+        <div class="error-banner-icon">
+            <i class="fas fa-exclamation-triangle"></i>
+        </div>
+        <div class="error-banner-content">
+            <h4>Please fix the following errors:</h4>
+            <ul>
+                {% for error in adminform.form.non_field_errors %}
+                <li>{{ error }}</li>
+                {% endfor %}
+                {% for field_name, field_errors in adminform.form.errors.items %}
+                    {% if field_name != '__all__' %}
+                        {% for error in field_errors %}
+                        <li><strong>{{ field_name|title }}:</strong> {{ error }}</li>
+                        {% endfor %}
+                    {% endif %}
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+    {% endif %}
+
+    <form method="post" enctype="multipart/form-data" id="listing-form" novalidate>
+        {% csrf_token %}
+        
+        <div class="form-layout">
+            <!-- Main Form Column -->
+            <div class="form-main">
+                <!-- Progress Indicator -->
+                <div class="form-progress">
+                    <div class="progress-header">
+                        <span>Listing Completion</span>
+                        <span id="progress-percent">0%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progress-fill" style="width: 0%"></div>
+                    </div>
+                    <div class="progress-steps">
+                        <span class="progress-step" data-step="basic">Basic Info</span>
+                        <span class="progress-step" data-step="pricing">Pricing</span>
+                        <span class="progress-step" data-step="images">Images</span>
+                        <span class="progress-step" data-step="details">Details</span>
+                    </div>
+                </div>
+
+                <!-- Basic Information -->
+                <div class="form-card">
+                    <div class="form-card-header">
+                        <div class="form-card-icon purple">
+                            <i class="fas fa-info-circle"></i>
+                        </div>
+                        <div class="form-card-title">
+                            <h3>Basic Information</h3>
+                            <p>Enter the main details about your listing</p>
+                        </div>
+                    </div>
+                    <div class="form-card-body">
+                        {% for fieldset in adminform %}
+                            {% if fieldset.name == 'Basic Info' %}
+                                {% for line in fieldset %}
+                                    {% for field in line %}
+                                        {% if field.field.name == 'title' %}
+                                        <div class="form-group">
+                                            <label class="form-label">
+                                                <i class="fas fa-heading"></i>
+                                                Product Title
+                                                <span class="required">*</span>
+                                            </label>
+                                            <input type="text" 
+                                                   name="{{ field.field.html_name }}" 
+                                                   id="id_{{ field.field.name }}"
+                                                   value="{{ field.field.value|default:'' }}"
+                                                   class="form-input form-input-lg{% if adminform.form.errors.title %} error{% endif %}"
+                                                   placeholder="e.g., iPhone 14 Pro Max 256GB - Space Black"
+                                                   maxlength="200"
+                                                   required>
+                                            {% for error in adminform.form.errors.title %}
+                                            <div class="field-error"><i class="fas fa-exclamation-circle"></i> {{ error }}</div>
+                                            {% endfor %}
+                                            <p class="form-help">
+                                                <i class="fas fa-lightbulb"></i>
+                                                Write a clear, descriptive title. Include brand, model, and key features.
+                                            </p>
+                                        </div>
+                                        {% elif field.field.name == 'description' %}
+                                        <div class="form-group">
+                                            <label class="form-label">
+                                                <i class="fas fa-align-left"></i>
+                                                Description
+                                                <span class="required">*</span>
+                                            </label>
+                                            <textarea name="{{ field.field.html_name }}" 
+                                                      id="id_{{ field.field.name }}"
+                                                      class="form-input{% if adminform.form.errors.description %} error{% endif %}"
+                                                      placeholder="Describe your product in detail. Include condition, features, specifications, and what's included..."
+                                                      rows="6"
+                                                      required>{{ field.field.value|default:'' }}</textarea>
+                                            {% for error in adminform.form.errors.description %}
+                                            <div class="field-error"><i class="fas fa-exclamation-circle"></i> {{ error }}</div>
+                                            {% endfor %}
+                                            <p class="form-help">
+                                                <i class="fas fa-lightbulb"></i>
+                                                Be detailed! Good descriptions increase buyer confidence and sales.
+                                            </p>
+                                        </div>
+                                        {% elif field.field.name == 'listing_type' %}
+                                        <div class="form-group">
+                                            <label class="form-label">
+                                                <i class="fas fa-tags"></i>
+                                                Listing Type
+                                                <span class="required">*</span>
+                                            </label>
+                                            <div class="tag-selector">
+                                                <div class="tag-option type-product">
+                                                    <input type="radio" name="{{ field.field.html_name }}" id="listing_type_product" value="PRODUCT" {% if field.field.value == 'PRODUCT' %}checked{% endif %} required>
+                                                    <label for="listing_type_product">
+                                                        <i class="fas fa-box"></i>
+                                                        Physical Product
+                                                    </label>
+                                                </div>
+                                                <div class="tag-option type-digital">
+                                                    <input type="radio" name="{{ field.field.html_name }}" id="listing_type_digital" value="DIGITAL" {% if field.field.value == 'DIGITAL' %}checked{% endif %}>
+                                                    <label for="listing_type_digital">
+                                                        <i class="fas fa-download"></i>
+                                                        Digital Product
+                                                    </label>
+                                                </div>
+                                                <div class="tag-option type-service">
+                                                    <input type="radio" name="{{ field.field.html_name }}" id="listing_type_service" value="SERVICE" {% if field.field.value == 'SERVICE' %}checked{% endif %}>
+                                                    <label for="listing_type_service">
+                                                        <i class="fas fa-hands-helping"></i>
+                                                        Service
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            {% for error in adminform.form.errors.listing_type %}
+                                            <div class="field-error"><i class="fas fa-exclamation-circle"></i> {{ error }}</div>
+                                            {% endfor %}
+                                        </div>
+                                        {% endif %}
+                                    {% endfor %}
+                                {% endfor %}
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Category & Tags -->
+                <div class="form-card">
+                    <div class="form-card-header">
+                        <div class="form-card-icon blue">
+                            <i class="fas fa-folder-open"></i>
+                        </div>
+                        <div class="form-card-title">
+                            <h3>Category & Tags</h3>
+                            <p>Help buyers find your listing</p>
+                        </div>
+                    </div>
+                    <div class="form-card-body">
+                        {% for fieldset in adminform %}
+                            {% if fieldset.name == 'Categorization' %}
+                                {% for line in fieldset %}
+                                    {% for field in line %}
+                                        {% if field.field.name == 'category' %}
+                                        <div class="form-group">
+                                            <label class="form-label">
+                                                <i class="fas fa-sitemap"></i>
+                                                Category
+                                                <span class="required">*</span>
+                                            </label>
+                                            
+                                            <!-- Custom Searchable Dropdown -->
+                                            <div class="custom-dropdown" id="categoryDropdown">
+                                                <div class="custom-dropdown-trigger" onclick="toggleDropdown('categoryDropdown')">
+                                                    <div class="custom-dropdown-selected placeholder" id="categorySelected">
+                                                        <i class="fas fa-folder"></i>
+                                                        <span class="custom-dropdown-selected-text">Select a category...</span>
+                                                    </div>
+                                                    <i class="fas fa-chevron-down custom-dropdown-arrow"></i>
+                                                </div>
+                                                <div class="custom-dropdown-menu">
+                                                    <div class="custom-dropdown-search">
+                                                        <input type="text" placeholder="Search categories..." oninput="filterDropdown('categoryDropdown', this.value)">
+                                                    </div>
+                                                    <div class="custom-dropdown-options" id="categoryOptions">
+                                                        <!-- Options will be populated by JavaScript from the hidden select -->
+                                                    </div>
+                                                </div>
+                                                <!-- Hidden Django-rendered select for form submission -->
+                                                <div class="custom-dropdown-hidden">
+                                                    {{ field.field }}
+                                                </div>
+                                            </div>
+                                            
+                                            {% for error in adminform.form.errors.category %}
+                                            <div class="field-error"><i class="fas fa-exclamation-circle"></i> {{ error }}</div>
+                                            {% endfor %}
+                                            <p class="form-help">
+                                                <i class="fas fa-lightbulb"></i>
+                                                Select the most specific category that fits your product.
+                                            </p>
+                                        </div>
+                                        {% elif field.field.name == 'tags' %}
+                                        <div class="form-group">
+                                            <label class="form-label">
+                                                <i class="fas fa-hashtag"></i>
+                                                Tags
+                                                <span class="optional">(Optional)</span>
+                                            </label>
+                                            <input type="text" 
+                                                   name="{{ field.field.html_name }}" 
+                                                   id="id_{{ field.field.name }}"
+                                                   value="{{ field.field.value|default:'' }}"
+                                                   class="form-input"
+                                                   placeholder="e.g., electronics, smartphone, apple, refurbished">
+                                            <p class="form-help">
+                                                <i class="fas fa-lightbulb"></i>
+                                                Add comma-separated tags to improve searchability.
+                                            </p>
+                                        </div>
+                                        {% endif %}
+                                    {% endfor %}
+                                {% endfor %}
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Pricing -->
+                <div class="form-card">
+                    <div class="form-card-header">
+                        <div class="form-card-icon green">
+                            <i class="fas fa-money-bill-wave"></i>
+                        </div>
+                        <div class="form-card-title">
+                            <h3>Pricing</h3>
+                            <p>Set your listing price</p>
+                        </div>
+                    </div>
+                    <div class="form-card-body">
+                        {% for fieldset in adminform %}
+                            {% if fieldset.name == 'Pricing' %}
+                                <div class="form-row-2">
+                                {% for line in fieldset %}
+                                    {% for field in line %}
+                                        {% if field.field.name == 'price' %}
+                                        <div class="form-group">
+                                            <label class="form-label">
+                                                <i class="fas fa-tag"></i>
+                                                Selling Price
+                                                <span class="required">*</span>
+                                            </label>
+                                            <div class="price-input-group">
+                                                <span class="price-currency">GHS</span>
+                                                <input type="number" 
+                                                       name="{{ field.field.html_name }}" 
+                                                       id="id_{{ field.field.name }}"
+                                                       value="{{ field.field.value|default:'' }}"
+                                                       class="form-input{% if adminform.form.errors.price %} error{% endif %}"
+                                                       placeholder="0.00"
+                                                       step="0.01"
+                                                       min="0"
+                                                       required>
+                                            </div>
+                                            {% for error in adminform.form.errors.price %}
+                                            <div class="field-error"><i class="fas fa-exclamation-circle"></i> {{ error }}</div>
+                                            {% endfor %}
+                                        </div>
+                                        {% elif field.field.name == 'compare_at_price' %}
+                                        <div class="form-group">
+                                            <label class="form-label">
+                                                <i class="fas fa-percentage"></i>
+                                                Compare at Price
+                                                <span class="optional">(Original price)</span>
+                                            </label>
+                                            <div class="price-input-group">
+                                                <span class="price-currency">GHS</span>
+                                                <input type="number" 
+                                                       name="{{ field.field.html_name }}" 
+                                                       id="id_{{ field.field.name }}"
+                                                       value="{{ field.field.value|default:'' }}"
+                                                       class="form-input"
+                                                       placeholder="0.00"
+                                                       step="0.01"
+                                                       min="0">
+                                            </div>
+                                            <p class="form-help">
+                                                <i class="fas fa-lightbulb"></i>
+                                                Set a higher price to show discount.
+                                            </p>
+                                        </div>
+                                        {% elif field.field.name == 'currency' %}
+                                        <input type="hidden" name="{{ field.field.html_name }}" value="{{ field.field.value|default:'GHS' }}">
+                                        {% endif %}
+                                    {% endfor %}
+                                {% endfor %}
+                                </div>
+                                <div id="discount-preview" class="discount-preview" style="display: none;">
+                                    <i class="fas fa-badge-percent"></i>
+                                    <span>Buyers will see <strong id="discount-percent">0%</strong> off!</span>
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Product Images -->
+                <div class="form-card">
+                    <div class="form-card-header">
+                        <div class="form-card-icon indigo">
+                            <i class="fas fa-images"></i>
+                        </div>
+                        <div class="form-card-title">
+                            <h3>Product Images</h3>
+                            <p>Add photos of your product</p>
+                        </div>
+                    </div>
+                    <div class="form-card-body">
+                        {% for fieldset in adminform %}
+                            {% if fieldset.name == 'Images' %}
+                                {% for line in fieldset %}
+                                    {% for field in line %}
+                                        {% if field.field.name == 'main_image' %}
+                                        <div class="form-group">
+                                            <label class="form-label">
+                                                <i class="fas fa-image"></i>
+                                                Main Image
+                                                <span class="required">*</span>
+                                            </label>
+                                            
+                                            {% if not add and original.main_image %}
+                                            <div class="current-image">
+                                                <img src="{{ original.main_image.url }}" alt="Current image">
+                                                <div class="current-image-info">
+                                                    <h5>Current Image</h5>
+                                                    <p>Upload a new image to replace</p>
+                                                </div>
+                                            </div>
+                                            {% endif %}
+                                            
+                                            <div style="margin-top: {% if not add and original.main_image %}16px{% else %}0{% endif %};">
+                                                <label for="id_main_image" class="image-upload-area" id="upload-area">
+                                                    <div class="image-upload-icon">
+                                                        <i class="fas fa-cloud-upload-alt"></i>
+                                                    </div>
+                                                    <h4>{% if not add and original.main_image %}Upload New Image{% else %}Upload Main Image{% endif %}</h4>
+                                                    <p>Drag and drop or click to browse</p>
+                                                    <span class="browse-btn">
+                                                        <i class="fas fa-folder-open"></i>
+                                                        Choose File
+                                                    </span>
+                                                    <p class="upload-formats">Supports: JPG, PNG, WebP • Max size: 5MB</p>
+                                                </label>
+                                                <input type="file" 
+                                                       name="{{ field.field.html_name }}" 
+                                                       id="id_main_image"
+                                                       accept="image/*"
+                                                       style="display: none;">
+                                            </div>
+                                            {% for error in adminform.form.errors.main_image %}
+                                            <div class="field-error"><i class="fas fa-exclamation-circle"></i> {{ error }}</div>
+                                            {% endfor %}
+                                        </div>
+                                        {% endif %}
+                                    {% endfor %}
+                                {% endfor %}
+                            {% endif %}
+                        {% endfor %}
+
+                        <!-- Additional Images -->
+                        {% for inline_admin_formset in inline_admin_formsets %}
+                            {% if 'image' in inline_admin_formset.opts.verbose_name|lower %}
+                            <div style="margin-top: 24px; padding-top: 24px; border-top: 1px solid var(--gray-200);">
+                                <label class="form-label" style="margin-bottom: 16px;">
+                                    <i class="fas fa-plus-circle"></i>
+                                    Additional Images
+                                    <span class="optional">(Optional)</span>
+                                </label>
+                                {{ inline_admin_formset.formset.management_form }}
+                                {% for inline_admin_form in inline_admin_formset %}
+                                <div style="padding: 16px; background: var(--gray-50); border-radius: 12px; margin-bottom: 12px;">
+                                    {{ inline_admin_form.form.as_p }}
+                                </div>
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Inventory -->
+                <div class="form-card">
+                    <div class="form-card-header">
+                        <div class="form-card-icon orange">
+                            <i class="fas fa-boxes"></i>
+                        </div>
+                        <div class="form-card-title">
+                            <h3>Inventory</h3>
+                            <p>Manage your stock</p>
+                        </div>
+                    </div>
+                    <div class="form-card-body">
+                        {% for fieldset in adminform %}
+                            {% if fieldset.name == 'Inventory' %}
+                                <div class="form-row-2">
+                                {% for line in fieldset %}
+                                    {% for field in line %}
+                                        {% if field.field.name == 'stock_quantity' %}
+                                        <div class="form-group">
+                                            <label class="form-label">
+                                                <i class="fas fa-cubes"></i>
+                                                Stock Quantity
+                                            </label>
+                                            <input type="number" 
+                                                   name="{{ field.field.html_name }}" 
+                                                   id="id_{{ field.field.name }}"
+                                                   value="{{ field.field.value|default:'1' }}"
+                                                   class="form-input"
+                                                   min="0">
+                                        </div>
+                                        {% elif field.field.name == 'low_stock_threshold' %}
+                                        <div class="form-group">
+                                            <label class="form-label">
+                                                <i class="fas fa-exclamation-triangle"></i>
+                                                Low Stock Alert
+                                            </label>
+                                            <input type="number" 
+                                                   name="{{ field.field.html_name }}" 
+                                                   id="id_{{ field.field.name }}"
+                                                   value="{{ field.field.value|default:'5' }}"
+                                                   class="form-input"
+                                                   min="0"
+                                                   placeholder="5">
+                                            <p class="form-help">
+                                                <i class="fas fa-lightbulb"></i>
+                                                Get notified when stock falls below this.
+                                            </p>
+                                        </div>
+                                        {% endif %}
+                                    {% endfor %}
+                                {% endfor %}
+                                </div>
+
+                                <div class="checkbox-group" style="margin-top: 24px;">
+                                {% for line in fieldset %}
+                                    {% for field in line %}
+                                        {% if field.field.name == 'track_inventory' %}
+                                        <div class="checkbox-item{% if field.field.value %} checked{% endif %}" onclick="this.querySelector('input').click(); event.stopPropagation();">
+                                            <input type="checkbox" 
+                                                   name="{{ field.field.html_name }}" 
+                                                   id="id_{{ field.field.name }}"
+                                                   {% if field.field.value %}checked{% endif %}
+                                                   onclick="event.stopPropagation(); this.closest('.checkbox-item').classList.toggle('checked', this.checked);">
+                                            <div class="checkbox-content">
+                                                <label for="id_{{ field.field.name }}">Track Inventory</label>
+                                                <p>Automatically update stock when orders are placed</p>
+                                            </div>
+                                        </div>
+                                        {% elif field.field.name == 'allow_backorder' %}
+                                        <div class="checkbox-item{% if field.field.value %} checked{% endif %}" onclick="this.querySelector('input').click(); event.stopPropagation();">
+                                            <input type="checkbox" 
+                                                   name="{{ field.field.html_name }}" 
+                                                   id="id_{{ field.field.name }}"
+                                                   {% if field.field.value %}checked{% endif %}
+                                                   onclick="event.stopPropagation(); this.closest('.checkbox-item').classList.toggle('checked', this.checked);">
+                                            <div class="checkbox-content">
+                                                <label for="id_{{ field.field.name }}">Allow Backorders</label>
+                                                <p>Continue selling when out of stock</p>
+                                            </div>
+                                        </div>
+                                        {% endif %}
+                                    {% endfor %}
+                                {% endfor %}
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Condition & Shipping -->
+                <div class="form-card">
+                    <div class="form-card-header">
+                        <div class="form-card-icon red">
+                            <i class="fas fa-truck"></i>
+                        </div>
+                        <div class="form-card-title">
+                            <h3>Condition & Shipping</h3>
+                            <p>Product condition and delivery details</p>
+                        </div>
+                    </div>
+                    <div class="form-card-body">
+                        {% for fieldset in adminform %}
+                            {% if fieldset.name == 'Condition & Shipping' %}
+                                <div class="form-row-2">
+                                {% for line in fieldset %}
+                                    {% for field in line %}
+                                        {% if field.field.name == 'condition' %}
+                                        <div class="form-group">
+                                            <label class="form-label">
+                                                <i class="fas fa-star-half-alt"></i>
+                                                Condition
+                                                <span class="required">*</span>
+                                            </label>
+                                            <div class="tag-selector">
+                                                <div class="tag-option condition-new">
+                                                    <input type="radio" name="{{ field.field.html_name }}" id="condition_new" value="NEW" {% if field.field.value == 'NEW' %}checked{% endif %} required>
+                                                    <label for="condition_new">
+                                                        <i class="fas fa-sparkles"></i>
+                                                        New
+                                                    </label>
+                                                </div>
+                                                <div class="tag-option condition-likenew">
+                                                    <input type="radio" name="{{ field.field.html_name }}" id="condition_likenew" value="LIKE_NEW" {% if field.field.value == 'LIKE_NEW' %}checked{% endif %}>
+                                                    <label for="condition_likenew">
+                                                        <i class="fas fa-star"></i>
+                                                        Like New
+                                                    </label>
+                                                </div>
+                                                <div class="tag-option condition-good">
+                                                    <input type="radio" name="{{ field.field.html_name }}" id="condition_good" value="GOOD" {% if field.field.value == 'GOOD' %}checked{% endif %}>
+                                                    <label for="condition_good">
+                                                        <i class="fas fa-thumbs-up"></i>
+                                                        Good
+                                                    </label>
+                                                </div>
+                                                <div class="tag-option condition-fair">
+                                                    <input type="radio" name="{{ field.field.html_name }}" id="condition_fair" value="FAIR" {% if field.field.value == 'FAIR' %}checked{% endif %}>
+                                                    <label for="condition_fair">
+                                                        <i class="fas fa-check"></i>
+                                                        Fair
+                                                    </label>
+                                                </div>
+                                                <div class="tag-option condition-used">
+                                                    <input type="radio" name="{{ field.field.html_name }}" id="condition_used" value="USED" {% if field.field.value == 'USED' %}checked{% endif %}>
+                                                    <label for="condition_used">
+                                                        <i class="fas fa-recycle"></i>
+                                                        Used
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {% elif field.field.name == 'weight' %}
+                                        <div class="form-group">
+                                            <label class="form-label">
+                                                <i class="fas fa-weight-hanging"></i>
+                                                Weight (kg)
+                                                <span class="optional">(Optional)</span>
+                                            </label>
+                                            <input type="number" 
+                                                   name="{{ field.field.html_name }}" 
+                                                   id="id_{{ field.field.name }}"
+                                                   value="{{ field.field.value|default:'' }}"
+                                                   class="form-input"
+                                                   step="0.01"
+                                                   min="0"
+                                                   placeholder="0.00">
+                                        </div>
+                                        {% endif %}
+                                    {% endfor %}
+                                {% endfor %}
+                                </div>
+
+                                {% for line in fieldset %}
+                                    {% for field in line %}
+                                        {% if field.field.name == 'shipping_info' %}
+                                        <div class="form-group" style="margin-top: 20px;">
+                                            <label class="form-label">
+                                                <i class="fas fa-info-circle"></i>
+                                                Shipping Information
+                                                <span class="optional">(Optional)</span>
+                                            </label>
+                                            <textarea name="{{ field.field.html_name }}" 
+                                                      id="id_{{ field.field.name }}"
+                                                      class="form-input"
+                                                      placeholder="e.g., Ships within 2-3 business days. Free delivery within KNUST campus."
+                                                      rows="3">{{ field.field.value|default:'' }}</textarea>
+                                        </div>
+                                        {% elif field.field.name == 'requires_shipping' %}
+                                        <div class="checkbox-group" style="margin-top: 20px;">
+                                            <div class="checkbox-item{% if field.field.value %} checked{% endif %}" onclick="this.querySelector('input').click(); event.stopPropagation();">
+                                                <input type="checkbox" 
+                                                       name="{{ field.field.html_name }}" 
+                                                       id="id_{{ field.field.name }}"
+                                                       {% if field.field.value %}checked{% endif %}
+                                                       onclick="event.stopPropagation(); this.closest('.checkbox-item').classList.toggle('checked', this.checked);">
+                                                <div class="checkbox-content">
+                                                    <label for="id_{{ field.field.name }}">Requires Shipping</label>
+                                                    <p>This is a physical product that needs to be delivered</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {% endif %}
+                                    {% endfor %}
+                                {% endfor %}
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Status -->
+                <div class="form-card">
+                    <div class="form-card-header">
+                        <div class="form-card-icon purple">
+                            <i class="fas fa-flag"></i>
+                        </div>
+                        <div class="form-card-title">
+                            <h3>Listing Status</h3>
+                            <p>Control visibility of your listing</p>
+                        </div>
+                    </div>
+                    <div class="form-card-body">
+                        {% for fieldset in adminform %}
+                            {% if fieldset.name == 'Status' %}
+                                {% for line in fieldset %}
+                                    {% for field in line %}
+                                        {% if field.field.name == 'status' %}
+                                        <div class="form-group">
+                                            <label class="form-label">
+                                                <i class="fas fa-toggle-on"></i>
+                                                Status
+                                            </label>
+                                            <div class="tag-selector">
+                                                <div class="tag-option status-draft">
+                                                    <input type="radio" name="{{ field.field.html_name }}" id="status_draft" value="DRAFT" {% if field.field.value == 'DRAFT' or not field.field.value %}checked{% endif %}>
+                                                    <label for="status_draft">
+                                                        <i class="fas fa-pencil-alt"></i>
+                                                        Draft
+                                                    </label>
+                                                </div>
+                                                <div class="tag-option status-pending">
+                                                    <input type="radio" name="{{ field.field.html_name }}" id="status_pending" value="PENDING_REVIEW" {% if field.field.value == 'PENDING_REVIEW' %}checked{% endif %}>
+                                                    <label for="status_pending">
+                                                        <i class="fas fa-clock"></i>
+                                                        Pending Review
+                                                    </label>
+                                                </div>
+                                                <div class="tag-option status-active">
+                                                    <input type="radio" name="{{ field.field.html_name }}" id="status_active" value="ACTIVE" {% if field.field.value == 'ACTIVE' %}checked{% endif %}>
+                                                    <label for="status_active">
+                                                        <i class="fas fa-check-circle"></i>
+                                                        Active
+                                                    </label>
+                                                </div>
+                                                <div class="tag-option status-inactive">
+                                                    <input type="radio" name="{{ field.field.html_name }}" id="status_inactive" value="INACTIVE" {% if field.field.value == 'INACTIVE' %}checked{% endif %}>
+                                                    <label for="status_inactive">
+                                                        <i class="fas fa-pause-circle"></i>
+                                                        Inactive
+                                                    </label>
+                                                </div>
+                                                <div class="tag-option status-soldout">
+                                                    <input type="radio" name="{{ field.field.html_name }}" id="status_soldout" value="SOLD_OUT" {% if field.field.value == 'SOLD_OUT' %}checked{% endif %}>
+                                                    <label for="status_soldout">
+                                                        <i class="fas fa-ban"></i>
+                                                        Sold Out
+                                                    </label>
+                                                </div>
+                                                <div class="tag-option status-archived">
+                                                    <input type="radio" name="{{ field.field.html_name }}" id="status_archived" value="ARCHIVED" {% if field.field.value == 'ARCHIVED' %}checked{% endif %}>
+                                                    <label for="status_archived">
+                                                        <i class="fas fa-archive"></i>
+                                                        Archived
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <p class="form-help">
+                                                <i class="fas fa-lightbulb"></i>
+                                                Save as Draft to continue editing later, or publish when ready.
+                                            </p>
+                                        </div>
+                                        {% elif field.field.name == 'rejection_reason' and not add %}
+                                            {% if original.rejection_reason %}
+                                            <div class="info-alert" style="margin-top: 16px; background: rgba(239, 68, 68, 0.1); border-color: rgba(239, 68, 68, 0.2);">
+                                                <div class="info-alert-icon" style="background: var(--danger);">
+                                                    <i class="fas fa-exclamation-circle"></i>
+                                                </div>
+                                                <div class="info-alert-content">
+                                                    <h5 style="color: var(--danger);">Rejection Reason</h5>
+                                                    <p>{{ original.rejection_reason }}</p>
+                                                </div>
+                                            </div>
+                                            {% endif %}
+                                        {% endif %}
+                                    {% endfor %}
+                                {% endfor %}
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Variants -->
+                {% for inline_admin_formset in inline_admin_formsets %}
+                    {% if 'variant' in inline_admin_formset.opts.verbose_name|lower %}
+                    <div class="form-card">
+                        <div class="form-card-header">
+                            <div class="form-card-icon blue">
+                                <i class="fas fa-layer-group"></i>
+                            </div>
+                            <div class="form-card-title">
+                                <h3>Product Variants</h3>
+                                <p>Add size, color, or other variations</p>
+                            </div>
+                        </div>
+                        <div class="form-card-body">
+                            {{ inline_admin_formset.formset.management_form }}
+                            {% for inline_admin_form in inline_admin_formset %}
+                            <div style="padding: 20px; background: var(--gray-50); border-radius: 12px; margin-bottom: 12px; border: 1px solid var(--gray-200);">
+                                {{ inline_admin_form.form.as_p }}
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
+                {% endfor %}
+
+                <!-- Form Actions -->
+                <div class="form-actions">
+                    <div class="form-actions-inner">
+                        <div class="form-actions-left">
+                            <button type="submit" name="_save" class="btn btn-primary btn-lg">
+                                <i class="fas fa-save"></i>
+                                {% if add %}Create Listing{% else %}Save Changes{% endif %}
+                            </button>
+                            <button type="submit" name="_continue" class="btn btn-secondary">
+                                <i class="fas fa-edit"></i>
+                                Save & Continue
+                            </button>
+                            <button type="submit" name="_addanother" class="btn btn-secondary">
+                                <i class="fas fa-plus"></i>
+                                Save & Add Another
+                            </button>
+                        </div>
+                        {% if not add %}
+                        <div class="form-actions-right">
+                            <a href="{% url opts|admin_urlname:'delete' original.pk|admin_urlquote %}" class="btn btn-danger">
+                                <i class="fas fa-trash-alt"></i>
+                                Delete
+                            </a>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sidebar -->
+            <div class="form-sidebar">
+                <!-- Preview Card -->
+                <div class="sidebar-card">
+                    <div class="sidebar-card-header">
+                        <i class="fas fa-eye"></i>
+                        <h4>Live Preview</h4>
+                    </div>
+                    <div class="sidebar-card-body">
+                        <div class="preview-card">
+                            <div id="preview-content">
+                                {% if not add and original.main_image %}
+                                <div class="preview-product">
+                                    <img src="{{ original.main_image.url }}" alt="Preview" class="preview-image" id="preview-image">
+                                    <h4 class="preview-title" id="preview-title">{{ original.title }}</h4>
+                                    <p class="preview-price">
+                                        GHS {{ original.price }}
+                                        {% if original.compare_at_price %}
+                                        <span class="original">GHS {{ original.compare_at_price }}</span>
+                                        {% endif %}
+                                    </p>
+                                </div>
+                                {% else %}
+                                <div class="preview-placeholder">
+                                    <i class="fas fa-box-open"></i>
+                                    <p>Add details to see preview</p>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tips Card -->
+                <div class="sidebar-card">
+                    <div class="sidebar-card-header">
+                        <i class="fas fa-lightbulb"></i>
+                        <h4>Listing Tips</h4>
+                    </div>
+                    <div class="sidebar-card-body">
+                        <ul class="tips-list">
+                            <li>
+                                <i class="fas fa-check-circle"></i>
+                                <span>Use high-quality photos with good lighting</span>
+                            </li>
+                            <li>
+                                <i class="fas fa-check-circle"></i>
+                                <span>Write detailed, honest descriptions</span>
+                            </li>
+                            <li>
+                                <i class="fas fa-check-circle"></i>
+                                <span>Price competitively - research similar items</span>
+                            </li>
+                            <li>
+                                <i class="fas fa-check-circle"></i>
+                                <span>Respond to buyer questions promptly</span>
+                            </li>
+                            <li>
+                                <i class="fas fa-check-circle"></i>
+                                <span>Keep your inventory updated</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Stats Card (Edit mode only) -->
+                {% if not add %}
+                <div class="sidebar-card">
+                    <div class="sidebar-card-header">
+                        <i class="fas fa-chart-bar"></i>
+                        <h4>Listing Stats</h4>
+                    </div>
+                    <div class="sidebar-card-body">
+                        <div class="stats-grid">
+                            <div class="stat-item">
+                                <div class="value">{{ original.view_count }}</div>
+                                <div class="label">Views</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="value">{{ original.favorite_count }}</div>
+                                <div class="label">Favorites</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="value">{{ original.order_count }}</div>
+                                <div class="label">Orders</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="value" style="color: var(--primary);">{{ original.average_rating|default:"0" }}</div>
+                                <div class="label">Rating</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Help Card -->
+                <div class="sidebar-card">
+                    <div class="sidebar-card-header">
+                        <i class="fas fa-question-circle"></i>
+                        <h4>Need Help?</h4>
+                    </div>
+                    <div class="sidebar-card-body">
+                        <p style="font-size: 14px; color: var(--gray-600); margin: 0 0 16px 0;">
+                            Having trouble? Check out our seller guide or contact support.
+                        </p>
+                        <a href="{{ FRONTEND_URL }}/el-mercado/seller-guide" target="_blank" class="btn btn-secondary" style="width: 100%; justify-content: center;">
+                            <i class="fas fa-book"></i>
+                            View Seller Guide
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<!-- Custom Dropdown JavaScript -->
+<script>
+// Custom Dropdown Functions
+function toggleDropdown(dropdownId) {
+    const dropdown = document.getElementById(dropdownId);
+    const wasOpen = dropdown.classList.contains('open');
+    
+    // Close all dropdowns first
+    document.querySelectorAll('.custom-dropdown.open').forEach(d => {
+        d.classList.remove('open');
+    });
+    
+    // Toggle current dropdown
+    if (!wasOpen) {
+        dropdown.classList.add('open');
+        const searchInput = dropdown.querySelector('.custom-dropdown-search input');
+        if (searchInput) {
+            setTimeout(() => searchInput.focus(), 100);
+        }
+    }
+}
+
+function filterDropdown(dropdownId, searchTerm) {
+    const dropdown = document.getElementById(dropdownId);
+    const options = dropdown.querySelectorAll('.custom-dropdown-option');
+    const emptyState = dropdown.querySelector('.custom-dropdown-empty');
+    let visibleCount = 0;
+    
+    searchTerm = searchTerm.toLowerCase().trim();
+    
+    options.forEach(option => {
+        const text = option.textContent.toLowerCase();
+        const matches = text.includes(searchTerm);
+        option.style.display = matches ? '' : 'none';
+        if (matches) visibleCount++;
+    });
+    
+    if (emptyState) {
+        emptyState.style.display = visibleCount === 0 ? '' : 'none';
+    }
+}
+
+function selectDropdownOption(dropdownId, value, text, icon) {
+    const dropdown = document.getElementById(dropdownId);
+    
+    // Find the hidden Django select
+    const hiddenContainer = dropdown.querySelector('.custom-dropdown-hidden');
+    let hiddenSelect = hiddenContainer ? hiddenContainer.querySelector('select') : null;
+    if (!hiddenSelect) {
+        hiddenSelect = dropdown.querySelector('.related-widget-wrapper select');
+    }
+    if (!hiddenSelect) {
+        hiddenSelect = dropdown.querySelector('select');
+    }
+    
+    const selectedDisplay = dropdown.querySelector('.custom-dropdown-selected');
+    
+    // Update hidden select value
+    if (hiddenSelect) {
+        hiddenSelect.value = value;
+        // Trigger change event for any listeners
+        hiddenSelect.dispatchEvent(new Event('change', { bubbles: true }));
+    }
+    
+    // Update display
+    if (selectedDisplay) {
+        selectedDisplay.classList.remove('placeholder');
+        selectedDisplay.innerHTML = `
+            <i class="${icon || 'fas fa-folder'}"></i>
+            <span class="custom-dropdown-selected-text">${text}</span>
+        `;
+    }
+    
+    // Update selected state on options
+    dropdown.querySelectorAll('.custom-dropdown-option').forEach(opt => {
+        opt.classList.toggle('selected', opt.dataset.value === value);
+    });
+    
+    // Close dropdown
+    dropdown.classList.remove('open');
+    
+    // Clear search
+    const searchInput = dropdown.querySelector('.custom-dropdown-search input');
+    if (searchInput) {
+        searchInput.value = '';
+        filterDropdown(dropdownId, '');
+    }
+}
+
+// Initialize dropdowns on page load
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize Category Dropdown
+    initCategoryDropdown();
+    
+    // Close dropdown when clicking outside
+    document.addEventListener('click', function(e) {
+        if (!e.target.closest('.custom-dropdown')) {
+            document.querySelectorAll('.custom-dropdown.open').forEach(d => {
+                d.classList.remove('open');
+            });
+        }
+    });
+});
+
+function initCategoryDropdown() {
+    const dropdown = document.getElementById('categoryDropdown');
+    if (!dropdown) return;
+    
+    // Find the hidden Django select (could be inside .custom-dropdown-hidden div or .related-widget-wrapper)
+    const hiddenContainer = dropdown.querySelector('.custom-dropdown-hidden');
+    let djangoSelect = hiddenContainer ? hiddenContainer.querySelector('select') : null;
+    
+    // Also try related-widget-wrapper if exists
+    if (!djangoSelect) {
+        djangoSelect = dropdown.querySelector('.related-widget-wrapper select');
+    }
+    if (!djangoSelect) {
+        djangoSelect = dropdown.querySelector('select');
+    }
+    
+    const optionsContainer = dropdown.querySelector('.custom-dropdown-options');
+    const selectedDisplay = dropdown.querySelector('.custom-dropdown-selected');
+    
+    if (!djangoSelect || !optionsContainer) {
+        console.error('Category dropdown: Missing select or options container');
+        return;
+    }
+    
+    const options = djangoSelect.querySelectorAll('option');
+    
+    // Build options HTML
+    let optionsHTML = '';
+    let currentValue = djangoSelect.value;
+    let currentText = '';
+    
+    // Category icons mapping
+    const categoryIcons = {
+        'electronics': 'fas fa-laptop',
+        'phone': 'fas fa-mobile-alt',
+        'computer': 'fas fa-desktop',
+        'fashion': 'fas fa-tshirt',
+        'clothing': 'fas fa-tshirt',
+        'shoes': 'fas fa-shoe-prints',
+        'books': 'fas fa-book',
+        'beauty': 'fas fa-spa',
+        'cosmetics': 'fas fa-magic',
+        'sports': 'fas fa-futbol',
+        'fitness': 'fas fa-dumbbell',
+        'home': 'fas fa-home',
+        'furniture': 'fas fa-couch',
+        'food': 'fas fa-utensils',
+        'groceries': 'fas fa-shopping-basket',
+        'services': 'fas fa-concierge-bell',
+        'automotive': 'fas fa-car',
+        'gaming': 'fas fa-gamepad',
+        'music': 'fas fa-music',
+        'art': 'fas fa-palette',
+        'health': 'fas fa-heartbeat',
+        'pets': 'fas fa-paw',
+        'office': 'fas fa-briefcase',
+        'stationery': 'fas fa-pen',
+        'accessories': 'fas fa-glasses',
+        'jewelry': 'fas fa-gem',
+        'bags': 'fas fa-shopping-bag',
+        'watch': 'fas fa-clock',
+        'default': 'fas fa-tag'
+    };
+    
+    function getIconForCategory(name) {
+        const lowerName = name.toLowerCase();
+        for (const [key, icon] of Object.entries(categoryIcons)) {
+            if (lowerName.includes(key)) return icon;
+        }
+        return categoryIcons.default;
+    }
+    
+    options.forEach(option => {
+        const value = option.value;
+        const text = option.textContent.trim();
+        
+        // Skip empty/placeholder options
+        if (!value || value === '' || text === '---------' || text === '') return;
+        
+        const icon = getIconForCategory(text);
+        const isSelected = value === currentValue;
+        
+        if (isSelected) {
+            currentText = text;
+        }
+        
+        // Check if this is a child category (usually has dashes or spaces for hierarchy)
+        const isChild = text.startsWith('—') || text.startsWith('---') || text.startsWith('   ');
+        const displayText = text.replace(/^[—\-\s]+/, '').trim();
+        
+        optionsHTML += `
+            <div class="custom-dropdown-option${isSelected ? ' selected' : ''}" 
+                 data-value="${value}"
+                 data-text="${displayText.replace(/"/g, '&quot;')}"
+                 onclick="selectDropdownOption('categoryDropdown', '${value}', '${displayText.replace(/'/g, "\\'")}', '${icon}')">
+                <div class="custom-dropdown-option-icon">
+                    <i class="${icon}"></i>
+                </div>
+                <div class="custom-dropdown-option-text">
+                    <span class="custom-dropdown-option-label">${displayText}</span>
+                    ${isChild ? '<span class="custom-dropdown-option-sub">Subcategory</span>' : ''}
+                </div>
+            </div>
+        `;
+    });
+    
+    // Add empty state
+    optionsHTML += `
+        <div class="custom-dropdown-empty" style="display: none;">
+            <i class="fas fa-search"></i>
+            <p>No categories found</p>
+        </div>
+    `;
+    
+    optionsContainer.innerHTML = optionsHTML;
+    
+    // Set initial selected display if there's a current value
+    if (currentValue && currentText) {
+        const displayText = currentText.replace(/^[—\-\s]+/, '').trim();
+        const icon = getIconForCategory(currentText);
+        selectedDisplay.classList.remove('placeholder');
+        selectedDisplay.innerHTML = `
+            <i class="${icon}"></i>
+            <span class="custom-dropdown-selected-text">${displayText}</span>
+        `;
+    }
+}
+</script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // FORCE SELECT STYLING - Fix invisible text issue
+    function fixSelectStyles() {
+        document.querySelectorAll('#listing-form select, .listing-form-container select').forEach(select => {
+            // Add custom-select class for consistent styling
+            select.classList.add('custom-select');
+            
+            // Force inline styles (highest specificity)
+            select.style.cssText = `
+                display: block !important;
+                width: 100% !important;
+                padding: 14px 48px 14px 18px !important;
+                border: 2px solid #e2e8f0 !important;
+                border-radius: 12px !important;
+                font-size: 15px !important;
+                font-weight: 500 !important;
+                font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif !important;
+                background-color: #ffffff !important;
+                background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E") !important;
+                background-repeat: no-repeat !important;
+                background-position: right 14px center !important;
+                background-size: 18px !important;
+                cursor: pointer !important;
+                -webkit-appearance: none !important;
+                -moz-appearance: none !important;
+                appearance: none !important;
+                color: #0f172a !important;
+                -webkit-text-fill-color: #0f172a !important;
+                line-height: 1.5 !important;
+            `;
+        });
+    }
+    
+    // Fix styles on page load
+    fixSelectStyles();
+    
+    // Fix styles after any selection change
+    document.querySelectorAll('#listing-form select, .listing-form-container select').forEach(select => {
+        select.addEventListener('change', function() {
+            this.style.setProperty('color', '#0f172a', 'important');
+            this.style.setProperty('-webkit-text-fill-color', '#0f172a', 'important');
+            updateProgress();
+        });
+    });
+    
+    // Also fix after delays (in case of async loading)
+    setTimeout(fixSelectStyles, 100);
+    setTimeout(fixSelectStyles, 300);
+    setTimeout(fixSelectStyles, 500);
+
+    // Image upload drag & drop
+    const uploadArea = document.getElementById('upload-area');
+    const fileInput = document.getElementById('id_main_image');
+    
+    if (uploadArea && fileInput) {
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            uploadArea.addEventListener(eventName, function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }, false);
+        });
+        
+        ['dragenter', 'dragover'].forEach(eventName => {
+            uploadArea.addEventListener(eventName, () => uploadArea.classList.add('dragover'), false);
+        });
+        
+        ['dragleave', 'drop'].forEach(eventName => {
+            uploadArea.addEventListener(eventName, () => uploadArea.classList.remove('dragover'), false);
+        });
+        
+        uploadArea.addEventListener('drop', function(e) {
+            const files = e.dataTransfer.files;
+            if (files.length) {
+                fileInput.files = files;
+                updateImagePreview(files[0]);
+            }
+        });
+        
+        fileInput.addEventListener('change', function() {
+            if (this.files.length) {
+                updateImagePreview(this.files[0]);
+            }
+        });
+    }
+    
+    function updateImagePreview(file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const previewContent = document.getElementById('preview-content');
+            const previewImage = document.getElementById('preview-image');
+            
+            if (previewImage) {
+                previewImage.src = e.target.result;
+            } else if (previewContent) {
+                const title = document.getElementById('id_title')?.value || 'Your Product';
+                const price = document.getElementById('id_price')?.value || '0.00';
+                previewContent.innerHTML = `
+                    <div class="preview-product">
+                        <img src="${e.target.result}" alt="Preview" class="preview-image" id="preview-image">
+                        <h4 class="preview-title" id="preview-title">${title}</h4>
+                        <p class="preview-price">GHS ${price}</p>
+                    </div>
+                `;
+            }
+        };
+        reader.readAsDataURL(file);
+    }
+    
+    // Live preview updates
+    const titleInput = document.getElementById('id_title');
+    if (titleInput) {
+        titleInput.addEventListener('input', function() {
+            const previewTitle = document.getElementById('preview-title');
+            if (previewTitle) {
+                previewTitle.textContent = this.value || 'Your Product';
+            }
+        });
+    }
+    
+    // Discount preview
+    const priceInput = document.getElementById('id_price');
+    const comparePriceInput = document.getElementById('id_compare_at_price');
+    
+    function updateDiscountPreview() {
+        const price = parseFloat(priceInput?.value) || 0;
+        const comparePrice = parseFloat(comparePriceInput?.value) || 0;
+        const discountPreview = document.getElementById('discount-preview');
+        const discountPercent = document.getElementById('discount-percent');
+        
+        if (comparePrice > price && price > 0) {
+            const discount = Math.round((1 - price / comparePrice) * 100);
+            if (discountPreview && discountPercent) {
+                discountPercent.textContent = discount + '%';
+                discountPreview.style.display = 'flex';
+            }
+        } else if (discountPreview) {
+            discountPreview.style.display = 'none';
+        }
+    }
+    
+    if (priceInput) priceInput.addEventListener('input', updateDiscountPreview);
+    if (comparePriceInput) comparePriceInput.addEventListener('input', updateDiscountPreview);
+    updateDiscountPreview();
+    
+    // Form progress
+    function updateProgress() {
+        const fields = {
+            basic: ['id_title', 'id_description', 'id_listing_type'],
+            pricing: ['id_price'],
+            images: ['id_main_image'],
+            details: ['id_category', 'id_condition']
+        };
+        
+        let completed = 0;
+        let total = 0;
+        
+        Object.keys(fields).forEach(section => {
+            let sectionComplete = true;
+            fields[section].forEach(fieldId => {
+                total++;
+                const field = document.getElementById(fieldId);
+                if (field && field.value) {
+                    completed++;
+                } else {
+                    sectionComplete = false;
+                }
+            });
+            
+            const stepEl = document.querySelector(`[data-step="${section}"]`);
+            if (stepEl) {
+                stepEl.classList.toggle('completed', sectionComplete);
+            }
+        });
+        
+        const percent = Math.round((completed / total) * 100);
+        const progressFill = document.getElementById('progress-fill');
+        const progressPercent = document.getElementById('progress-percent');
+        
+        if (progressFill) progressFill.style.width = percent + '%';
+        if (progressPercent) progressPercent.textContent = percent + '%';
+    }
+    
+    document.querySelectorAll('input, select, textarea').forEach(field => {
+        field.addEventListener('change', updateProgress);
+        field.addEventListener('input', updateProgress);
+    });
+    updateProgress();
+});
+</script>
+{% endblock %}

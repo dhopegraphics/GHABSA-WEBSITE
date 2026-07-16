@@ -1,0 +1,65 @@
+{% extends "admin/payments/expense_base.html" %}
+{% load static i18n admin_urls %}
+
+{% block expense_header %}
+<div class="expense-module-header">
+    <div class="module-header-top">
+        <div class="module-title">
+            <div class="module-icon green">
+                <i class="ri-pie-chart-2-line"></i>
+            </div>
+            <div class="module-info">
+                <h2>📊 Budget Allocations</h2>
+                <p>Set and monitor spending limits for each expense category</p>
+            </div>
+        </div>
+        <div class="module-actions">
+            <a href="{% url 'payments:expense-dashboard' %}" class="btn-modern btn-secondary-modern">
+                <i class="ri-dashboard-3-line"></i> Dashboard
+            </a>
+            <a href="{% url 'admin:payments_budgetallocation_add' %}" class="btn-modern btn-primary-modern">
+                <i class="ri-add-line"></i> Set Budget
+            </a>
+        </div>
+    </div>
+    
+    <div class="quick-stats">
+        <div class="quick-stat">
+            <div class="quick-stat-icon green">
+                <i class="ri-pie-chart-line"></i>
+            </div>
+            <div class="quick-stat-info">
+                <h4>{{ total_budgets|default:"0" }}</h4>
+                <span>Budget Lines</span>
+            </div>
+        </div>
+        <div class="quick-stat">
+            <div class="quick-stat-icon blue">
+                <i class="ri-wallet-3-line"></i>
+            </div>
+            <div class="quick-stat-info">
+                <h4>GH₵ {{ total_allocated|floatformat:0|default:"0" }}</h4>
+                <span>Total Allocated</span>
+            </div>
+        </div>
+        <div class="quick-stat">
+            <div class="quick-stat-icon red">
+                <i class="ri-money-dollar-circle-line"></i>
+            </div>
+            <div class="quick-stat-info">
+                <h4>GH₵ {{ total_spent|floatformat:0|default:"0" }}</h4>
+                <span>Total Spent</span>
+            </div>
+        </div>
+        <div class="quick-stat">
+            <div class="quick-stat-icon orange">
+                <i class="ri-funds-line"></i>
+            </div>
+            <div class="quick-stat-info">
+                <h4>GH₵ {{ remaining|floatformat:0|default:"0" }}</h4>
+                <span>Remaining</span>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

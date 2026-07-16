@@ -1,0 +1,3 @@
+# Add Django template files to prevent formatter from breaking template syntax
+templates/**/*.html
+**/templates/**/*.html

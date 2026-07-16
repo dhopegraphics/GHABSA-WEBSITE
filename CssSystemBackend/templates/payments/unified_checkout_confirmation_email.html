@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% if purchase_type == 'el_mercado_only' %}Order Confirmed - El Mercado{% elif purchase_type == 'merchandise_only' %}Purchase Confirmed - CSS Merchandise{% else %}Purchase Confirmation - CSS KNUST{% endif %}</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 700px;
+            margin: 20px auto;
+            background-color: #ffffff;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+        .header {
+            {% if purchase_type == 'el_mercado_only' %}
+            background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+            {% elif purchase_type == 'merchandise_only' %}
+            background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+            {% else %}
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            {% endif %}
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 28px;
+        }
+        .header p {
+            margin: 10px 0 0 0;
+            opacity: 0.9;
+        }
+        .content {
+            padding: 30px;
+        }
+        .greeting {
+            font-size: 18px;
+            margin-bottom: 20px;
+            color: #555;
+        }
+        .success-message {
+            background-color: #d4edda;
+            border-left: 4px solid #28a745;
+            padding: 15px;
+            margin-bottom: 25px;
+            border-radius: 4px;
+        }
+        .section-title {
+            font-size: 20px;
+            font-weight: bold;
+            color: #333;
+            margin: 30px 0 15px 0;
+            padding-bottom: 10px;
+            {% if purchase_type == 'el_mercado_only' %}
+            border-bottom: 2px solid #f97316;
+            {% elif purchase_type == 'merchandise_only' %}
+            border-bottom: 2px solid #22c55e;
+            {% else %}
+            border-bottom: 2px solid #667eea;
+            {% endif %}
+        }
+        
+        /* Merchandise Items */
+        .merchandise-item {
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 15px 0;
+            border-left: 4px solid #667eea;
+        }
+        .product-name {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        .validation-code-box {
+            background-color: #fff;
+            border: 2px dashed #667eea;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 10px 0;
+            text-align: center;
+        }
+        .validation-code {
+            font-size: 28px;
+            font-weight: bold;
+            color: #667eea;
+            letter-spacing: 3px;
+            font-family: 'Courier New', monospace;
+        }
+        .item-details {
+            font-size: 14px;
+            color: #666;
+            margin: 5px 0;
+        }
+        
+        /* El Mercado Orders */
+        .order-card {
+            background-color: #fff9e6;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 15px 0;
+            border-left: 4px solid #ffc107;
+        }
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+        .order-number {
+            font-size: 16px;
+            font-weight: bold;
+            color: #333;
+        }
+        .seller-badge {
+            background-color: #ffc107;
+            color: #333;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 13px;
+            font-weight: bold;
+        }
+        .order-item {
+            padding: 10px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        .order-item:last-child {
+            border-bottom: none;
+        }
+        .order-status-badge {
+            display: inline-block;
+            background-color: #28a745;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        
+        /* Badges */
+        .gift-badge {
+            display: inline-block;
+            background-color: #ff6b6b;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+        .on-behalf-badge {
+            display: inline-block;
+            background-color: #4ecdc4;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+        
+        /* Transaction Summary */
+        .transaction-summary {
+            background-color: #e7f3ff;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 25px 0;
+        }
+        .transaction-summary table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .transaction-summary td {
+            padding: 8px 0;
+            font-size: 14px;
+        }
+        .transaction-summary td:first-child {
+            font-weight: bold;
+            color: #555;
+            width: 40%;
+        }
+        .transaction-summary .total-row {
+            font-size: 18px;
+            font-weight: bold;
+            border-top: 2px solid #667eea;
+            padding-top: 12px !important;
+        }
+        
+        /* Info Box */
+        .info-box {
+            background-color: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        
+        /* Footer */
+        .footer {
+            background-color: #f8f9fa;
+            padding: 25px 30px;
+            text-align: center;
+            font-size: 14px;
+            color: #666;
+            border-top: 1px solid #dee2e6;
+        }
+        .footer a {
+            color: #667eea;
+            text-decoration: none;
+        }
+        .social-links {
+            margin: 15px 0;
+        }
+        .social-links a {
+            margin: 0 10px;
+            color: #667eea;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            {% if purchase_type == 'el_mercado_only' %}
+            <h1>🛍️ Order Confirmed!</h1>
+            <p>Your El Mercado marketplace order has been placed</p>
+            {% elif purchase_type == 'merchandise_only' %}
+            <h1>🎉 Purchase Confirmed!</h1>
+            <p>Your CSS KNUST merchandise order is ready</p>
+            {% else %}
+            <h1>🎉 Purchase Confirmed!</h1>
+            <p>Your order has been successfully processed</p>
+            {% endif %}
+        </div>
+
+        <!-- Content -->
+        <div class="content">
+            <div class="greeting">
+                Hello {{ user_name }},
+            </div>
+
+            <div class="success-message">
+                <strong>✅ Payment Successful!</strong><br>
+                {% if purchase_type == 'el_mercado_only' %}
+                Thank you for shopping on El Mercado! Your marketplace order details are below.
+                {% elif purchase_type == 'merchandise_only' %}
+                Thank you for your purchase! Your merchandise details and collection codes are below.
+                {% else %}
+                Thank you for your purchase. Your order details are below.
+                {% endif %}
+            </div>
+
+            {% if has_merchandise %}
+            <!-- Merchandise Section -->
+            <div class="section-title">
+                📦 Merchandise Validation Codes
+            </div>
+            <div class="info-box">
+                <strong>📋 How to collect:</strong> Present these validation codes at the merchandise collection point.
+            </div>
+            
+            {% for item in merchandise_items %}
+                <div class="merchandise-item">
+                    <div class="product-name">
+                        {{ item.product_name }}
+                        {% if item.is_gift %}
+                            <span class="gift-badge">🎁 GIFT</span>
+                        {% elif item.is_on_behalf %}
+                            <span class="on-behalf-badge">👥 ON BEHALF</span>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="item-details">
+                        <strong>Quantity:</strong> {{ item.quantity }}
+                    </div>
+                    
+                    {% if item.purchased_for_phone %}
+                        <div class="item-details">
+                            <strong>For:</strong> {{ item.purchased_for_phone }}
+                        </div>
+                    {% endif %}
+                    
+                    {% if item.gift_message %}
+                        <div class="item-details">
+                            <strong>Gift Message:</strong> "{{ item.gift_message }}"
+                        </div>
+                    {% endif %}
+                    
+                    <div class="validation-code-box">
+                        <div style="font-size: 14px; color: #666; margin-bottom: 5px;">Your Validation Code</div>
+                        <div class="validation-code">{{ item.validation_code }}</div>
+                    </div>
+                </div>
+            {% endfor %}
+            {% endif %}
+
+            {% if has_el_mercado %}
+            <!-- El Mercado Section -->
+            <div class="section-title">
+                🛍️ Marketplace Orders
+            </div>
+            <div class="info-box">
+                <strong>📬 Delivery Info:</strong> Your seller will contact you regarding delivery details. Order tracking is available in your account.
+            </div>
+            
+            {% for order in el_mercado_orders %}
+                <div class="order-card">
+                    <div class="order-header">
+                        <div class="order-number">Order #{{ order.order_number }}</div>
+                        <div class="seller-badge">{{ order.seller_name }}</div>
+                    </div>
+                    
+                    <div style="margin: 15px 0;">
+                        {% for item in order.items %}
+                            <div class="order-item">
+                                <strong>{{ item.product_name }}</strong>
+                                {% if item.variant_name %}
+                                    <span style="color: #666;"> - {{ item.variant_name }}</span>
+                                {% endif %}
+                                <br>
+                                <span style="color: #666; font-size: 14px;">
+                                    Qty: {{ item.quantity }} × GHS {{ item.unit_price }}
+                                </span>
+                            </div>
+                        {% endfor %}
+                    </div>
+                    
+                    <div style="margin-top: 15px; padding-top: 15px; border-top: 2px solid #f0f0f0;">
+                        <strong>Order Total:</strong> GHS {{ order.total_amount }}
+                    </div>
+                    
+                    <div class="order-status-badge">✓ Order Placed</div>
+                    
+                    {% if order.expected_delivery %}
+                        <div style="margin-top: 10px; font-size: 13px; color: #666;">
+                            <strong>Expected Delivery:</strong> {{ order.expected_delivery }}
+                        </div>
+                    {% endif %}
+                </div>
+            {% endfor %}
+            {% endif %}
+
+            <!-- Transaction Summary -->
+            <div class="transaction-summary">
+                <h3 style="margin-top: 0; color: #333;">Transaction Summary</h3>
+                <table>
+                    <tr>
+                        <td>Transaction Reference:</td>
+                        <td>{{ transaction_reference }}</td>
+                    </tr>
+                    <tr>
+                        <td>Payment Date:</td>
+                        <td>{{ payment_date|date:"F j, Y, g:i a" }}</td>
+                    </tr>
+                    <tr class="total-row">
+                        <td>Total Amount Paid:</td>
+                        <td>GHS {{ amount_paid }}</td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="info-box">
+                <strong>💡 Need Help?</strong><br>
+                If you have any questions or concerns about your purchase, please contact us:
+                <ul style="margin: 10px 0 0 0; padding-left: 20px;">
+                    <li>Email: support@cssknust.com</li>
+                    <li>Visit the CSS Office</li>
+                    <li>Check your account dashboard for order tracking</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <strong>Computer Science Society - KNUST</strong><br>
+            <div class="social-links">
+                <a href="#">Facebook</a> | 
+                <a href="#">Twitter</a> | 
+                <a href="#">Instagram</a>
+            </div>
+            <p style="margin: 10px 0 0 0; font-size: 12px; color: #999;">
+                © {{ payment_date|date:"Y" }} CSS KNUST. All rights reserved.
+            </p>
+        </div>
+    </div>
+</body>
+</html>

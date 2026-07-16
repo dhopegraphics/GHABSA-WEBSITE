@@ -1,0 +1,346 @@
+{% extends "seller_admin/seller_base_site.html" %}
+{% load i18n static %}
+
+{% block extrastyle %}
+{{ block.super }}
+<style>
+    .delete-container {
+        max-width: 600px;
+        margin: 0 auto;
+    }
+
+    .delete-header {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        margin-bottom: 32px;
+    }
+
+    .back-btn {
+        width: 44px;
+        height: 44px;
+        border-radius: 12px;
+        background: white;
+        border: 1px solid var(--gray-200);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--gray-600);
+        text-decoration: none;
+        transition: all 0.2s ease;
+    }
+
+    .back-btn:hover {
+        background: var(--gray-50);
+        color: var(--primary);
+        border-color: var(--primary);
+    }
+
+    .delete-header h1 {
+        font-size: 26px;
+        font-weight: 800;
+        color: var(--gray-900);
+        margin: 0;
+    }
+
+    /* Warning Card */
+    .warning-card {
+        background: white;
+        border-radius: 20px;
+        border: 1px solid var(--gray-200);
+        overflow: hidden;
+    }
+
+    .warning-banner {
+        background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(239, 68, 68, 0.05));
+        padding: 24px;
+        display: flex;
+        align-items: flex-start;
+        gap: 16px;
+        border-bottom: 1px solid rgba(239, 68, 68, 0.2);
+    }
+
+    .warning-icon {
+        width: 56px;
+        height: 56px;
+        border-radius: 14px;
+        background: var(--danger);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        flex-shrink: 0;
+    }
+
+    .warning-content h2 {
+        font-size: 18px;
+        font-weight: 700;
+        color: var(--danger);
+        margin: 0 0 8px 0;
+    }
+
+    .warning-content p {
+        color: var(--gray-600);
+        margin: 0;
+        font-size: 14px;
+        line-height: 1.6;
+    }
+
+    /* Account Details */
+    .account-details {
+        padding: 24px;
+    }
+
+    .account-details h3 {
+        font-size: 15px;
+        font-weight: 700;
+        color: var(--gray-900);
+        margin: 0 0 16px 0;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .account-details h3 i {
+        color: var(--primary);
+    }
+
+    .account-card {
+        background: var(--gray-50);
+        border-radius: 12px;
+        padding: 20px;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+    }
+
+    .account-icon {
+        width: 56px;
+        height: 56px;
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        flex-shrink: 0;
+    }
+
+    .account-icon.bank {
+        background: linear-gradient(135deg, #3B82F6, #1D4ED8);
+        color: white;
+    }
+
+    .account-icon.momo {
+        background: linear-gradient(135deg, #FCD34D, #F59E0B);
+        color: white;
+    }
+
+    .account-info {
+        flex: 1;
+    }
+
+    .account-name {
+        font-size: 16px;
+        font-weight: 700;
+        color: var(--gray-900);
+        margin: 0 0 4px 0;
+    }
+
+    .account-meta {
+        font-size: 14px;
+        color: var(--gray-600);
+        margin: 0 0 4px 0;
+    }
+
+    .account-type-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        padding: 4px 10px;
+        background: white;
+        border-radius: 6px;
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--gray-600);
+        border: 1px solid var(--gray-200);
+    }
+
+    .default-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        padding: 4px 10px;
+        background: rgba(16, 185, 129, 0.1);
+        border-radius: 6px;
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--success);
+        margin-left: 8px;
+    }
+
+    /* Warning Note */
+    .warning-note {
+        margin: 20px 24px;
+        padding: 16px;
+        background: rgba(245, 158, 11, 0.1);
+        border-radius: 12px;
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+    }
+
+    .warning-note i {
+        color: var(--warning);
+        font-size: 18px;
+        flex-shrink: 0;
+        margin-top: 2px;
+    }
+
+    .warning-note p {
+        font-size: 13px;
+        color: var(--gray-700);
+        margin: 0;
+        line-height: 1.5;
+    }
+
+    /* Actions */
+    .actions-section {
+        padding: 24px;
+        background: var(--gray-50);
+        border-top: 1px solid var(--gray-200);
+        display: flex;
+        justify-content: flex-end;
+        gap: 12px;
+    }
+
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 14px 28px;
+        border-radius: 12px;
+        font-size: 14px;
+        font-weight: 600;
+        text-decoration: none;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        border: none;
+        font-family: inherit;
+    }
+
+    .btn-secondary {
+        background: white;
+        color: var(--gray-700);
+        border: 2px solid var(--gray-200);
+    }
+
+    .btn-secondary:hover {
+        background: var(--gray-50);
+        border-color: var(--gray-300);
+    }
+
+    .btn-danger {
+        background: var(--danger);
+        color: white;
+    }
+
+    .btn-danger:hover {
+        background: #dc2626;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(239, 68, 68, 0.3);
+    }
+</style>
+{% endblock %}
+
+{% block breadcrumbs %}
+<a href="{% url 'seller_admin:index' %}">Dashboard</a>
+<span>/</span>
+<a href="{% url 'seller_admin:el_mercado_sellerpayoutaccount_changelist' %}">Payout Accounts</a>
+<span>/</span>
+<span>Delete</span>
+{% endblock %}
+
+{% block content %}
+<div class="delete-container">
+    <div class="delete-header">
+        <a href="{% url 'seller_admin:el_mercado_sellerpayoutaccount_changelist' %}" class="back-btn" title="Back to Accounts">
+            <i class="ri-arrow-left-line"></i>
+        </a>
+        <h1>Delete Payout Account</h1>
+    </div>
+
+    <div class="warning-card">
+        <div class="warning-banner">
+            <div class="warning-icon">
+                <i class="ri-error-warning-line"></i>
+            </div>
+            <div class="warning-content">
+                <h2>Are you sure you want to delete this account?</h2>
+                <p>
+                    This action cannot be undone. The payout account will be permanently removed from your store.
+                </p>
+            </div>
+        </div>
+
+        <div class="account-details">
+            <h3><i class="ri-bank-card-line"></i> Account to be deleted</h3>
+            <div class="account-card">
+                <div class="account-icon {% if object.account_type == 'BANK' %}bank{% else %}momo{% endif %}">
+                    {% if object.account_type == 'BANK' %}
+                    <i class="ri-bank-line"></i>
+                    {% else %}
+                    <i class="ri-smartphone-line"></i>
+                    {% endif %}
+                </div>
+                <div class="account-info">
+                    {% if object.account_type == 'BANK' %}
+                    <p class="account-name">{{ object.account_name }}</p>
+                    <p class="account-meta">{{ object.bank_name }} • •••• {{ object.account_number|slice:"-4:" }}</p>
+                    {% else %}
+                    <p class="account-name">{{ object.mobile_money_name }}</p>
+                    <p class="account-meta">{{ object.mobile_money_provider }} • {{ object.mobile_money_number }}</p>
+                    {% endif %}
+                    <div style="margin-top: 8px;">
+                        <span class="account-type-badge">
+                            {% if object.account_type == 'BANK' %}
+                            <i class="ri-bank-line"></i> Bank Account
+                            {% else %}
+                            <i class="ri-smartphone-line"></i> Mobile Money
+                            {% endif %}
+                        </span>
+                        {% if object.is_default %}
+                        <span class="default-badge">
+                            <i class="ri-star-fill"></i> Primary
+                        </span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {% if object.is_default %}
+        <div class="warning-note">
+            <i class="ri-information-line"></i>
+            <p>
+                <strong>Note:</strong> This is your primary payout account. After deletion, you'll need to set another account as primary to receive payouts.
+            </p>
+        </div>
+        {% endif %}
+
+        <form method="post">
+            {% csrf_token %}
+            <div class="actions-section">
+                <a href="{% url 'seller_admin:el_mercado_sellerpayoutaccount_changelist' %}" class="btn btn-secondary">
+                    <i class="ri-close-line"></i>
+                    Cancel
+                </a>
+                <button type="submit" class="btn btn-danger">
+                    <i class="ri-delete-bin-line"></i>
+                    Yes, Delete Account
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

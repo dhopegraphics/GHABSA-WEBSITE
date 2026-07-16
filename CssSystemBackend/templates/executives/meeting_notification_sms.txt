@@ -1,0 +1,10 @@
+CSS KNUST MEETING
+
+{{ meeting_type }}: {{ meeting_title }}
+Date: {{ meeting_date }}
+Time: {{ meeting_time }}
+Venue: {{ location }}
+
+Please attend on time.
+
+- CSS Executive

@@ -1,0 +1,217 @@
+{% extends "payments/dashboard_base.html" %}
+{% load static %}
+
+{% block title %}Audit Log{% endblock %}
+
+{% block content %}
+<!-- Header -->
+<header class="header">
+    <div class="header-left">
+        <h1>📜 Audit Log</h1>
+        <p>Track all expense-related activities and changes</p>
+    </div>
+    <div class="header-right">
+        <button class="btn btn-secondary" onclick="exportAuditLog()">
+            <i class="ri-download-line"></i>
+            Export
+        </button>
+    </div>
+</header>
+
+<!-- Stats Cards -->
+<div class="stats-grid">
+    <div class="stat-card purple">
+        <div class="stat-card-header">
+            <div class="stat-card-icon">
+                <i class="ri-history-line"></i>
+            </div>
+        </div>
+        <div class="stat-card-value">{{ total_logs|default:"0" }}</div>
+        <div class="stat-card-label">Total Activities</div>
+    </div>
+
+    <div class="stat-card green">
+        <div class="stat-card-header">
+            <div class="stat-card-icon">
+                <i class="ri-add-circle-line"></i>
+            </div>
+        </div>
+        <div class="stat-card-value">{{ created_count|default:"0" }}</div>
+        <div class="stat-card-label">Created</div>
+    </div>
+
+    <div class="stat-card blue">
+        <div class="stat-card-header">
+            <div class="stat-card-icon">
+                <i class="ri-edit-line"></i>
+            </div>
+        </div>
+        <div class="stat-card-value">{{ updated_count|default:"0" }}</div>
+        <div class="stat-card-label">Updated</div>
+    </div>
+
+    <div class="stat-card orange">
+        <div class="stat-card-header">
+            <div class="stat-card-icon">
+                <i class="ri-check-double-line"></i>
+            </div>
+        </div>
+        <div class="stat-card-value">{{ status_changes|default:"0" }}</div>
+        <div class="stat-card-label">Status Changes</div>
+    </div>
+</div>
+
+<!-- Filters -->
+<div class="card">
+    <div class="filters-bar">
+        <div class="search-input">
+            <i class="ri-search-line"></i>
+            <input type="text" id="searchInput" placeholder="Search audit logs..." value="{{ search_query }}">
+        </div>
+        <select class="filter-select" id="actionFilter">
+            <option value="">All Actions</option>
+            <option value="created" {% if action_filter == 'created' %}selected{% endif %}>Created</option>
+            <option value="updated" {% if action_filter == 'updated' %}selected{% endif %}>Updated</option>
+            <option value="status_changed" {% if action_filter == 'status_changed' %}selected{% endif %}>Status Changed</option>
+            <option value="deleted" {% if action_filter == 'deleted' %}selected{% endif %}>Deleted</option>
+            <option value="sms_sent" {% if action_filter == 'sms_sent' %}selected{% endif %}>SMS Sent</option>
+        </select>
+        <input type="date" class="filter-select" id="dateFilter" value="{{ date_filter }}" style="width: 180px;">
+    </div>
+
+    {% if logs %}
+    <div class="audit-timeline" style="padding: 20px;">
+        {% regroup logs by created_at|date:"Y-m-d" as logs_by_date %}
+        {% for date_group in logs_by_date %}
+        <div class="audit-date-group" style="margin-bottom: 32px;">
+            <h4 style="font-size: 14px; font-weight: 600; color: var(--primary); margin-bottom: 16px; display: flex; align-items: center; gap: 8px;">
+                <i class="ri-calendar-line"></i>
+                {{ date_group.grouper|date:"l, F d, Y" }}
+            </h4>
+            
+            {% for log in date_group.list %}
+            <div class="audit-item" style="display: flex; gap: 16px; padding: 16px; background: var(--gray-50); border-radius: 12px; margin-bottom: 12px; border-left: 4px solid {% if log.action == 'created' %}var(--success){% elif log.action == 'deleted' %}var(--danger){% elif log.action == 'status_changed' %}var(--warning){% else %}var(--primary){% endif %};">
+                <div class="audit-icon" style="width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; background: {% if log.action == 'created' %}var(--success){% elif log.action == 'deleted' %}var(--danger){% elif log.action == 'status_changed' %}var(--warning){% else %}var(--primary){% endif %}20; color: {% if log.action == 'created' %}var(--success){% elif log.action == 'deleted' %}var(--danger){% elif log.action == 'status_changed' %}var(--warning){% else %}var(--primary){% endif %};">
+                    {% if log.action == 'created' %}
+                    <i class="ri-add-circle-line"></i>
+                    {% elif log.action == 'deleted' %}
+                    <i class="ri-delete-bin-line"></i>
+                    {% elif log.action == 'status_changed' %}
+                    <i class="ri-exchange-line"></i>
+                    {% elif log.action == 'sms_sent' %}
+                    <i class="ri-message-2-line"></i>
+                    {% else %}
+                    <i class="ri-edit-line"></i>
+                    {% endif %}
+                </div>
+                <div class="audit-content" style="flex: 1;">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
+                        <h5 style="font-weight: 600; color: var(--gray-900);">
+                            {% if log.expense %}
+                            {{ log.expense.title|truncatechars:40 }}
+                            {% else %}
+                            [Deleted Expense]
+                            {% endif %}
+                        </h5>
+                        <span style="font-size: 12px; color: var(--gray-500);">{{ log.created_at|time:"h:i A" }}</span>
+                    </div>
+                    <p style="font-size: 14px; color: var(--gray-600); margin-bottom: 8px;">
+                        {% if log.action == 'created' %}
+                        Expense <strong>created</strong>
+                        {% elif log.action == 'deleted' %}
+                        Expense <strong>deleted</strong>
+                        {% elif log.action == 'status_changed' %}
+                        Status changed from <strong>{{ log.old_status|default:'N/A' }}</strong> to <strong>{{ log.new_status }}</strong>
+                        {% elif log.action == 'sms_sent' %}
+                        SMS notification sent to executives
+                        {% else %}
+                        Expense <strong>updated</strong>
+                        {% endif %}
+                        {% if log.expense %} — GH₵ {{ log.expense.amount|floatformat:2 }}{% endif %}
+                    </p>
+                    <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+                        <span class="badge {% if log.action == 'created' %}badge-success{% elif log.action == 'deleted' %}badge-danger{% elif log.action == 'status_changed' %}badge-warning{% else %}badge-info{% endif %}">
+                            {{ log.get_action_display }}
+                        </span>
+                        {% if log.performed_by %}
+                        <span style="font-size: 13px; color: var(--gray-500);">
+                            <i class="ri-user-line"></i> {{ log.performed_by.get_full_name|default:log.performed_by.username }}
+                        </span>
+                        {% endif %}
+                        {% if log.ip_address %}
+                        <span style="font-size: 12px; color: var(--gray-400);">
+                            <i class="ri-global-line"></i> {{ log.ip_address }}
+                        </span>
+                        {% endif %}
+                    </div>
+                    {% if log.comments %}
+                    <div class="changes-detail" style="margin-top: 12px; padding: 12px; background: white; border-radius: 8px; font-size: 13px;">
+                        <strong style="color: var(--gray-700);">Comments:</strong>
+                        <pre style="margin-top: 8px; white-space: pre-wrap; color: var(--gray-600);">{{ log.comments }}</pre>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Pagination -->
+    {% if page_obj.has_other_pages %}
+    <div class="pagination">
+        {% if page_obj.has_previous %}
+        <a href="?page=1{% if action_filter %}&action={{ action_filter }}{% endif %}">First</a>
+        <a href="?page={{ page_obj.previous_page_number }}{% if action_filter %}&action={{ action_filter }}{% endif %}">Previous</a>
+        {% endif %}
+        
+        <span class="active">{{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+        
+        {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}{% if action_filter %}&action={{ action_filter }}{% endif %}">Next</a>
+        <a href="?page={{ page_obj.paginator.num_pages }}{% if action_filter %}&action={{ action_filter }}{% endif %}">Last</a>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    {% else %}
+    <div class="empty-state">
+        <div class="empty-state-icon"><i class="ri-history-line"></i></div>
+        <h3>No Audit Logs</h3>
+        <p>{% if search_query or action_filter or date_filter %}No results found for your filters{% else %}Activities will appear here once expenses are created or modified{% endif %}</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Filter functionality
+    const searchInput = document.getElementById('searchInput');
+    const actionFilter = document.getElementById('actionFilter');
+    const dateFilter = document.getElementById('dateFilter');
+
+    function applyFilters() {
+        const search = searchInput.value;
+        const action = actionFilter.value;
+        const date = dateFilter.value;
+        
+        let url = '{% url "payments:expense-audit" %}?';
+        if (search) url += 'q=' + encodeURIComponent(search) + '&';
+        if (action) url += 'action=' + action + '&';
+        if (date) url += 'date=' + date + '&';
+        
+        window.location.href = url;
+    }
+
+    searchInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') applyFilters();
+    });
+    actionFilter.addEventListener('change', applyFilters);
+    dateFilter.addEventListener('change', applyFilters);
+
+    function exportAuditLog() {
+        window.location.href = '{% url "payments:expense-audit" %}?export=csv';
+    }
+</script>
+{% endblock %}

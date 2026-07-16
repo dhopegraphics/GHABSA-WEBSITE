@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Code Quest - Group Formation Complete</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .header {
+            background: linear-gradient(135deg, #2563eb, #7c3aed);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        .header h1 {
+            margin: 0 0 10px 0;
+            font-size: 28px;
+        }
+        .header p {
+            margin: 0;
+            opacity: 0.9;
+        }
+        .content {
+            padding: 30px;
+        }
+        .greeting {
+            font-size: 18px;
+            margin-bottom: 20px;
+        }
+        .group-info {
+            background: #f0f7ff;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            border-left: 4px solid #2563eb;
+        }
+        .group-info h3 {
+            margin: 0 0 15px 0;
+            color: #1e40af;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .members-list {
+            list-style: none;
+            padding: 0;
+            margin: 15px 0;
+        }
+        .members-list li {
+            padding: 10px 15px;
+            background: white;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .member-name {
+            font-weight: 600;
+            color: #1f2937;
+        }
+        .member-id {
+            color: #6b7280;
+            font-size: 14px;
+        }
+        .highlight-box {
+            background: linear-gradient(135deg, #fef3c7, #fde68a);
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+        }
+        .highlight-box h4 {
+            color: #92400e;
+            margin: 0 0 10px 0;
+        }
+        .access-key {
+            background: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 20px;
+            font-weight: bold;
+            color: #2563eb;
+            letter-spacing: 2px;
+            display: inline-block;
+            margin-top: 10px;
+        }
+        .next-steps {
+            margin: 25px 0;
+        }
+        .next-steps h3 {
+            color: #1f2937;
+            margin-bottom: 15px;
+        }
+        .step {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+            align-items: flex-start;
+        }
+        .step-number {
+            background: #2563eb;
+            color: white;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+        .step-content h4 {
+            margin: 0 0 5px 0;
+            color: #1f2937;
+        }
+        .step-content p {
+            margin: 0;
+            color: #6b7280;
+            font-size: 14px;
+        }
+        .cta-button {
+            display: block;
+            background: linear-gradient(135deg, #2563eb, #7c3aed);
+            color: white;
+            text-align: center;
+            padding: 15px 30px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            margin: 25px 0;
+        }
+        .dates-section {
+            background: #f9fafb;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .dates-section h4 {
+            margin: 0 0 15px 0;
+            color: #1f2937;
+        }
+        .date-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .date-row:last-child {
+            border-bottom: none;
+        }
+        .date-label {
+            color: #6b7280;
+        }
+        .date-value {
+            font-weight: 600;
+            color: #1f2937;
+        }
+        .footer {
+            background: #f9fafb;
+            padding: 20px 30px;
+            text-align: center;
+            border-top: 1px solid #e5e7eb;
+        }
+        .footer p {
+            margin: 5px 0;
+            color: #6b7280;
+            font-size: 14px;
+        }
+        .social-links {
+            margin-top: 15px;
+        }
+        .social-links a {
+            color: #2563eb;
+            text-decoration: none;
+            margin: 0 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 Code Quest {{ academic_year }}</h1>
+            <p>Your Group Has Been Formed!</p>
+        </div>
+        
+        <div class="content">
+            <p class="greeting">Hello <strong>{{ participant_name }}</strong>,</p>
+            
+            <p>Great news! Your Code Quest group has been formed and you're now part of an exciting team. Get ready to build something amazing together!</p>
+            
+            <div class="group-info">
+                <h3>👥 {{ group_name }}</h3>
+                <p><strong>Group Number:</strong> {{ group_number }}</p>
+                <p><strong>Total Members:</strong> {{ member_count }}</p>
+                
+                <p style="margin-top: 15px; margin-bottom: 10px;"><strong>Your Team Members:</strong></p>
+                <ul class="members-list">
+                    {% for member in members %}
+                    <li>
+                        <span class="member-name">
+                            {{ member.student_name }}
+                            {% if member.student_id == participant_student_id %}
+                            (You)
+                            {% endif %}
+                        </span>
+                        <span class="member-id">{{ member.student_id }}</span>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+            
+            <div class="highlight-box">
+                <h4>🔑 Your Access Key</h4>
+                <p>Use this to login to the Code Quest Portal</p>
+                <div class="access-key">{{ access_key }}</div>
+            </div>
+            
+            <div class="next-steps">
+                <h3>📋 What's Next?</h3>
+                
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h4>Login to the Portal</h4>
+                        <p>Use your access key to access the Code Quest Portal and view your group details.</p>
+                    </div>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h4>Meet Your Team</h4>
+                        <p>Connect with your group members. Exchange contacts and set up your communication channel.</p>
+                    </div>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h4>Elect Your Project Manager</h4>
+                        <p>Participate in the PM election when voting opens. The PM will lead your team to success!</p>
+                    </div>
+                </div>
+                
+                <div class="step">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                        <h4>Start Planning</h4>
+                        <p>Discuss project ideas with your team and prepare for the development phase.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <a href="{{ portal_url }}" class="cta-button">🎯 Access Code Quest Portal</a>
+            
+            {% if voting_start_date or submission_deadline %}
+            <div class="dates-section">
+                <h4>📅 Important Dates</h4>
+                {% if voting_start_date %}
+                <div class="date-row">
+                    <span class="date-label">PM Election Starts</span>
+                    <span class="date-value">{{ voting_start_date }}</span>
+                </div>
+                {% endif %}
+                {% if voting_end_date %}
+                <div class="date-row">
+                    <span class="date-label">PM Election Ends</span>
+                    <span class="date-value">{{ voting_end_date }}</span>
+                </div>
+                {% endif %}
+                {% if submission_deadline %}
+                <div class="date-row">
+                    <span class="date-label">Project Submission</span>
+                    <span class="date-value">{{ submission_deadline }}</span>
+                </div>
+                {% endif %}
+                {% if presentation_date %}
+                <div class="date-row">
+                    <span class="date-label">Presentation Day</span>
+                    <span class="date-value">{{ presentation_date }}</span>
+                </div>
+                {% endif %}
+            </div>
+            {% endif %}
+            
+            <p>If you have any questions, reach out to your consultant or the Code Quest organizers.</p>
+            
+            <p>Best of luck,<br><strong>The Code Quest Team</strong></p>
+        </div>
+        
+        <div class="footer">
+            <p>© {{ academic_year }} CSS KNUST - Code Quest</p>
+            <p>Computer Science Students' Society, KNUST</p>
+            <div class="social-links">
+                <a href="#">Website</a> |
+                <a href="#">Twitter</a> |
+                <a href="#">Instagram</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

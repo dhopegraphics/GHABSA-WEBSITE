@@ -1,0 +1,83 @@
+[
+  {
+    "model": "admissions.subjectgrademapping",
+    "pk": 1,
+    "fields": {
+      "grade": "A1",
+      "numerical_value": 1,
+      "description": "Excellent - 80-100%"
+    }
+  },
+  {
+    "model": "admissions.subjectgrademapping",
+    "pk": 2,
+    "fields": {
+      "grade": "B2",
+      "numerical_value": 2,
+      "description": "Very Good - 70-79%"
+    }
+  },
+  {
+    "model": "admissions.subjectgrademapping",
+    "pk": 3,
+    "fields": {
+      "grade": "B3",
+      "numerical_value": 3,
+      "description": "Good - 65-69%"
+    }
+  },
+  {
+    "model": "admissions.subjectgrademapping",
+    "pk": 4,
+    "fields": {
+      "grade": "C4",
+      "numerical_value": 4,
+      "description": "Credit - 60-64%"
+    }
+  },
+  {
+    "model": "admissions.subjectgrademapping",
+    "pk": 5,
+    "fields": {
+      "grade": "C5",
+      "numerical_value": 5,
+      "description": "Credit - 55-59%"
+    }
+  },
+  {
+    "model": "admissions.subjectgrademapping",
+    "pk": 6,
+    "fields": {
+      "grade": "C6",
+      "numerical_value": 6,
+      "description": "Credit - 50-54%"
+    }
+  },
+  {
+    "model": "admissions.subjectgrademapping",
+    "pk": 7,
+    "fields": {
+      "grade": "D7",
+      "numerical_value": 7,
+      "description": "Pass - 45-49%"
+    }
+  },
+  {
+    "model": "admissions.subjectgrademapping",
+    "pk": 8,
+    "fields": {
+      "grade": "E8",
+      "numerical_value": 8,
+      "description": "Pass - 40-44%"
+    }
+  },
+  {
+    "model": "admissions.subjectgrademapping",
+    "pk": 9,
+    "fields": {
+      "grade": "F9",
+      "numerical_value": 9,
+      "description": "Fail - Below 40%"
+    }
+  }
+]

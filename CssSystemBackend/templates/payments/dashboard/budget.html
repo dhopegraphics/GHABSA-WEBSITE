@@ -1,0 +1,325 @@
+{% extends "payments/dashboard_base.html" %}
+{% load static %}
+
+{% block title %}Budget Allocations{% endblock %}
+
+{% block content %}
+<!-- Header -->
+<header class="header">
+    <div class="header-left">
+        <h1>💰 Budget Allocations</h1>
+        <p>Track and manage budget allocations for expense categories</p>
+    </div>
+    <div class="header-right">
+        <button type="button" class="btn btn-primary" onclick="openAddModal()">
+            <i class="ri-add-line"></i>
+            Add Budget
+        </button>
+    </div>
+</header>
+
+<!-- Stats Cards -->
+<div class="stats-grid">
+    <div class="stat-card purple">
+        <div class="stat-card-header">
+            <div class="stat-card-icon">
+                <i class="ri-wallet-3-line"></i>
+            </div>
+        </div>
+        <div class="stat-card-value">GH₵ {{ total_allocated|floatformat:0|default:"0" }}</div>
+        <div class="stat-card-label">Total Allocated</div>
+    </div>
+
+    <div class="stat-card green">
+        <div class="stat-card-header">
+            <div class="stat-card-icon">
+                <i class="ri-funds-line"></i>
+            </div>
+        </div>
+        <div class="stat-card-value">GH₵ {{ total_remaining|floatformat:0|default:"0" }}</div>
+        <div class="stat-card-label">Remaining</div>
+    </div>
+
+    <div class="stat-card orange">
+        <div class="stat-card-header">
+            <div class="stat-card-icon">
+                <i class="ri-shopping-cart-line"></i>
+            </div>
+        </div>
+        <div class="stat-card-value">GH₵ {{ total_spent|floatformat:0|default:"0" }}</div>
+        <div class="stat-card-label">Total Spent</div>
+    </div>
+
+    <div class="stat-card blue">
+        <div class="stat-card-header">
+            <div class="stat-card-icon">
+                <i class="ri-pie-chart-line"></i>
+            </div>
+        </div>
+        <div class="stat-card-value">{{ utilization_rate|floatformat:0|default:"0" }}%</div>
+        <div class="stat-card-label">Utilization Rate</div>
+    </div>
+</div>
+
+<!-- Budget Overview Chart -->
+<div class="grid-2">
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">Budget vs Spent</h3>
+        </div>
+        <div style="padding: 20px; height: 300px;">
+            <canvas id="budgetChart"></canvas>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">Budget Utilization</h3>
+        </div>
+        <div style="padding: 20px; height: 300px;">
+            <canvas id="utilizationChart"></canvas>
+        </div>
+    </div>
+</div>
+
+<!-- Budget Allocations List -->
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">All Budget Allocations</h3>
+        <select class="filter-select" id="periodFilter" style="width: auto;">
+            <option value="">Current Period</option>
+            <option value="2024">2024</option>
+            <option value="2023">2023</option>
+        </select>
+    </div>
+
+    {% if budgets %}
+    <div class="table-container">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Category</th>
+                    <th>Period</th>
+                    <th>Allocated</th>
+                    <th>Spent</th>
+                    <th>Remaining</th>
+                    <th>Usage</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for budget in budgets %}
+                <tr>
+                    <td>
+                        <div class="info-row">
+                            <div class="info-icon" style="background: {{ budget.category.color|default:'#6366f1' }}20; color: {{ budget.category.color|default:'#6366f1' }};">
+                                {{ budget.category.icon|default:'📁' }}
+                            </div>
+                            <div class="info-details">
+                                <h4>{{ budget.category.name }}</h4>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <span style="font-weight: 500;">{{ budget.start_date|date:"M Y" }} - {{ budget.end_date|date:"M Y" }}</span>
+                    </td>
+                    <td>
+                        <span class="amount">GH₵ {{ budget.allocated_amount|floatformat:2 }}</span>
+                    </td>
+                    <td>
+                        <span class="amount amount-negative">GH₵ {{ budget.spent_amount|floatformat:2|default:'0.00' }}</span>
+                    </td>
+                    <td>
+                        <span class="amount {% if budget.remaining_amount >= 0 %}amount-positive{% else %}amount-negative{% endif %}">
+                            GH₵ {{ budget.remaining_amount|floatformat:2|default:budget.allocated_amount }}
+                        </span>
+                    </td>
+                    <td>
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <div class="progress-bar" style="flex: 1; height: 8px; background: var(--gray-200); border-radius: 4px; overflow: hidden;">
+                                {% widthratio budget.spent_amount budget.allocated_amount 100 as usage_pct %}
+                                <div class="progress-fill" style="height: 100%; width: {{ usage_pct|default:0 }}%; background: {% if usage_pct > 90 %}var(--danger){% elif usage_pct > 70 %}var(--warning){% else %}var(--success){% endif %}; border-radius: 4px;"></div>
+                            </div>
+                            <span style="font-size: 13px; font-weight: 600; width: 40px; text-align: right;">{{ usage_pct|default:0 }}%</span>
+                        </div>
+                    </td>
+                    <td>
+                        {% if budget.is_active %}
+                            {% if usage_pct > 100 %}
+                            <span class="badge badge-danger"><i class="ri-error-warning-line"></i> Over Budget</span>
+                            {% elif usage_pct > 90 %}
+                            <span class="badge badge-warning"><i class="ri-alert-line"></i> Critical</span>
+                            {% elif usage_pct > 70 %}
+                            <span class="badge badge-info"><i class="ri-information-line"></i> High</span>
+                            {% else %}
+                            <span class="badge badge-success"><i class="ri-checkbox-circle-line"></i> On Track</span>
+                            {% endif %}
+                        {% else %}
+                        <span class="badge badge-gray"><i class="ri-time-line"></i> Inactive</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <div class="action-btns">
+                            <button class="action-btn action-btn-edit" title="Edit"
+                                onclick="openEditModal({{ budget.id }}, {{ budget.category.id }}, '{{ budget.allocated_amount }}', '{{ budget.start_date|date:'Y-m-d' }}', '{{ budget.end_date|date:'Y-m-d' }}', '{{ budget.notes|escapejs|default:'' }}', {{ budget.is_active|yesno:'true,false' }})">
+                                <i class="ri-edit-line"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <div class="empty-state-icon"><i class="ri-wallet-3-line"></i></div>
+        <h3>No Budget Allocations</h3>
+        <p>Create budget allocations to track spending limits per category</p>
+        <button type="button" class="btn btn-primary" onclick="openAddModal()">
+            <i class="ri-add-line"></i> Add Budget
+        </button>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Add/Edit Budget Modal -->
+<div class="modal-overlay" id="budgetModal">
+    <div class="modal">
+        <div class="modal-header">
+            <h3 class="modal-title" id="modalTitle">➕ Add Budget Allocation</h3>
+            <button class="modal-close" onclick="closeBudgetModal()">
+                <i class="ri-close-line"></i>
+            </button>
+        </div>
+        <form id="budgetForm" method="POST" action="{% url 'payments:budget-add' %}">
+            {% csrf_token %}
+            <div class="modal-body">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">Category *</label>
+                        <select name="category" class="form-input" id="budgetCategory" required>
+                            <option value="">Select Category</option>
+                            {% for cat in categories %}
+                            <option value="{{ cat.id }}">{{ cat.icon }} {{ cat.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Allocated Amount (GH₵) *</label>
+                        <input type="number" name="allocated_amount" class="form-input" id="budgetAmount" required placeholder="0.00" step="0.01" min="0">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Start Date *</label>
+                        <input type="date" name="start_date" class="form-input" id="budgetStart" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">End Date *</label>
+                        <input type="date" name="end_date" class="form-input" id="budgetEnd" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Notes</label>
+                    <textarea name="notes" class="form-input" id="budgetNotes" rows="3" placeholder="Additional notes..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" name="is_active" id="budgetActive" checked>
+                        <span>Active</span>
+                    </label>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeBudgetModal()">Cancel</button>
+                <button type="submit" class="btn btn-primary">
+                    <i class="ri-save-line"></i> Save Budget
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Budget vs Spent Chart
+    const budgetCtx = document.getElementById('budgetChart').getContext('2d');
+    new Chart(budgetCtx, {
+        type: 'bar',
+        data: {
+            labels: [{% for b in budgets %}'{{ b.category.name|truncatechars:10 }}'{% if not forloop.last %}, {% endif %}{% endfor %}],
+            datasets: [
+                {
+                    label: 'Allocated',
+                    data: [{% for b in budgets %}{{ b.allocated_amount }}{% if not forloop.last %}, {% endif %}{% endfor %}],
+                    backgroundColor: 'rgba(99, 102, 241, 0.6)',
+                    borderColor: 'rgba(99, 102, 241, 1)',
+                    borderWidth: 1
+                },
+                {
+                    label: 'Spent',
+                    data: [{% for b in budgets %}{{ b.spent_amount|default:0 }}{% if not forloop.last %}, {% endif %}{% endfor %}],
+                    backgroundColor: 'rgba(239, 68, 68, 0.6)',
+                    borderColor: 'rgba(239, 68, 68, 1)',
+                    borderWidth: 1
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { position: 'bottom' } }
+        }
+    });
+
+    // Utilization Doughnut Chart
+    const utilCtx = document.getElementById('utilizationChart').getContext('2d');
+    new Chart(utilCtx, {
+        type: 'doughnut',
+        data: {
+            labels: ['Spent', 'Remaining'],
+            datasets: [{
+                data: [{{ total_spent|default:0 }}, {{ total_remaining|default:0 }}],
+                backgroundColor: ['rgba(239, 68, 68, 0.8)', 'rgba(34, 197, 94, 0.8)'],
+                borderWidth: 0
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { position: 'bottom' }
+            }
+        }
+    });
+
+    function openAddModal() {
+        document.getElementById('modalTitle').textContent = '➕ Add Budget Allocation';
+        document.getElementById('budgetForm').action = '{% url "payments:budget-add" %}';
+        document.getElementById('budgetForm').reset();
+        document.getElementById('budgetActive').checked = true;
+        document.getElementById('budgetModal').classList.add('active');
+    }
+
+    function openEditModal(id, categoryId, amount, startDate, endDate, notes, isActive) {
+        document.getElementById('modalTitle').textContent = '✏️ Edit Budget';
+        document.getElementById('budgetForm').action = '{% url "payments:budget-add" %}?edit=' + id;
+        document.getElementById('budgetCategory').value = categoryId;
+        document.getElementById('budgetAmount').value = amount;
+        document.getElementById('budgetStart').value = startDate;
+        document.getElementById('budgetEnd').value = endDate;
+        document.getElementById('budgetNotes').value = notes;
+        document.getElementById('budgetActive').checked = isActive;
+        document.getElementById('budgetModal').classList.add('active');
+    }
+
+    function closeBudgetModal() {
+        document.getElementById('budgetModal').classList.remove('active');
+        document.getElementById('modalTitle').textContent = '➕ Add Budget Allocation';
+        document.getElementById('budgetForm').action = '{% url "payments:budget-add" %}';
+        document.getElementById('budgetForm').reset();
+    }
+</script>
+{% endblock %}

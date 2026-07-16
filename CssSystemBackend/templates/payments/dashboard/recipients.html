@@ -1,0 +1,308 @@
+{% extends "payments/dashboard_base.html" %}
+{% load static %}
+
+{% block title %}Expense Recipients{% endblock %}
+
+{% block content %}
+<!-- Header -->
+<header class="header">
+    <div class="header-left">
+        <h1>👥 Expense Recipients</h1>
+        <p>Manage individuals and vendors receiving payments</p>
+    </div>
+    <div class="header-right">
+        <button type="button" class="btn btn-primary" onclick="openAddModal()">
+            <i class="ri-add-line"></i>
+            Add Recipient
+        </button>
+    </div>
+</header>
+
+<!-- Stats Cards -->
+<div class="stats-grid">
+    <div class="stat-card purple">
+        <div class="stat-card-header">
+            <div class="stat-card-icon">
+                <i class="ri-group-line"></i>
+            </div>
+        </div>
+        <div class="stat-card-value">{{ recipients|length }}</div>
+        <div class="stat-card-label">Total Recipients</div>
+    </div>
+
+    <div class="stat-card green">
+        <div class="stat-card-header">
+            <div class="stat-card-icon">
+                <i class="ri-check-line"></i>
+            </div>
+        </div>
+        <div class="stat-card-value">{{ active_count|default:"0" }}</div>
+        <div class="stat-card-label">Active</div>
+    </div>
+
+    <div class="stat-card blue">
+        <div class="stat-card-header">
+            <div class="stat-card-icon">
+                <i class="ri-user-line"></i>
+            </div>
+        </div>
+        <div class="stat-card-value">{{ individual_count|default:"0" }}</div>
+        <div class="stat-card-label">Individuals</div>
+    </div>
+
+    <div class="stat-card orange">
+        <div class="stat-card-header">
+            <div class="stat-card-icon">
+                <i class="ri-building-line"></i>
+            </div>
+        </div>
+        <div class="stat-card-value">{{ vendor_count|default:"0" }}</div>
+        <div class="stat-card-label">Vendors</div>
+    </div>
+</div>
+
+<!-- Filters -->
+<div class="card">
+    <div class="filters-bar">
+        <div class="search-input">
+            <i class="ri-search-line"></i>
+            <input type="text" id="searchInput" placeholder="Search recipients..." value="{{ search_query }}">
+        </div>
+        <select class="filter-select" id="typeFilter">
+            <option value="">All Types</option>
+            <option value="individual" {% if type_filter == 'individual' %}selected{% endif %}>Individual</option>
+            <option value="vendor" {% if type_filter == 'vendor' %}selected{% endif %}>Vendor</option>
+        </select>
+    </div>
+
+    {% if recipients %}
+    <div class="table-container">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Recipient</th>
+                    <th>Type</th>
+                    <th>Contact</th>
+                    <th>Payment Info</th>
+                    <th>Total Received</th>
+                    <th>Expenses</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for recipient in recipients %}
+                <tr>
+                    <td>
+                        <div class="info-row">
+                            <div class="info-icon" style="background: {% if recipient.is_vendor %}#8b5cf620{% else %}#6366f120{% endif %}; color: {% if recipient.is_vendor %}#8b5cf6{% else %}#6366f1{% endif %};">
+                                {% if recipient.is_vendor %}🏢{% else %}👤{% endif %}
+                            </div>
+                            <div class="info-details">
+                                <h4>{{ recipient.name }}</h4>
+                                <span>{{ recipient.email|default:'-' }}</span>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <span class="badge {% if recipient.is_vendor %}badge-info{% else %}badge-gray{% endif %}">
+                            {% if recipient.is_vendor %}Vendor{% else %}Individual{% endif %}
+                        </span>
+                    </td>
+                    <td>
+                        {% if recipient.phone %}
+                        <div style="font-size: 14px;"><i class="ri-phone-line"></i> {{ recipient.phone }}</div>
+                        {% endif %}
+                        {% if recipient.email %}
+                        <div style="font-size: 13px; color: var(--gray-500);"><i class="ri-mail-line"></i> {{ recipient.email|truncatechars:20 }}</div>
+                        {% endif %}
+                        {% if not recipient.phone and not recipient.email %}-{% endif %}
+                    </td>
+                    <td>
+                        {% if recipient.bank_name %}
+                        <div style="font-size: 14px;">🏦 {{ recipient.bank_name }}</div>
+                        <div style="font-size: 13px; color: var(--gray-500);">{{ recipient.account_number|default:'-' }}</div>
+                        {% elif recipient.momo_number %}
+                        <div style="font-size: 14px;">📱 {{ recipient.get_momo_provider_display|default:'MoMo' }}</div>
+                        <div style="font-size: 13px; color: var(--gray-500);">{{ recipient.momo_number }}</div>
+                        {% else %}
+                        <span class="badge badge-gray">Not Set</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <span class="amount amount-negative">GH₵ {{ recipient.total_received|floatformat:2|default:'0.00' }}</span>
+                    </td>
+                    <td>
+                        <span style="font-weight: 600; color: var(--primary);">{{ recipient.expense_count|default:0 }}</span>
+                    </td>
+                    <td>
+                        {% if recipient.is_active %}
+                        <span class="badge badge-success"><i class="ri-checkbox-circle-line"></i> Active</span>
+                        {% else %}
+                        <span class="badge badge-danger"><i class="ri-close-circle-line"></i> Inactive</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <div class="action-btns">
+                            <button class="action-btn action-btn-edit" title="Edit" 
+                                onclick="openEditModal('{{ recipient.id }}', '{{ recipient.name|escapejs }}', '{{ recipient.email|escapejs|default:"" }}', '{{ recipient.phone|escapejs|default:"" }}', '{{ recipient.bank_name|escapejs|default:"" }}', '{{ recipient.account_number|escapejs|default:"" }}', '{{ recipient.momo_number|escapejs|default:"" }}', '{{ recipient.momo_provider|default:"" }}', {{ recipient.is_vendor|yesno:'true,false' }}, {{ recipient.is_active|yesno:'true,false' }}, '{{ recipient.notes|escapejs|default:"" }}')">
+                                <i class="ri-edit-line"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <div class="empty-state-icon"><i class="ri-group-line"></i></div>
+        <h3>No Recipients Found</h3>
+        <p>{% if search_query or type_filter %}Try adjusting your filters{% else %}Add recipients to track expense payments{% endif %}</p>
+        <button type="button" class="btn btn-primary" onclick="openAddModal()">
+            <i class="ri-add-line"></i> Add Recipient
+        </button>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Add/Edit Recipient Modal -->
+<div class="modal-overlay" id="recipientModal">
+    <div class="modal">
+        <div class="modal-header">
+            <h3 class="modal-title" id="modalTitle">➕ Add Recipient</h3>
+            <button class="modal-close" onclick="closeRecipientModal()">
+                <i class="ri-close-line"></i>
+            </button>
+        </div>
+        <form id="recipientForm" method="POST" action="{% url 'payments:recipient-add' %}">
+            {% csrf_token %}
+            <div class="modal-body">
+                <div class="form-grid">
+                    <div class="form-group" style="grid-column: span 2;">
+                        <label class="form-label">Name *</label>
+                        <input type="text" name="name" class="form-input" id="recName" required placeholder="Full name or organization name">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Email</label>
+                        <input type="email" name="email" class="form-input" id="recEmail" placeholder="email@example.com">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Phone</label>
+                        <input type="tel" name="phone" class="form-input" id="recPhone" placeholder="0XX XXX XXXX">
+                    </div>
+                </div>
+                
+                <h4 style="margin: 20px 0 12px; color: var(--gray-700);">💳 Bank Details (Optional)</h4>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">Bank Name</label>
+                        <input type="text" name="bank_name" class="form-input" id="recBankName" placeholder="e.g., GCB Bank">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Account Number</label>
+                        <input type="text" name="account_number" class="form-input" id="recAccountNum" placeholder="XXXXXXXXXX">
+                    </div>
+                </div>
+
+                <h4 style="margin: 20px 0 12px; color: var(--gray-700);">📱 Mobile Money (Optional)</h4>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">MoMo Number</label>
+                        <input type="text" name="momo_number" class="form-input" id="recMomoNum" placeholder="0XX XXX XXXX">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Provider</label>
+                        <select name="momo_provider" class="form-input" id="recMomoProvider">
+                            <option value="">Select Provider</option>
+                            <option value="mtn">MTN Mobile Money</option>
+                            <option value="vodafone">Vodafone Cash</option>
+                            <option value="airteltigo">AirtelTigo Money</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group" style="margin-top: 16px;">
+                    <label class="form-label">Notes</label>
+                    <textarea name="notes" class="form-input" id="recNotes" rows="2" placeholder="Additional notes..."></textarea>
+                </div>
+
+                <div class="form-group" style="margin-top: 16px;">
+                    <label class="checkbox-label">
+                        <input type="checkbox" name="is_vendor" id="recIsVendor">
+                        <span>This is a Vendor/Supplier</span>
+                    </label>
+                </div>
+                <div class="form-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" name="is_active" id="recActive" checked>
+                        <span>Active</span>
+                    </label>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeRecipientModal()">Cancel</button>
+                <button type="submit" class="btn btn-primary">
+                    <i class="ri-save-line"></i> Save Recipient
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Filter functionality
+    const searchInput = document.getElementById('searchInput');
+    const typeFilter = document.getElementById('typeFilter');
+
+    function applyFilters() {
+        const search = searchInput.value;
+        const type = typeFilter.value;
+        
+        let url = '{% url "payments:expense-recipients" %}?';
+        if (search) url += 'q=' + encodeURIComponent(search) + '&';
+        if (type) url += 'type=' + type + '&';
+        
+        window.location.href = url;
+    }
+
+    searchInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') applyFilters();
+    });
+    typeFilter.addEventListener('change', applyFilters);
+
+    function openAddModal() {
+        document.getElementById('modalTitle').textContent = '➕ Add Recipient';
+        document.getElementById('recipientForm').action = '{% url "payments:recipient-add" %}';
+        document.getElementById('recipientForm').reset();
+        document.getElementById('recActive').checked = true;
+        document.getElementById('recipientModal').classList.add('active');
+    }
+
+    function openEditModal(id, name, email, phone, bankName, accountNum, momoNum, momoProvider, isVendor, isActive, notes) {
+        document.getElementById('modalTitle').textContent = '✏️ Edit Recipient';
+        document.getElementById('recipientForm').action = '{% url "payments:recipient-add" %}?edit=' + id;
+        document.getElementById('recName').value = name;
+        document.getElementById('recEmail').value = email;
+        document.getElementById('recPhone').value = phone;
+        document.getElementById('recBankName').value = bankName;
+        document.getElementById('recAccountNum').value = accountNum;
+        document.getElementById('recMomoNum').value = momoNum;
+        document.getElementById('recMomoProvider').value = momoProvider;
+        document.getElementById('recIsVendor').checked = isVendor;
+        document.getElementById('recActive').checked = isActive;
+        document.getElementById('recNotes').value = notes;
+        document.getElementById('recipientModal').classList.add('active');
+    }
+
+    function closeRecipientModal() {
+        document.getElementById('recipientModal').classList.remove('active');
+        document.getElementById('modalTitle').textContent = '➕ Add Recipient';
+        document.getElementById('recipientForm').action = '{% url "payments:recipient-add" %}';
+        document.getElementById('recipientForm').reset();
+    }
+</script>
+{% endblock %}

@@ -1,0 +1,277 @@
+{% extends "payments/dashboard_base.html" %}
+{% load static %}
+
+{% block title %}Account Balance{% endblock %}
+
+{% block content %}
+<!-- Header -->
+<header class="header">
+    <div class="header-left">
+        <h1>🏦 Account Balance</h1>
+        <p>Track organizational account balance and transactions</p>
+    </div>
+    <div class="header-right">
+        <button class="btn btn-primary" onclick="openDepositModal()">
+            <i class="ri-add-line"></i>
+            Add Deposit
+        </button>
+    </div>
+</header>
+
+<!-- Main Balance Card -->
+<div class="card" style="background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a855f7 100%); color: white; padding: 40px; text-align: center; margin-bottom: 24px;">
+    <div style="font-size: 14px; opacity: 0.9; margin-bottom: 8px;">CURRENT BALANCE</div>
+    <div style="font-size: 48px; font-weight: 700; margin-bottom: 16px;">GH₵ {{ current_balance|floatformat:2|default:"0.00" }}</div>
+    <div style="display: flex; justify-content: center; gap: 40px; font-size: 14px; opacity: 0.9;">
+        <div>
+            <i class="ri-arrow-up-line"></i> Total Deposits: <strong>GH₵ {{ total_deposits|floatformat:2|default:"0.00" }}</strong>
+        </div>
+        <div>
+            <i class="ri-arrow-down-line"></i> Total Withdrawals: <strong>GH₵ {{ total_withdrawals|floatformat:2|default:"0.00" }}</strong>
+        </div>
+    </div>
+    {% if balance_obj %}
+    <div style="margin-top: 16px; font-size: 13px; opacity: 0.8;">
+        Last updated: {{ balance_obj.updated_at|date:"M d, Y h:i A" }}
+    </div>
+    {% endif %}
+</div>
+
+<!-- Stats Cards -->
+<div class="stats-grid">
+    <div class="stat-card green">
+        <div class="stat-card-header">
+            <div class="stat-card-icon">
+                <i class="ri-arrow-up-circle-line"></i>
+            </div>
+        </div>
+        <div class="stat-card-value">GH₵ {{ month_deposits|floatformat:0|default:"0" }}</div>
+        <div class="stat-card-label">This Month Deposits</div>
+    </div>
+
+    <div class="stat-card red">
+        <div class="stat-card-header">
+            <div class="stat-card-icon">
+                <i class="ri-arrow-down-circle-line"></i>
+            </div>
+        </div>
+        <div class="stat-card-value">GH₵ {{ month_expenses|floatformat:0|default:"0" }}</div>
+        <div class="stat-card-label">This Month Expenses</div>
+    </div>
+
+    <div class="stat-card blue">
+        <div class="stat-card-header">
+            <div class="stat-card-icon">
+                <i class="ri-exchange-line"></i>
+            </div>
+        </div>
+        <div class="stat-card-value">{{ total_transactions|default:"0" }}</div>
+        <div class="stat-card-label">Total Transactions</div>
+    </div>
+
+    <div class="stat-card purple">
+        <div class="stat-card-header">
+            <div class="stat-card-icon">
+                <i class="ri-line-chart-line"></i>
+            </div>
+        </div>
+        <div class="stat-card-value">{% if net_flow >= 0 %}+{% endif %}GH₵ {{ net_flow|floatformat:0|default:"0" }}</div>
+        <div class="stat-card-label">Net Flow (This Month)</div>
+    </div>
+</div>
+
+<!-- Balance Trend Chart -->
+<div class="grid-2">
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">Balance Trend</h3>
+        </div>
+        <div style="padding: 20px; height: 300px;">
+            <canvas id="balanceChart"></canvas>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">Income vs Expenses</h3>
+        </div>
+        <div style="padding: 20px; height: 300px;">
+            <canvas id="flowChart"></canvas>
+        </div>
+    </div>
+</div>
+
+<!-- Transaction History -->
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">Transaction History</h3>
+        <select class="filter-select" id="txnTypeFilter" style="width: auto;">
+            <option value="">All Types</option>
+            <option value="deposit">Deposits</option>
+            <option value="expense">Expenses</option>
+        </select>
+    </div>
+
+    {% if transactions %}
+    <div class="table-container">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Description</th>
+                    <th>Type</th>
+                    <th>Amount</th>
+                    <th>Balance After</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for txn in transactions %}
+                <tr>
+                    <td>{{ txn.date|date:"M d, Y" }}</td>
+                    <td>
+                        <div class="info-details">
+                            <h4>{{ txn.description|truncatechars:40 }}</h4>
+                            {% if txn.reference %}
+                            <span style="font-size: 12px; color: var(--gray-500);">Ref: {{ txn.reference }}</span>
+                            {% endif %}
+                        </div>
+                    </td>
+                    <td>
+                        {% if txn.type == 'deposit' %}
+                        <span class="badge badge-success"><i class="ri-arrow-up-line"></i> Deposit</span>
+                        {% else %}
+                        <span class="badge badge-danger"><i class="ri-arrow-down-line"></i> Expense</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <span class="amount {% if txn.type == 'deposit' %}amount-positive{% else %}amount-negative{% endif %}">
+                            {% if txn.type == 'deposit' %}+{% else %}-{% endif %}GH₵ {{ txn.amount|floatformat:2 }}
+                        </span>
+                    </td>
+                    <td>
+                        <span style="font-weight: 600;">GH₵ {{ txn.balance_after|floatformat:2|default:'-' }}</span>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <div class="empty-state-icon"><i class="ri-exchange-line"></i></div>
+        <h3>No Transactions Yet</h3>
+        <p>Transactions will appear here as expenses are paid and deposits are made</p>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Add Deposit Modal -->
+<div class="modal-overlay" id="depositModal">
+    <div class="modal">
+        <div class="modal-header">
+            <h3 class="modal-title">💵 Add Deposit</h3>
+            <button class="modal-close" onclick="closeDepositModal()">
+                <i class="ri-close-line"></i>
+            </button>
+        </div>
+        <form method="POST" action="{% url 'payments:expense-balance' %}">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="deposit">
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">Amount (GH₵) *</label>
+                    <input type="number" name="amount" class="form-input" required placeholder="0.00" step="0.01" min="0.01">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Description *</label>
+                    <input type="text" name="description" class="form-input" required placeholder="e.g., Dues Collection, Sponsorship">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Reference Number</label>
+                    <input type="text" name="reference" class="form-input" placeholder="Transaction reference">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Date</label>
+                    <input type="date" name="date" class="form-input" value="{% now 'Y-m-d' %}">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeDepositModal()">Cancel</button>
+                <button type="submit" class="btn btn-primary">
+                    <i class="ri-add-line"></i> Add Deposit
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Balance Trend Chart
+    const balanceCtx = document.getElementById('balanceChart').getContext('2d');
+    new Chart(balanceCtx, {
+        type: 'line',
+        data: {
+            labels: {{ balance_dates|safe|default:'[]' }},
+            datasets: [{
+                label: 'Balance',
+                data: {{ balance_values|safe|default:'[]' }},
+                borderColor: '#6366f1',
+                backgroundColor: 'rgba(99, 102, 241, 0.1)',
+                fill: true,
+                tension: 0.4
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: {
+                y: { beginAtZero: true }
+            }
+        }
+    });
+
+    // Income vs Expenses Chart
+    const flowCtx = document.getElementById('flowChart').getContext('2d');
+    new Chart(flowCtx, {
+        type: 'bar',
+        data: {
+            labels: {{ monthly_labels|safe|default:'["Jan", "Feb", "Mar", "Apr", "May", "Jun"]' }},
+            datasets: [
+                {
+                    label: 'Deposits',
+                    data: {{ monthly_deposits|safe|default:'[0,0,0,0,0,0]' }},
+                    backgroundColor: 'rgba(34, 197, 94, 0.8)'
+                },
+                {
+                    label: 'Expenses',
+                    data: {{ monthly_expenses|safe|default:'[0,0,0,0,0,0]' }},
+                    backgroundColor: 'rgba(239, 68, 68, 0.8)'
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { position: 'bottom' } }
+        }
+    });
+
+    function openDepositModal() {
+        document.getElementById('depositModal').classList.add('active');
+    }
+
+    function closeDepositModal() {
+        document.getElementById('depositModal').classList.remove('active');
+    }
+
+    // Filter
+    document.getElementById('txnTypeFilter').addEventListener('change', function() {
+        const type = this.value;
+        window.location.href = '{% url "payments:expense-balance" %}' + (type ? '?type=' + type : '');
+    });
+</script>
+{% endblock %}

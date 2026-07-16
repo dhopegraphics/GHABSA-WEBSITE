@@ -1,0 +1,254 @@
+{% extends "payments/dashboard_base.html" %}
+{% load static %}
+
+{% block title %}All Expenses{% endblock %}
+
+{% block content %}
+<!-- Header -->
+<header class="header">
+    <div class="header-left">
+        <h1>📋 All Expenses</h1>
+        <p>View and manage all organizational expenses</p>
+    </div>
+    <div class="header-right">
+        <a href="{% url 'payments:expense-add' %}" class="btn btn-primary">
+            <i class="ri-add-line"></i>
+            Add Expense
+        </a>
+    </div>
+</header>
+
+<!-- Stats Cards -->
+<div class="stats-grid">
+    <div class="stat-card purple">
+        <div class="stat-card-header">
+            <div class="stat-card-icon">
+                <i class="ri-file-list-3-line"></i>
+            </div>
+        </div>
+        <div class="stat-card-value">{{ total_count|default:"0" }}</div>
+        <div class="stat-card-label">Total Expenses</div>
+    </div>
+
+    <div class="stat-card green">
+        <div class="stat-card-header">
+            <div class="stat-card-icon">
+                <i class="ri-checkbox-circle-line"></i>
+            </div>
+        </div>
+        <div class="stat-card-value">{{ paid_count|default:"0" }}</div>
+        <div class="stat-card-label">Paid</div>
+    </div>
+
+    <div class="stat-card orange">
+        <div class="stat-card-header">
+            <div class="stat-card-icon">
+                <i class="ri-time-line"></i>
+            </div>
+        </div>
+        <div class="stat-card-value">{{ pending_count|default:"0" }}</div>
+        <div class="stat-card-label">Pending</div>
+    </div>
+
+    <div class="stat-card red">
+        <div class="stat-card-header">
+            <div class="stat-card-icon">
+                <i class="ri-money-dollar-circle-line"></i>
+            </div>
+        </div>
+        <div class="stat-card-value">GH₵ {{ total_amount|floatformat:0|default:"0" }}</div>
+        <div class="stat-card-label">Total Spent</div>
+    </div>
+</div>
+
+<!-- Filters -->
+<div class="card">
+    <div class="filters-bar">
+        <div class="search-input">
+            <i class="ri-search-line"></i>
+            <input type="text" id="searchInput" placeholder="Search expenses..." value="{{ search_query }}">
+        </div>
+        <select class="filter-select" id="statusFilter">
+            <option value="">All Status</option>
+            <option value="pending" {% if status_filter == 'pending' %}selected{% endif %}>Pending</option>
+            <option value="approved" {% if status_filter == 'approved' %}selected{% endif %}>Approved</option>
+            <option value="paid" {% if status_filter == 'paid' %}selected{% endif %}>Paid</option>
+            <option value="rejected" {% if status_filter == 'rejected' %}selected{% endif %}>Rejected</option>
+        </select>
+        <select class="filter-select" id="categoryFilter">
+            <option value="">All Categories</option>
+            {% for cat in categories %}
+            <option value="{{ cat.id }}" {% if category_filter == cat.id|stringformat:"s" %}selected{% endif %}>{{ cat.icon }} {{ cat.name }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    {% if expenses %}
+    <div class="table-container">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Reference</th>
+                    <th>Title</th>
+                    <th>Category</th>
+                    <th>Recipient</th>
+                    <th>Amount</th>
+                    <th>Status</th>
+                    <th>Date</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for expense in expenses %}
+                <tr>
+                    <td>
+                        <code style="background: var(--gray-100); padding: 4px 8px; border-radius: 6px; font-size: 12px;">
+                            {{ expense.reference }}
+                        </code>
+                    </td>
+                    <td>
+                        <div class="info-row">
+                            <div class="info-icon" style="background: {{ expense.category.color|default:'#6366f1' }}20; color: {{ expense.category.color|default:'#6366f1' }};">
+                                {{ expense.category.icon|default:'💰' }}
+                            </div>
+                            <div class="info-details">
+                                <h4>{{ expense.title|truncatechars:25 }}</h4>
+                                <span>{{ expense.description|truncatechars:30|default:'-' }}</span>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        {% if expense.category %}
+                        <span class="category-badge" style="background: {{ expense.category.color }};">
+                            {{ expense.category.icon }} {{ expense.category.name }}
+                        </span>
+                        {% else %}-{% endif %}
+                    </td>
+                    <td>{{ expense.recipient.name|default:expense.recipient_name|default:'-' }}</td>
+                    <td>
+                        <span class="amount amount-negative">GH₵ {{ expense.amount|floatformat:2 }}</span>
+                    </td>
+                    <td>
+                        {% if expense.status == 'paid' %}
+                        <span class="badge badge-success"><i class="ri-checkbox-circle-line"></i> Paid</span>
+                        {% elif expense.status == 'pending' %}
+                        <span class="badge badge-warning"><i class="ri-time-line"></i> Pending</span>
+                        {% elif expense.status == 'approved' %}
+                        <span class="badge badge-info"><i class="ri-check-line"></i> Approved</span>
+                        {% elif expense.status == 'rejected' %}
+                        <span class="badge badge-danger"><i class="ri-close-line"></i> Rejected</span>
+                        {% else %}
+                        <span class="badge badge-gray">{{ expense.get_status_display }}</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ expense.expense_date|date:"M d, Y" }}</td>
+                    <td>
+                        <div class="action-btns">
+                            <a href="{% url 'payments:expense-edit' expense.id %}" class="action-btn action-btn-edit" title="Edit">
+                                <i class="ri-edit-line"></i>
+                            </a>
+                            <button class="action-btn action-btn-delete" title="Delete" onclick="confirmDelete('{{ expense.id }}', '{{ expense.title }}')">
+                                <i class="ri-delete-bin-line"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Pagination -->
+    {% if page_obj.has_other_pages %}
+    <div class="pagination">
+        {% if page_obj.has_previous %}
+        <a href="?page=1{% if search_query %}&q={{ search_query }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}">First</a>
+        <a href="?page={{ page_obj.previous_page_number }}{% if search_query %}&q={{ search_query }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}">Previous</a>
+        {% endif %}
+        
+        <span class="active">{{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+        
+        {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}{% if search_query %}&q={{ search_query }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}">Next</a>
+        <a href="?page={{ page_obj.paginator.num_pages }}{% if search_query %}&q={{ search_query }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}">Last</a>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    {% else %}
+    <div class="empty-state">
+        <div class="empty-state-icon"><i class="ri-file-list-line"></i></div>
+        <h3>No Expenses Found</h3>
+        <p>{% if search_query or status_filter %}Try adjusting your filters{% else %}Start by adding your first expense{% endif %}</p>
+        <a href="{% url 'payments:expense-add' %}" class="btn btn-primary">
+            <i class="ri-add-line"></i> Add Expense
+        </a>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal-overlay" id="deleteModal">
+    <div class="modal" style="max-width: 400px;">
+        <div class="modal-header">
+            <h3 class="modal-title">🗑️ Delete Expense</h3>
+            <button class="modal-close" onclick="closeDeleteModal()">
+                <i class="ri-close-line"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <p>Are you sure you want to delete <strong id="deleteExpenseTitle"></strong>?</p>
+            <p style="color: var(--gray-500); font-size: 14px; margin-top: 8px;">This action cannot be undone.</p>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" onclick="closeDeleteModal()">Cancel</button>
+            <form id="deleteForm" method="POST" style="display: inline;">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger">
+                    <i class="ri-delete-bin-line"></i> Delete
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Filter functionality
+    const searchInput = document.getElementById('searchInput');
+    const statusFilter = document.getElementById('statusFilter');
+    const categoryFilter = document.getElementById('categoryFilter');
+
+    function applyFilters() {
+        const search = searchInput.value;
+        const status = statusFilter.value;
+        const category = categoryFilter.value;
+        
+        let url = '{% url "payments:dashboard-expense-list" %}?';
+        if (search) url += 'q=' + encodeURIComponent(search) + '&';
+        if (status) url += 'status=' + status + '&';
+        if (category) url += 'category=' + category + '&';
+        
+        window.location.href = url;
+    }
+
+    searchInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') applyFilters();
+    });
+
+    statusFilter.addEventListener('change', applyFilters);
+    categoryFilter.addEventListener('change', applyFilters);
+
+    // Delete confirmation
+    function confirmDelete(id, title) {
+        document.getElementById('deleteExpenseTitle').textContent = title;
+        document.getElementById('deleteForm').action = '{% url "payments:expense-delete" "00000000-0000-0000-0000-000000000000" %}'.replace('00000000-0000-0000-0000-000000000000', id);
+        document.getElementById('deleteModal').classList.add('active');
+    }
+
+    function closeDeleteModal() {
+        document.getElementById('deleteModal').classList.remove('active');
+    }
+</script>
+{% endblock %}

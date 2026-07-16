@@ -1,0 +1,1120 @@
+{% extends "seller_admin/seller_base_site.html" %}
+{% load i18n static %}
+
+{% block extrastyle %}
+{{ block.super }}
+<style>
+    .store-container {
+        max-width: 1200px;
+    }
+
+    .page-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 32px;
+    }
+
+    .page-header h1 {
+        font-size: 28px;
+        font-weight: 800;
+        color: var(--gray-900);
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .page-header h1 i {
+        color: var(--primary);
+    }
+
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 12px 24px;
+        border-radius: 12px;
+        font-size: 14px;
+        font-weight: 600;
+        text-decoration: none;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        border: none;
+    }
+
+    .btn-primary,
+    .btn-primary:link,
+    .btn-primary:visited,
+    a.btn-primary {
+        background: var(--gradient-primary);
+        color: #ffffff !important;
+    }
+
+    .btn-primary:hover,
+    a.btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(124, 58, 237, 0.4);
+        color: #ffffff !important;
+    }
+
+    .btn-primary i {
+        color: #ffffff !important;
+    }
+
+    /* Store Profile Card */
+    .store-profile-card {
+        background: white;
+        border-radius: 24px;
+        border: 1px solid var(--gray-200);
+        overflow: hidden;
+        margin-bottom: 32px;
+    }
+
+    .store-banner {
+        height: 200px;
+        background: var(--gradient-primary);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .store-banner img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .store-banner-overlay {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(to top, rgba(0,0,0,0.5), transparent);
+    }
+
+    .store-info {
+        padding: 0 32px 32px;
+        position: relative;
+    }
+
+    .store-logo-wrapper {
+        position: relative;
+        width: 120px;
+        height: 120px;
+        margin-top: -60px;
+        margin-bottom: 20px;
+    }
+
+    .store-logo {
+        width: 120px;
+        height: 120px;
+        border-radius: 20px;
+        background: white;
+        border: 4px solid white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 48px;
+        font-weight: 800;
+        color: var(--primary);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+        overflow: hidden;
+    }
+
+    .store-logo img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .store-header {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 20px;
+    }
+
+    .store-details h2 {
+        font-size: 28px;
+        font-weight: 800;
+        color: var(--gray-900);
+        margin: 0 0 8px 0;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .verified-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        padding: 4px 10px;
+        background: linear-gradient(135deg, #10b981, #059669);
+        color: white;
+        font-size: 12px;
+        font-weight: 600;
+        border-radius: 50px;
+    }
+
+    .store-type {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 14px;
+        background: var(--gray-100);
+        color: var(--gray-600);
+        font-size: 13px;
+        font-weight: 600;
+        border-radius: 50px;
+        margin-bottom: 12px;
+    }
+
+    .store-description {
+        font-size: 15px;
+        color: var(--gray-600);
+        line-height: 1.7;
+        max-width: 600px;
+    }
+
+    .store-status {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .status-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 8px 16px;
+        border-radius: 50px;
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    .status-badge.active {
+        background: rgba(16, 185, 129, 0.15);
+        color: #059669;
+    }
+
+    .status-badge.vacation {
+        background: rgba(245, 158, 11, 0.15);
+        color: #d97706;
+    }
+
+    .status-badge.inactive {
+        background: rgba(107, 114, 128, 0.15);
+        color: #6b7280;
+    }
+
+    /* Stats Grid */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+        margin-bottom: 32px;
+    }
+
+    .stat-card {
+        background: white;
+        border-radius: 20px;
+        padding: 24px;
+        border: 1px solid var(--gray-200);
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        transition: all 0.2s ease;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08);
+    }
+
+    .stat-icon {
+        width: 60px;
+        height: 60px;
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 26px;
+    }
+
+    .stat-icon.purple {
+        background: linear-gradient(135deg, rgba(124, 58, 237, 0.15), rgba(139, 92, 246, 0.1));
+        color: var(--primary);
+    }
+
+    .stat-icon.green {
+        background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(52, 211, 153, 0.1));
+        color: var(--success);
+    }
+
+    .stat-icon.blue {
+        background: linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(96, 165, 250, 0.1));
+        color: #3B82F6;
+    }
+
+    .stat-icon.yellow {
+        background: linear-gradient(135deg, rgba(245, 158, 11, 0.15), rgba(251, 191, 36, 0.1));
+        color: var(--warning);
+    }
+
+    .stat-content h4 {
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--gray-500);
+        margin: 0 0 6px 0;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .stat-content .value {
+        font-size: 28px;
+        font-weight: 800;
+        color: var(--gray-900);
+    }
+
+    .stat-content .value small {
+        font-size: 14px;
+        font-weight: 500;
+        color: var(--gray-500);
+    }
+
+    /* Quick Actions */
+    .quick-actions {
+        background: white;
+        border-radius: 20px;
+        border: 1px solid var(--gray-200);
+        padding: 28px;
+    }
+
+    .quick-actions h3 {
+        font-size: 18px;
+        font-weight: 700;
+        color: var(--gray-800);
+        margin: 0 0 20px 0;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .quick-actions h3 i {
+        color: var(--primary);
+    }
+
+    .actions-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 16px;
+    }
+
+    .action-card {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        padding: 20px;
+        background: var(--gray-50);
+        border-radius: 14px;
+        text-decoration: none;
+        transition: all 0.2s ease;
+        border: 2px solid transparent;
+    }
+
+    .action-card:hover {
+        background: white;
+        border-color: var(--primary);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(124, 58, 237, 0.1);
+    }
+
+    .action-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 20px;
+        background: var(--gradient-primary);
+        color: white;
+    }
+
+    .action-content h4 {
+        font-size: 15px;
+        font-weight: 600;
+        color: var(--gray-800);
+        margin: 0 0 4px 0;
+    }
+
+    .action-content p {
+        font-size: 13px;
+        color: var(--gray-500);
+        margin: 0;
+    }
+
+    /* Rating Stars */
+    .rating-stars {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+    }
+
+    .rating-stars i {
+        font-size: 16px;
+        color: #fbbf24;
+    }
+
+    .rating-stars i.empty {
+        color: var(--gray-300);
+    }
+
+    /* Store Details Grid */
+    .store-details-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 24px;
+        margin-bottom: 32px;
+    }
+
+    .details-card {
+        background: white;
+        border-radius: 20px;
+        border: 1px solid var(--gray-200);
+        overflow: hidden;
+    }
+
+    .details-card-header {
+        padding: 20px 24px;
+        border-bottom: 1px solid var(--gray-100);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .details-card-header h3 {
+        font-size: 16px;
+        font-weight: 700;
+        color: var(--gray-800);
+        margin: 0;
+    }
+
+    .details-card-header i {
+        color: var(--primary);
+        font-size: 20px;
+    }
+
+    .details-card-body {
+        padding: 20px 24px;
+    }
+
+    .detail-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 14px;
+        padding: 14px 0;
+        border-bottom: 1px solid var(--gray-100);
+    }
+
+    .detail-item:last-child {
+        border-bottom: none;
+        padding-bottom: 0;
+    }
+
+    .detail-item:first-child {
+        padding-top: 0;
+    }
+
+    .detail-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
+        background: var(--gray-100);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--gray-600);
+        font-size: 18px;
+        flex-shrink: 0;
+    }
+
+    .detail-content {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .detail-content label {
+        display: block;
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--gray-500);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 4px;
+    }
+
+    .detail-content p {
+        font-size: 14px;
+        color: var(--gray-800);
+        margin: 0;
+        word-break: break-word;
+    }
+
+    .detail-content p.muted {
+        color: var(--gray-400);
+        font-style: italic;
+    }
+
+    .detail-content a {
+        color: var(--primary);
+        text-decoration: none;
+    }
+
+    .detail-content a:hover {
+        text-decoration: underline;
+    }
+
+    .store-url-box {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        background: var(--gray-50);
+        padding: 12px 16px;
+        border-radius: 10px;
+        margin-top: 8px;
+    }
+
+    .store-url-box code {
+        font-size: 13px;
+        color: var(--gray-700);
+        flex: 1;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .store-url-box code .slug {
+        color: var(--primary);
+        font-weight: 600;
+    }
+
+    .copy-url-btn {
+        padding: 6px 12px;
+        background: white;
+        border: 1px solid var(--gray-200);
+        border-radius: 6px;
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--gray-600);
+        cursor: pointer;
+        transition: all 0.2s ease;
+        white-space: nowrap;
+    }
+
+    .copy-url-btn:hover {
+        background: var(--primary);
+        color: white;
+        border-color: var(--primary);
+    }
+
+    .social-links-row {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+    }
+
+    .social-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 16px;
+        background: var(--gray-50);
+        border-radius: 10px;
+        text-decoration: none;
+        color: var(--gray-700);
+        font-size: 14px;
+        font-weight: 500;
+        transition: all 0.2s ease;
+    }
+
+    .social-link:hover {
+        background: var(--primary);
+        color: white;
+    }
+
+    .social-link i {
+        font-size: 18px;
+    }
+
+    .policy-preview {
+        background: var(--gray-50);
+        padding: 14px 16px;
+        border-radius: 10px;
+        font-size: 13px;
+        color: var(--gray-600);
+        line-height: 1.6;
+        margin-top: 8px;
+    }
+
+    .notification-badges {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .notif-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 12px;
+        border-radius: 50px;
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+    .notif-badge.on {
+        background: rgba(16, 185, 129, 0.15);
+        color: #059669;
+    }
+
+    .notif-badge.off {
+        background: var(--gray-100);
+        color: var(--gray-500);
+    }
+
+    /* Toggle Button */
+    .btn-toggle {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 8px 16px;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 600;
+        border: 1px solid var(--gray-200);
+        background: white;
+        color: var(--gray-700);
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .btn-toggle:hover {
+        background: var(--gray-50);
+        border-color: var(--gray-300);
+    }
+
+    .btn-toggle.active {
+        background: rgba(16, 185, 129, 0.1);
+        border-color: #10b981;
+        color: #059669;
+    }
+
+    .btn-toggle.active:hover {
+        background: rgba(16, 185, 129, 0.2);
+    }
+
+    /* Hide Django elements */
+    #changelist, .changelist-form, #toolbar, .actions {
+        display: none !important;
+    }
+</style>
+{% endblock %}
+
+{% block breadcrumbs %}
+<a href="{% url 'seller_admin:index' %}">Dashboard</a>
+<span>/</span>
+<span>My Store</span>
+{% endblock %}
+
+{% block content %}
+<div class="store-container">
+    <div class="page-header">
+        <h1>
+            <i class="ri-store-3-line"></i>
+            My Store
+        </h1>
+        {% for seller in cl.result_list %}
+        <a href="{% url 'seller_admin:el_mercado_seller_change' seller.pk %}" class="btn btn-primary">
+            <i class="ri-edit-line"></i>
+            Edit Store Profile
+        </a>
+        {% endfor %}
+    </div>
+
+    {% for seller in cl.result_list %}
+    <!-- Store Profile Card -->
+    <div class="store-profile-card">
+        <div class="store-banner">
+            {% if seller.banner %}
+            <img src="{{ seller.banner.url }}" alt="Store Banner">
+            {% endif %}
+            <div class="store-banner-overlay"></div>
+        </div>
+        <div class="store-info">
+            <div class="store-logo-wrapper">
+                <div class="store-logo">
+                    {% if seller.logo %}
+                    <img src="{{ seller.logo.url }}" alt="{{ seller.display_name }}">
+                    {% else %}
+                    {{ seller.display_name|slice:":2"|upper }}
+                    {% endif %}
+                </div>
+            </div>
+            <div class="store-header">
+                <div class="store-details">
+                    <h2>
+                        {{ seller.display_name }}
+                        {% if seller.is_verified %}
+                        <span class="verified-badge">
+                            <i class="ri-verified-badge-fill"></i>
+                            Verified
+                        </span>
+                        {% endif %}
+                    </h2>
+                    <span class="store-type">
+                        <i class="ri-{% if seller.seller_type == 'BUSINESS' %}building-line{% else %}user-line{% endif %}"></i>
+                        {{ seller.get_seller_type_display }}
+                    </span>
+                    {% if seller.description %}
+                    <p class="store-description">{{ seller.description|truncatewords:50 }}</p>
+                    {% endif %}
+                </div>
+                <div class="store-status">
+                    {% if seller.vacation_mode %}
+                    <span class="status-badge vacation">
+                        <i class="ri-plane-line"></i>
+                        Vacation Mode
+                    </span>
+                    {% elif seller.status == 'ACTIVE' %}
+                    <span class="status-badge active">
+                        <i class="ri-checkbox-circle-fill"></i>
+                        Active
+                    </span>
+                    {% else %}
+                    <span class="status-badge inactive">
+                        <i class="ri-pause-circle-fill"></i>
+                        {{ seller.get_status_display }}
+                    </span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stats Grid -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-icon yellow">
+                <i class="ri-star-fill"></i>
+            </div>
+            <div class="stat-content">
+                <h4>Rating</h4>
+                <div class="value">
+                    {{ seller.average_rating|floatformat:1 }}
+                    <small>/ 5.0</small>
+                </div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon purple">
+                <i class="ri-message-3-line"></i>
+            </div>
+            <div class="stat-content">
+                <h4>Reviews</h4>
+                <div class="value">{{ seller.total_reviews }}</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon green">
+                <i class="ri-shopping-bag-3-line"></i>
+            </div>
+            <div class="stat-content">
+                <h4>Total Sales</h4>
+                <div class="value">{{ seller.total_sales }}</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon blue">
+                <i class="ri-percent-line"></i>
+            </div>
+            <div class="stat-content">
+                <h4>Commission Rate</h4>
+                <div class="value">{{ seller.commission_rate }}%</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Store Details Grid -->
+    <div class="store-details-grid">
+        <!-- Contact & Store Info -->
+        <div class="details-card">
+            <div class="details-card-header">
+                <i class="ri-information-line"></i>
+                <h3>Store Information</h3>
+            </div>
+            <div class="details-card-body">
+                <div class="detail-item">
+                    <div class="detail-icon">
+                        <i class="ri-mail-line"></i>
+                    </div>
+                    <div class="detail-content">
+                        <label>Contact Email</label>
+                        <p><a href="mailto:{{ seller.email }}">{{ seller.email }}</a></p>
+                    </div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-icon">
+                        <i class="ri-phone-line"></i>
+                    </div>
+                    <div class="detail-content">
+                        <label>Phone Number</label>
+                        <p><a href="tel:{{ seller.phone }}">{{ seller.phone }}</a></p>
+                    </div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-icon">
+                        <i class="ri-link"></i>
+                    </div>
+                    <div class="detail-content">
+                        <label>Store URL</label>
+                        <div class="store-url-box">
+                            <code>{{ FRONTEND_URL|default:"https://thecssknust.com" }}/el-mercado/store/<span class="slug">{{ seller.slug }}</span></code>
+                            <button type="button" class="copy-url-btn" onclick="copyStoreUrl('{{ seller.slug }}')">
+                                <i class="ri-file-copy-line"></i> Copy
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-icon">
+                        <i class="ri-calendar-line"></i>
+                    </div>
+                    <div class="detail-content">
+                        <label>Member Since</label>
+                        <p>{{ seller.created_at|date:"F j, Y" }}</p>
+                    </div>
+                </div>
+                {% if seller.application and seller.application.tracking_code %}
+                <div class="detail-item">
+                    <div class="detail-icon" style="background: linear-gradient(135deg, rgba(124, 58, 237, 0.15), rgba(139, 92, 246, 0.1)); color: var(--primary);">
+                        <i class="ri-barcode-line"></i>
+                    </div>
+                    <div class="detail-content">
+                        <label>Seller Tracking Code</label>
+                        <div class="store-url-box" style="margin-top: 0;">
+                            <code style="font-size: 16px; letter-spacing: 2px; font-weight: 700; color: var(--primary);">{{ seller.application.tracking_code }}</code>
+                            <button type="button" class="copy-url-btn" onclick="copyTrackingCode('{{ seller.application.tracking_code }}')">
+                                <i class="ri-file-copy-line"></i> Copy
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Social Links -->
+        <div class="details-card">
+            <div class="details-card-header">
+                <i class="ri-share-line"></i>
+                <h3>Social Links</h3>
+            </div>
+            <div class="details-card-body">
+                {% if seller.instagram or seller.twitter or seller.facebook or seller.website %}
+                <div class="social-links-row">
+                    {% if seller.instagram %}
+                    <a href="https://instagram.com/{{ seller.instagram }}" target="_blank" class="social-link">
+                        <i class="ri-instagram-line"></i>
+                        @{{ seller.instagram }}
+                    </a>
+                    {% endif %}
+                    {% if seller.twitter %}
+                    <a href="https://x.com/{{ seller.twitter }}" target="_blank" class="social-link">
+                        <i class="ri-twitter-x-line"></i>
+                        @{{ seller.twitter }}
+                    </a>
+                    {% endif %}
+                    {% if seller.facebook %}
+                    <a href="https://facebook.com/{{ seller.facebook }}" target="_blank" class="social-link">
+                        <i class="ri-facebook-circle-line"></i>
+                        {{ seller.facebook }}
+                    </a>
+                    {% endif %}
+                    {% if seller.website %}
+                    <a href="{{ seller.website }}" target="_blank" class="social-link">
+                        <i class="ri-global-line"></i>
+                        Website
+                    </a>
+                    {% endif %}
+                </div>
+                {% else %}
+                <div class="detail-item" style="padding: 0;">
+                    <div class="detail-icon">
+                        <i class="ri-links-line"></i>
+                    </div>
+                    <div class="detail-content">
+                        <p class="muted">No social links added yet</p>
+                        <p style="margin-top: 8px;"><a href="{% url 'seller_admin:el_mercado_seller_change' seller.pk %}">Add social links →</a></p>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Store Policies -->
+        <div class="details-card">
+            <div class="details-card-header">
+                <i class="ri-file-shield-2-line"></i>
+                <h3>Store Policies</h3>
+            </div>
+            <div class="details-card-body">
+                <div class="detail-item">
+                    <div class="detail-icon">
+                        <i class="ri-truck-line"></i>
+                    </div>
+                    <div class="detail-content">
+                        <label>Shipping Policy</label>
+                        {% if seller.shipping_policy %}
+                        <div class="policy-preview">{{ seller.shipping_policy|truncatewords:30 }}</div>
+                        {% else %}
+                        <p class="muted">Not set</p>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-icon">
+                        <i class="ri-refresh-line"></i>
+                    </div>
+                    <div class="detail-content">
+                        <label>Return Policy</label>
+                        {% if seller.return_policy %}
+                        <div class="policy-preview">{{ seller.return_policy|truncatewords:30 }}</div>
+                        {% else %}
+                        <p class="muted">Not set</p>
+                        {% endif %}
+                    </div>
+                </div>
+                {% if not seller.shipping_policy or not seller.return_policy %}
+                <p style="margin-top: 12px; font-size: 13px;"><a href="{% url 'seller_admin:el_mercado_seller_change' seller.pk %}"><i class="ri-edit-line"></i> Update policies →</a></p>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Notification Settings -->
+        <div class="details-card">
+            <div class="details-card-header">
+                <i class="ri-notification-3-line"></i>
+                <h3>Notification Preferences</h3>
+            </div>
+            <div class="details-card-body">
+                <div class="notification-badges">
+                    <span class="notif-badge {% if seller.notify_new_orders %}on{% else %}off{% endif %}">
+                        <i class="ri-{% if seller.notify_new_orders %}checkbox-circle-fill{% else %}close-circle-line{% endif %}"></i>
+                        Orders
+                    </span>
+                    <span class="notif-badge {% if seller.notify_messages %}on{% else %}off{% endif %}">
+                        <i class="ri-{% if seller.notify_messages %}checkbox-circle-fill{% else %}close-circle-line{% endif %}"></i>
+                        Messages
+                    </span>
+                    <span class="notif-badge {% if seller.notify_reviews %}on{% else %}off{% endif %}">
+                        <i class="ri-{% if seller.notify_reviews %}checkbox-circle-fill{% else %}close-circle-line{% endif %}"></i>
+                        Reviews
+                    </span>
+                    <span class="notif-badge {% if seller.notify_low_stock %}on{% else %}off{% endif %}">
+                        <i class="ri-{% if seller.notify_low_stock %}checkbox-circle-fill{% else %}close-circle-line{% endif %}"></i>
+                        Low Stock
+                    </span>
+                    <span class="notif-badge {% if seller.notify_payouts %}on{% else %}off{% endif %}">
+                        <i class="ri-{% if seller.notify_payouts %}checkbox-circle-fill{% else %}close-circle-line{% endif %}"></i>
+                        Payouts
+                    </span>
+                </div>
+                <p style="margin-top: 16px; font-size: 13px;"><a href="{% url 'seller_admin:el_mercado_seller_change' seller.pk %}"><i class="ri-settings-3-line"></i> Manage notifications →</a></p>
+            </div>
+        </div>
+
+        <!-- Order Settings -->
+        <div class="details-card">
+            <div class="details-card-header">
+                <i class="ri-shopping-cart-2-line"></i>
+                <h3>Order Settings</h3>
+            </div>
+            <div class="details-card-body">
+                <div class="detail-item">
+                    <div class="detail-icon">
+                        <i class="ri-checkbox-circle-line"></i>
+                    </div>
+                    <div class="detail-content">
+                        <label>Auto-Accept Orders</label>
+                        <p>
+                            <span class="notif-badge {% if seller.auto_accept_orders %}on{% else %}off{% endif %}" style="margin: 0;">
+                                <i class="ri-{% if seller.auto_accept_orders %}checkbox-circle-fill{% else %}close-circle-line{% endif %}"></i>
+                                {% if seller.auto_accept_orders %}Enabled{% else %}Disabled{% endif %}
+                            </span>
+                        </p>
+                        <p class="muted" style="margin-top: 8px; font-size: 12px;">
+                            {% if seller.auto_accept_orders %}
+                            New paid orders will be automatically accepted and moved to processing.
+                            {% else %}
+                            You will need to manually accept each incoming order.
+                            {% endif %}
+                        </p>
+                    </div>
+                </div>
+                <div style="margin-top: 16px; display: flex; gap: 12px; flex-wrap: wrap;">
+                    <form method="post" action="{% url 'seller_admin:toggle_auto_accept' %}" style="margin: 0;">
+                        {% csrf_token %}
+                        <button type="submit" class="btn-toggle {% if seller.auto_accept_orders %}active{% endif %}">
+                            {% if seller.auto_accept_orders %}
+                            <i class="ri-toggle-fill"></i> Turn Off Auto-Accept
+                            {% else %}
+                            <i class="ri-toggle-line"></i> Turn On Auto-Accept
+                            {% endif %}
+                        </button>
+                    </form>
+                    <a href="{% url 'seller_admin:el_mercado_seller_change' seller.pk %}" class="btn-toggle" style="text-decoration: none;">
+                        <i class="ri-settings-3-line"></i> More Settings
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="store-profile-card" style="padding: 60px; text-align: center;">
+        <i class="ri-store-3-line" style="font-size: 64px; color: var(--gray-300); margin-bottom: 20px;"></i>
+        <h3 style="color: var(--gray-600); margin: 0;">No Store Profile Found</h3>
+        <p style="color: var(--gray-500); margin-top: 8px;">Please contact support if you believe this is an error.</p>
+    </div>
+    {% endfor %}
+
+    <!-- Quick Actions -->
+    <div class="quick-actions">
+        <h3>
+            <i class="ri-flashlight-line"></i>
+            Quick Actions
+        </h3>
+        <div class="actions-grid">
+            <a href="{% url 'seller_admin:el_mercado_listing_add' %}" class="action-card">
+                <div class="action-icon">
+                    <i class="ri-add-line"></i>
+                </div>
+                <div class="action-content">
+                    <h4>Add New Listing</h4>
+                    <p>Create a new product listing</p>
+                </div>
+            </a>
+            <a href="{% url 'seller_admin:el_mercado_listing_changelist' %}" class="action-card">
+                <div class="action-icon">
+                    <i class="ri-store-2-line"></i>
+                </div>
+                <div class="action-content">
+                    <h4>Manage Listings</h4>
+                    <p>View and edit your products</p>
+                </div>
+            </a>
+            <a href="{% url 'seller_admin:el_mercado_marketplaceorder_changelist' %}" class="action-card">
+                <div class="action-icon">
+                    <i class="ri-shopping-cart-2-line"></i>
+                </div>
+                <div class="action-content">
+                    <h4>View Orders</h4>
+                    <p>Manage customer orders</p>
+                </div>
+            </a>
+            <a href="{% url 'seller_admin:el_mercado_sellerwallet_changelist' %}" class="action-card">
+                <div class="action-icon">
+                    <i class="ri-wallet-3-line"></i>
+                </div>
+                <div class="action-content">
+                    <h4>My Wallet</h4>
+                    <p>Check earnings & payouts</p>
+                </div>
+            </a>
+            {% for seller in cl.result_list %}
+            <a href="{% url 'seller_admin:el_mercado_seller_change' seller.pk %}" class="action-card">
+                <div class="action-icon">
+                    <i class="ri-settings-4-line"></i>
+                </div>
+                <div class="action-content">
+                    <h4>Store Settings</h4>
+                    <p>Edit profile & preferences</p>
+                </div>
+            </a>
+            {% endfor %}
+            <a href="{% url 'seller_admin:el_mercado_review_changelist' %}" class="action-card">
+                <div class="action-icon">
+                    <i class="ri-star-line"></i>
+                </div>
+                <div class="action-content">
+                    <h4>Reviews</h4>
+                    <p>See customer feedback</p>
+                </div>
+            </a>
+            <a href="{{ FRONTEND_URL|default:'https://thecssknust.com' }}/el-mercado/seller-guide" target="_blank" class="action-card">
+                <div class="action-icon">
+                    <i class="ri-book-open-line"></i>
+                </div>
+                <div class="action-content">
+                    <h4>Seller Guide</h4>
+                    <p>Learn how to sell effectively</p>
+                </div>
+            </a>
+            <a href="{{ FRONTEND_URL|default:'https://thecssknust.com' }}/el_mercado/commission-policy" target="_blank" class="action-card">
+                <div class="action-icon">
+                    <i class="ri-percent-line"></i>
+                </div>
+                <div class="action-content">
+                    <h4>Commission Policy</h4>
+                    <p>Understand fees & earnings</p>
+                </div>
+            </a>
+            <a href="{{ FRONTEND_URL|default:'https://thecssknust.com' }}/el_mercado/seller-terms" target="_blank" class="action-card">
+                <div class="action-icon">
+                    <i class="ri-file-list-3-line"></i>
+                </div>
+                <div class="action-content">
+                    <h4>Terms & Policies</h4>
+                    <p>Review seller agreements</p>
+                </div>
+            </a>
+        </div>
+    </div>
+</div>
+
+<script>
+function copyStoreUrl(slug) {
+    const url = '{{ FRONTEND_URL|default:"https://thecssknust.com" }}/el-mercado/store/' + slug;
+    navigator.clipboard.writeText(url).then(() => {
+        const btn = event.target.closest('.copy-url-btn');
+        const originalHtml = btn.innerHTML;
+        btn.innerHTML = '<i class="ri-check-line"></i> Copied!';
+        btn.style.background = 'var(--success)';
+        btn.style.color = 'white';
+        btn.style.borderColor = 'var(--success)';
+        setTimeout(() => {
+            btn.innerHTML = originalHtml;
+            btn.style.background = '';
+            btn.style.color = '';
+            btn.style.borderColor = '';
+        }, 2000);
+    });
+}
+
+function copyTrackingCode(code) {
+    navigator.clipboard.writeText(code).then(() => {
+        const btn = event.target.closest('.copy-url-btn');
+        const originalHtml = btn.innerHTML;
+        btn.innerHTML = '<i class="ri-check-line"></i> Copied!';
+        btn.style.background = 'var(--success)';
+        btn.style.color = 'white';
+        btn.style.borderColor = 'var(--success)';
+        setTimeout(() => {
+            btn.innerHTML = originalHtml;
+            btn.style.background = '';
+            btn.style.color = '';
+            btn.style.borderColor = '';
+        }, 2000);
+    });
+}
+</script>
+{% endblock %}

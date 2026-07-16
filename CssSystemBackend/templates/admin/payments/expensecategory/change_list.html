@@ -1,0 +1,65 @@
+{% extends "admin/payments/expense_base.html" %}
+{% load static i18n admin_urls %}
+
+{% block expense_header %}
+<div class="expense-module-header">
+    <div class="module-header-top">
+        <div class="module-title">
+            <div class="module-icon orange">
+                <i class="ri-folder-3-line"></i>
+            </div>
+            <div class="module-info">
+                <h2>📁 Expense Categories</h2>
+                <p>Organize and classify your expenses with custom categories</p>
+            </div>
+        </div>
+        <div class="module-actions">
+            <a href="{% url 'payments:expense-dashboard' %}" class="btn-modern btn-secondary-modern">
+                <i class="ri-dashboard-3-line"></i> Dashboard
+            </a>
+            <a href="{% url 'admin:payments_expensecategory_add' %}" class="btn-modern btn-primary-modern">
+                <i class="ri-add-line"></i> Add Category
+            </a>
+        </div>
+    </div>
+    
+    <div class="quick-stats">
+        <div class="quick-stat">
+            <div class="quick-stat-icon orange">
+                <i class="ri-folder-line"></i>
+            </div>
+            <div class="quick-stat-info">
+                <h4>{{ total_categories|default:"0" }}</h4>
+                <span>Total Categories</span>
+            </div>
+        </div>
+        <div class="quick-stat">
+            <div class="quick-stat-icon green">
+                <i class="ri-checkbox-circle-line"></i>
+            </div>
+            <div class="quick-stat-info">
+                <h4>{{ active_count|default:"0" }}</h4>
+                <span>Active</span>
+            </div>
+        </div>
+        <div class="quick-stat">
+            <div class="quick-stat-icon purple">
+                <i class="ri-file-list-3-line"></i>
+            </div>
+            <div class="quick-stat-info">
+                <h4>{{ total_expenses|default:"0" }}</h4>
+                <span>Linked Expenses</span>
+            </div>
+        </div>
+        <div class="quick-stat">
+            <div class="quick-stat-icon blue">
+                <i class="ri-pie-chart-line"></i>
+            </div>
+            <div class="quick-stat-info">
+                <h4>{{ with_budget|default:"0" }}</h4>
+                <span>With Budget</span>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

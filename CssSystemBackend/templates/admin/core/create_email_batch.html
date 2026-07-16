@@ -1,0 +1,567 @@
+{% extends "admin/base_site.html" %}
+{% load static %}
+
+{% block title %}Create Email Batch - {{ site_title }}{% endblock %}
+
+{% block extrastyle %}
+<style>
+    .batch-container {
+        max-width: 1200px;
+        margin: 20px auto;
+        padding: 20px;
+    }
+
+    .notification-card {
+        background: white;
+        border-radius: 8px;
+        padding: 24px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .card-header {
+        font-size: 18px;
+        font-weight: 600;
+        margin-bottom: 16px;
+        color: #333;
+        border-bottom: 2px solid #0566C7;
+        padding-bottom: 8px;
+    }
+
+    .form-group {
+        margin-bottom: 16px;
+    }
+
+    .form-group label {
+        display: block;
+        font-weight: 600;
+        margin-bottom: 6px;
+        color: #555;
+    }
+
+    .form-group select,
+    .form-group input[type="text"],
+    .form-group textarea {
+        width: 100%;
+        padding: 10px 12px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 14px;
+    }
+
+    .form-group textarea {
+        resize: vertical;
+        min-height: 120px;
+        font-family: inherit;
+    }
+
+    .filter-options {
+        display: none;
+        padding: 16px;
+        background: #f8f9fa;
+        border-radius: 6px;
+        margin-top: 12px;
+    }
+
+    .filter-options.active {
+        display: block;
+    }
+
+    .preview-box {
+        background: #e8f5e9;
+        border: 1px solid #81c784;
+        border-radius: 6px;
+        padding: 16px;
+        margin-top: 16px;
+    }
+
+    .preview-header {
+        font-weight: 600;
+        color: #2e7d32;
+        margin-bottom: 8px;
+    }
+
+    .preview-count {
+        font-size: 24px;
+        font-weight: 700;
+        color: #2e7d32;
+        margin: 8px 0;
+    }
+
+    .sample-users {
+        background: white;
+        border-radius: 4px;
+        padding: 12px;
+        margin-top: 12px;
+    }
+
+    .sample-user {
+        padding: 6px;
+        border-bottom: 1px solid #eee;
+        font-size: 13px;
+    }
+
+    .sample-user:last-child {
+        border-bottom: none;
+    }
+
+    .checkbox-group {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .checkbox-group input[type="checkbox"] {
+        width: 18px;
+        height: 18px;
+    }
+
+    .button-group {
+        display: flex;
+        gap: 12px;
+        margin-top: 24px;
+    }
+
+    .btn-primary {
+        background: #2e7d32;
+        color: white;
+        padding: 12px 24px;
+        border: none;
+        border-radius: 6px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.3s;
+    }
+
+    .btn-primary:hover {
+        background: #1b5e20;
+    }
+
+    .btn-secondary {
+        background: #6c757d;
+        color: white;
+        padding: 12px 24px;
+        border: none;
+        border-radius: 6px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.3s;
+    }
+
+    .btn-secondary:hover {
+        background: #545b62;
+    }
+
+    .btn-outline {
+        background: white;
+        color: #2e7d32;
+        padding: 12px 24px;
+        border: 2px solid #2e7d32;
+        border-radius: 6px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+
+    .btn-outline:hover {
+        background: #2e7d32;
+        color: white;
+    }
+
+    .help-text {
+        font-size: 12px;
+        color: #666;
+        margin-top: 4px;
+        font-style: italic;
+    }
+
+    .alert {
+        padding: 12px 16px;
+        border-radius: 6px;
+        margin-bottom: 16px;
+    }
+
+    .alert-info {
+        background: #e3f2fd;
+        border: 1px solid #2196f3;
+        color: #1565c0;
+    }
+
+    .rate-status {
+        background: #fff3e0;
+        border: 1px solid #ff9800;
+        border-radius: 6px;
+        padding: 12px;
+        margin-bottom: 16px;
+    }
+
+    .rate-status-title {
+        font-weight: 600;
+        color: #e65100;
+        margin-bottom: 8px;
+    }
+
+    .rate-stat {
+        display: inline-block;
+        margin-right: 20px;
+        font-size: 14px;
+    }
+
+    .rate-stat strong {
+        color: #e65100;
+    }
+</style>
+{% endblock %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+    <a href="{% url 'admin:index' %}">Home</a>
+    &rsaquo; <a href="{% url 'admin:core_emailbatch_changelist' %}">Email Batches</a>
+    &rsaquo; Create Email Batch
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="batch-container">
+    <h1>📧 Create Email Batch</h1>
+    <p>Create a tracked email batch with progress monitoring and resume capability.</p>
+
+    <!-- Rate Status -->
+    <div class="rate-status">
+        <div class="rate-status-title">📊 Email Rate Status</div>
+        <span class="rate-stat">Sent this hour: <strong>{{ rate_status.emails_sent_last_hour }}/{{
+                rate_status.hourly_limit }}</strong></span>
+        <span class="rate-stat">Remaining: <strong>{{ rate_status.remaining_this_hour }}</strong> this hour</span>
+        <span class="rate-stat">Remaining today: <strong>{{ rate_status.remaining_today }}</strong></span>
+    </div>
+
+    <form method="post" id="batchForm">
+        {% csrf_token %}
+
+        <!-- Batch Info Card -->
+        <div class="notification-card">
+            <div class="card-header">1️⃣ Batch Information</div>
+
+            <div class="form-group">
+                <label for="batch_title">Batch Title: <span style="color: red;">*</span></label>
+                <input type="text" name="batch_title" id="batch_title" required
+                    placeholder="e.g., Welcome Email - Jan 2025 Freshers" maxlength="200">
+                <div class="help-text">Internal name to identify this batch</div>
+            </div>
+
+            <div class="form-group">
+                <label for="email_subject">Email Subject: <span style="color: red;">*</span></label>
+                <input type="text" name="email_subject" id="email_subject" required
+                    placeholder="e.g., Welcome to CSS KNUST!" maxlength="200">
+                <div class="help-text">Subject line that recipients will see</div>
+            </div>
+
+            <div class="form-group">
+                <label for="email_message">Email Message: <span style="color: red;">*</span></label>
+                <textarea name="email_message" id="email_message" rows="8" required
+                    placeholder="Enter your email message here..."></textarea>
+                <div class="help-text">Message will be wrapped in the CSS KNUST branded email template</div>
+            </div>
+
+            <!-- Placeholders Reference -->
+            <div class="alert"
+                style="background: #e8f5e9; border-left: 4px solid #4caf50; padding: 12px; margin: 10px 0;">
+                <strong>📝 Available Placeholders:</strong>
+                <div
+                    style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 8px; margin-top: 10px; font-size: 13px;">
+                    <div><code style="background: #fff; padding: 2px 4px; border-radius: 3px;">{name}</code> - First
+                        name</div>
+                    <div><code style="background: #fff; padding: 2px 4px; border-radius: 3px;">{full_name}</code> - Full
+                        name</div>
+                    <div><code style="background: #fff; padding: 2px 4px; border-radius: 3px;">{phone}</code> - Phone
+                        number</div>
+                    <div><code style="background: #fff; padding: 2px 4px; border-radius: 3px;">{student_id}</code> -
+                        Student ID</div>
+                    <div><code style="background: #fff; padding: 2px 4px; border-radius: 3px;">{index_number}</code> -
+                        Index number</div>
+                    <div><code style="background: #fff; padding: 2px 4px; border-radius: 3px;">{personal_email}</code> -
+                        Personal email</div>
+                    <div><code style="background: #fff; padding: 2px 4px; border-radius: 3px;">{student_email}</code> -
+                        Student email</div>
+                    <div><code style="background: #fff; padding: 2px 4px; border-radius: 3px;">{program}</code> -
+                        Program (CS/IT)</div>
+                    <div><code style="background: #fff; padding: 2px 4px; border-radius: 3px;">{program_full}</code> -
+                        Full program name</div>
+                    <div><code style="background: #fff; padding: 2px 4px; border-radius: 3px;">{group}</code> - Group
+                        (G1/G2)</div>
+                    <div><code style="background: #fff; padding: 2px 4px; border-radius: 3px;">{year}</code> - Year
+                        (1-4)</div>
+                    <div><code style="background: #fff; padding: 2px 4px; border-radius: 3px;">{semester}</code> -
+                        Semester (1/2)</div>
+                    <div><code style="background: #fff; padding: 2px 4px; border-radius: 3px;">{graduation_year}</code>
+                        - Graduation year</div>
+                    <div><code style="background: #fff; padding: 2px 4px; border-radius: 3px;">{gender}</code> - Gender
+                        (M/F/O)</div>
+                </div>
+                <div style="margin-top: 10px; font-size: 12px; color: #666;">
+                    <em>Example: "Hi {name}, your student ID is {student_id}..." → "Hi John, your student ID is
+                        12345678..."</em>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filter Selection Card -->
+        <div class="notification-card">
+            <div class="card-header">2️⃣ Select Recipients</div>
+
+            <div class="alert alert-info">
+                📧 Only users with a personal email address will be included. Student emails (@st.knust.edu.gh) are
+                excluded as they reject external emails.
+            </div>
+
+            <div class="form-group">
+                <label for="filter_type">Filter Type:</label>
+                <select name="filter_type" id="filter_type" required onchange="toggleFilterOptions()">
+                    <option value="">-- Select Filter Type --</option>
+                    <option value="all">All Active Users with Personal Email</option>
+                    <option value="year">By Year (1, 2, 3, 4)</option>
+                    <option value="program">By Program (CS or IT)</option>
+                    <option value="group">By Group (Group 1 or 2)</option>
+                    <option value="year_group">By Year + Group</option>
+                    <option value="year_program">By Year + Program</option>
+                    <option value="gender">By Gender</option>
+                    <option value="custom">Custom Selection (Phone/ID)</option>
+                </select>
+                <div class="help-text">Choose how you want to filter recipients</div>
+            </div>
+
+            <!-- Dynamic Filter Options -->
+            <div id="filter_year" class="filter-options">
+                <label for="year">Select Year:</label>
+                <select name="year" id="year" onchange="updatePreview()">
+                    <option value="">-- Select Year --</option>
+                    {% for year in years %}
+                    <option value="{{ year }}">Year {{ year }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div id="filter_program" class="filter-options">
+                <label for="program">Select Program:</label>
+                <select name="program" id="program" onchange="updatePreview()">
+                    <option value="">-- Select Program --</option>
+                    {% for code, name in programs %}
+                    <option value="{{ code }}">{{ name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div id="filter_group" class="filter-options">
+                <label for="group">Select Group:</label>
+                <select name="group" id="group" onchange="updatePreview()">
+                    <option value="">-- Select Group --</option>
+                    {% for code, name in groups %}
+                    <option value="{{ code }}">{{ name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div id="filter_year_group" class="filter-options">
+                <label for="year_yg">Select Year:</label>
+                <select name="year" id="year_yg" onchange="updatePreview()">
+                    <option value="">-- Select Year --</option>
+                    {% for year in years %}
+                    <option value="{{ year }}">Year {{ year }}</option>
+                    {% endfor %}
+                </select>
+                <br><br>
+                <label for="group_yg">Select Group:</label>
+                <select name="group" id="group_yg" onchange="updatePreview()">
+                    <option value="">-- Select Group --</option>
+                    {% for code, name in groups %}
+                    <option value="{{ code }}">{{ name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div id="filter_year_program" class="filter-options">
+                <label for="year_yp">Select Year:</label>
+                <select name="year" id="year_yp" onchange="updatePreview()">
+                    <option value="">-- Select Year --</option>
+                    {% for year in years %}
+                    <option value="{{ year }}">Year {{ year }}</option>
+                    {% endfor %}
+                </select>
+                <br><br>
+                <label for="program_yp">Select Program:</label>
+                <select name="program" id="program_yp" onchange="updatePreview()">
+                    <option value="">-- Select Program --</option>
+                    {% for code, name in programs %}
+                    <option value="{{ code }}">{{ name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div id="filter_gender" class="filter-options">
+                <label for="gender">Select Gender:</label>
+                <select name="gender" id="gender" onchange="updatePreview()">
+                    <option value="">-- Select Gender --</option>
+                    {% for code, name in genders %}
+                    <option value="{{ code }}">{{ name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div id="filter_custom" class="filter-options">
+                <label for="user_identifiers">Enter Phone Numbers, Student IDs, or Index Numbers:</label>
+                <textarea name="user_identifiers" id="user_identifiers" rows="5"
+                    placeholder="+233XXXXXXXXX, +233YYYYYYYYY&#10;or&#10;student_id_1, student_id_2"
+                    oninput="updatePreview()"></textarea>
+                <div class="help-text">Enter phone numbers, student IDs, or index numbers separated by commas or new
+                    lines</div>
+            </div>
+
+            <!-- Preview Box -->
+            <div id="preview_box" class="preview-box" style="display: none;">
+                <div class="preview-header">📊 Recipients Preview</div>
+                <div class="preview-count" id="preview_count">0</div>
+                <div style="color: #666; font-size: 14px;">users will receive this email</div>
+
+                <div class="sample-users" id="sample_users" style="display: none;">
+                    <strong style="color: #555; font-size: 13px;">Sample Recipients:</strong>
+                    <div id="sample_list"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Delivery Settings Card -->
+        <div class="notification-card">
+            <div class="card-header">3️⃣ Delivery Settings</div>
+
+            <div class="form-group">
+                <div class="checkbox-group">
+                    <input type="checkbox" name="start_immediately" id="start_immediately">
+                    <label for="start_immediately">🚀 Start sending immediately after creation</label>
+                </div>
+                <div class="help-text">If unchecked, batch will be saved as "pending" and you can start it manually
+                    later</div>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="button-group">
+            <button type="submit" class="btn-primary">
+                📧 Create Email Batch
+            </button>
+            <button type="button" class="btn-outline" onclick="updatePreview()">
+                🔄 Refresh Preview
+            </button>
+            <a href="{% url 'admin:core_emailbatch_changelist' %}" class="btn-secondary">
+                ↩️ Cancel
+            </a>
+        </div>
+    </form>
+</div>
+
+<script>
+    function toggleFilterOptions() {
+        const filterType = document.getElementById('filter_type').value;
+
+        // Hide all filter options
+        document.querySelectorAll('.filter-options').forEach(el => {
+            el.classList.remove('active');
+        });
+
+        // Show selected filter option
+        if (filterType && filterType !== 'all') {
+            const filterDiv = document.getElementById('filter_' + filterType);
+            if (filterDiv) {
+                filterDiv.classList.add('active');
+            }
+        }
+
+        if (filterType) {
+            updatePreview();
+        } else {
+            document.getElementById('preview_box').style.display = 'none';
+        }
+    }
+
+    function updatePreview() {
+        const filterType = document.getElementById('filter_type').value;
+
+        if (!filterType) {
+            document.getElementById('preview_box').style.display = 'none';
+            return;
+        }
+
+        // Build query params based on filter type
+        let params = new URLSearchParams({ filter_type: filterType });
+
+        if (filterType === 'year' || filterType === 'year_group' || filterType === 'year_program') {
+            const yearId = filterType === 'year' ? 'year' : 'year_' + filterType.split('_')[1].charAt(0) + filterType.split('_')[1].charAt(filterType.split('_')[1].length - 1);
+            const year = document.getElementById(yearId)?.value;
+            if (year) params.append('year', year);
+        }
+
+        if (filterType === 'program' || filterType === 'year_program') {
+            const programId = filterType === 'program' ? 'program' : 'program_yp';
+            const program = document.getElementById(programId)?.value;
+            if (program) params.append('program', program);
+        }
+
+        if (filterType === 'group' || filterType === 'year_group') {
+            const groupId = filterType === 'group' ? 'group' : 'group_yg';
+            const group = document.getElementById(groupId)?.value;
+            if (group) params.append('group', group);
+        }
+
+        if (filterType === 'gender') {
+            const gender = document.getElementById('gender')?.value;
+            if (gender) params.append('gender', gender);
+        }
+
+        // Fetch preview data
+        fetch('/executive-dashboard-cb/core/notifyuser/preview-recipients/?' + params.toString())
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('preview_box').style.display = 'block';
+                document.getElementById('preview_count').textContent = data.count;
+
+                if (data.sample && data.sample.length > 0) {
+                    document.getElementById('sample_users').style.display = 'block';
+                    const sampleList = document.getElementById('sample_list');
+                    sampleList.innerHTML = '';
+
+                    data.sample.forEach(user => {
+                        const div = document.createElement('div');
+                        div.className = 'sample-user';
+                        div.innerHTML = `<strong>${user.name}</strong> - ${user.phone}<br>
+                                   <span style="font-size: 12px; color: #777;">
+                                   Year ${user.year} | ${user.program} | ${user.group}
+                                   </span>`;
+                        sampleList.appendChild(div);
+                    });
+                } else {
+                    document.getElementById('sample_users').style.display = 'none';
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching preview:', error);
+            });
+    }
+
+    // Confirm before creating
+    document.getElementById('batchForm').addEventListener('submit', function (e) {
+        const count = document.getElementById('preview_count').textContent;
+        const startImmediately = document.getElementById('start_immediately').checked;
+
+        let message = `Create email batch for ${count} users?`;
+        if (startImmediately) {
+            message += '\n\nBatch will start sending immediately.';
+        }
+
+        if (!confirm(message)) {
+            e.preventDefault();
+        }
+    });
+</script>
+{% endblock %}

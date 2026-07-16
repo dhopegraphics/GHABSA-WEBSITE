@@ -1,0 +1,65 @@
+{% extends "admin/payments/expense_base.html" %}
+{% load static i18n admin_urls %}
+
+{% block expense_header %}
+<div class="expense-module-header">
+    <div class="module-header-top">
+        <div class="module-title">
+            <div class="module-icon purple">
+                <i class="ri-bank-line"></i>
+            </div>
+            <div class="module-info">
+                <h2>🏦 Account Balance</h2>
+                <p>Monitor the organization's financial position and cash flow</p>
+            </div>
+        </div>
+        <div class="module-actions">
+            <a href="{% url 'payments:expense-dashboard' %}" class="btn-modern btn-secondary-modern">
+                <i class="ri-dashboard-3-line"></i> Dashboard
+            </a>
+            <a href="{% url 'admin:payments_accountbalance_add' %}" class="btn-modern btn-primary-modern">
+                <i class="ri-add-line"></i> Update Balance
+            </a>
+        </div>
+    </div>
+    
+    <div class="quick-stats">
+        <div class="quick-stat">
+            <div class="quick-stat-icon purple">
+                <i class="ri-wallet-3-line"></i>
+            </div>
+            <div class="quick-stat-info">
+                <h4>GH₵ {{ current_balance|floatformat:2|default:"0.00" }}</h4>
+                <span>Current Balance</span>
+            </div>
+        </div>
+        <div class="quick-stat">
+            <div class="quick-stat-icon green">
+                <i class="ri-arrow-down-circle-line"></i>
+            </div>
+            <div class="quick-stat-info">
+                <h4>GH₵ {{ total_income|floatformat:2|default:"0.00" }}</h4>
+                <span>Total Income</span>
+            </div>
+        </div>
+        <div class="quick-stat">
+            <div class="quick-stat-icon red">
+                <i class="ri-arrow-up-circle-line"></i>
+            </div>
+            <div class="quick-stat-info">
+                <h4>GH₵ {{ total_expenses|floatformat:2|default:"0.00" }}</h4>
+                <span>Total Expenses</span>
+            </div>
+        </div>
+        <div class="quick-stat">
+            <div class="quick-stat-icon blue">
+                <i class="ri-calendar-check-line"></i>
+            </div>
+            <div class="quick-stat-info">
+                <h4>{{ last_updated|date:"M d, Y"|default:"Never" }}</h4>
+                <span>Last Updated</span>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,582 @@
+{% extends "admin/base_site.html" %}
+{% load static %}
+
+{% block title %}Email Batches - {{ site_title }}{% endblock %}
+
+{% block extrastyle %}
+<style>
+    .batch-dashboard {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+
+    .dashboard-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 24px;
+        flex-wrap: wrap;
+        gap: 16px;
+    }
+
+    .dashboard-title {
+        margin: 0;
+        font-size: 28px;
+        color: #1e3a5f;
+    }
+
+    .dashboard-title span {
+        font-size: 32px;
+    }
+
+    .header-actions {
+        display: flex;
+        gap: 12px;
+    }
+
+    .btn {
+        padding: 12px 24px;
+        border: none;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.2s;
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
+        color: white;
+        box-shadow: 0 4px 12px rgba(46, 125, 50, 0.3);
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(46, 125, 50, 0.4);
+    }
+
+    .btn-secondary {
+        background: #f5f5f5;
+        color: #333;
+        border: 1px solid #ddd;
+    }
+
+    .btn-secondary:hover {
+        background: #e0e0e0;
+    }
+
+    /* Stats Cards */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 16px;
+        margin-bottom: 24px;
+    }
+
+    .stat-card {
+        background: white;
+        border-radius: 12px;
+        padding: 20px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        border-left: 4px solid;
+    }
+
+    .stat-card.pending {
+        border-color: #6b7280;
+    }
+
+    .stat-card.in-progress {
+        border-color: #2563eb;
+    }
+
+    .stat-card.completed {
+        border-color: #10b981;
+    }
+
+    .stat-card.failed {
+        border-color: #ef4444;
+    }
+
+    .stat-label {
+        font-size: 13px;
+        color: #666;
+        margin-bottom: 4px;
+    }
+
+    .stat-value {
+        font-size: 28px;
+        font-weight: 700;
+        color: #333;
+    }
+
+    /* Batch List */
+    .batch-list {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        overflow: hidden;
+    }
+
+    .batch-list-header {
+        padding: 16px 24px;
+        background: #f8f9fa;
+        border-bottom: 1px solid #e5e7eb;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .batch-list-title {
+        font-size: 16px;
+        font-weight: 600;
+        color: #333;
+    }
+
+    .batch-item {
+        padding: 20px 24px;
+        border-bottom: 1px solid #f0f0f0;
+        transition: background 0.2s;
+    }
+
+    .batch-item:hover {
+        background: #f8f9fa;
+    }
+
+    .batch-item:last-child {
+        border-bottom: none;
+    }
+
+    .batch-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 20px;
+        flex-wrap: wrap;
+    }
+
+    .batch-info {
+        flex: 1;
+        min-width: 250px;
+    }
+
+    .batch-title {
+        font-size: 16px;
+        font-weight: 600;
+        color: #1e3a5f;
+        margin-bottom: 4px;
+    }
+
+    .batch-title a {
+        color: inherit;
+        text-decoration: none;
+    }
+
+    .batch-title a:hover {
+        color: #2563eb;
+    }
+
+    .batch-subject {
+        font-size: 14px;
+        color: #666;
+        margin-bottom: 8px;
+    }
+
+    .batch-meta {
+        display: flex;
+        gap: 16px;
+        flex-wrap: wrap;
+        font-size: 12px;
+        color: #888;
+    }
+
+    .batch-meta-item {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+    }
+
+    .batch-progress-section {
+        min-width: 280px;
+    }
+
+    .progress-stats {
+        display: flex;
+        gap: 16px;
+        margin-bottom: 8px;
+        font-size: 13px;
+    }
+
+    .progress-stat {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+    }
+
+    .progress-stat.sent {
+        color: #10b981;
+    }
+
+    .progress-stat.failed {
+        color: #ef4444;
+    }
+
+    .progress-stat.pending {
+        color: #6b7280;
+    }
+
+    .progress-bar-container {
+        height: 8px;
+        background: #e5e7eb;
+        border-radius: 4px;
+        overflow: hidden;
+        margin-bottom: 8px;
+    }
+
+    .progress-bar {
+        height: 100%;
+        border-radius: 4px;
+        transition: width 0.3s;
+    }
+
+    .progress-bar.completed {
+        background: linear-gradient(90deg, #10b981, #059669);
+    }
+
+    .progress-bar.in_progress {
+        background: linear-gradient(90deg, #2563eb, #1d4ed8);
+    }
+
+    .progress-bar.paused {
+        background: linear-gradient(90deg, #f59e0b, #d97706);
+    }
+
+    .progress-bar.failed {
+        background: linear-gradient(90deg, #ef4444, #dc2626);
+    }
+
+    .progress-bar.pending {
+        background: linear-gradient(90deg, #6b7280, #4b5563);
+    }
+
+    .progress-text {
+        font-size: 12px;
+        color: #666;
+    }
+
+    .batch-status-actions {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 8px;
+        min-width: 140px;
+    }
+
+    .status-badge {
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .status-badge.pending {
+        background: #f3f4f6;
+        color: #6b7280;
+    }
+
+    .status-badge.in_progress {
+        background: #dbeafe;
+        color: #2563eb;
+    }
+
+    .status-badge.paused {
+        background: #fef3c7;
+        color: #d97706;
+    }
+
+    .status-badge.completed {
+        background: #d1fae5;
+        color: #059669;
+    }
+
+    .status-badge.cancelled {
+        background: #f3f4f6;
+        color: #6b7280;
+    }
+
+    .status-badge.failed {
+        background: #fee2e2;
+        color: #dc2626;
+    }
+
+    .action-buttons {
+        display: flex;
+        gap: 8px;
+    }
+
+    .action-btn {
+        padding: 6px 12px;
+        border-radius: 6px;
+        font-size: 12px;
+        font-weight: 500;
+        text-decoration: none;
+        border: none;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+    .action-btn.resume {
+        background: #10b981;
+        color: white;
+    }
+
+    .action-btn.resume:hover {
+        background: #059669;
+    }
+
+    .action-btn.pause {
+        background: #f59e0b;
+        color: white;
+    }
+
+    .action-btn.pause:hover {
+        background: #d97706;
+    }
+
+    .action-btn.cancel {
+        background: #ef4444;
+        color: white;
+    }
+
+    .action-btn.cancel:hover {
+        background: #dc2626;
+    }
+
+    .action-btn.view {
+        background: #e5e7eb;
+        color: #374151;
+    }
+
+    .action-btn.view:hover {
+        background: #d1d5db;
+    }
+
+    /* Empty state */
+    .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        color: #666;
+    }
+
+    .empty-state-icon {
+        font-size: 64px;
+        margin-bottom: 16px;
+    }
+
+    .empty-state-title {
+        font-size: 20px;
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 8px;
+    }
+
+    .empty-state-desc {
+        font-size: 14px;
+        color: #666;
+        margin-bottom: 24px;
+    }
+
+    /* Rate limit banner */
+    .rate-limit-banner {
+        background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%);
+        border: 1px solid #fed7aa;
+        border-radius: 12px;
+        padding: 16px 24px;
+        margin-bottom: 24px;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        flex-wrap: wrap;
+    }
+
+    .rate-limit-icon {
+        font-size: 24px;
+    }
+
+    .rate-limit-info {
+        flex: 1;
+    }
+
+    .rate-limit-title {
+        font-weight: 600;
+        color: #c2410c;
+        margin-bottom: 4px;
+    }
+
+    .rate-limit-stats {
+        display: flex;
+        gap: 24px;
+        font-size: 14px;
+        color: #9a3412;
+    }
+
+    .rate-stat-item strong {
+        color: #c2410c;
+    }
+
+    @media (max-width: 768px) {
+        .batch-row {
+            flex-direction: column;
+        }
+
+        .batch-status-actions {
+            align-items: flex-start;
+            width: 100%;
+        }
+
+        .stats-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+</style>
+{% endblock %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+    <a href="{% url 'admin:index' %}">Home</a>
+    &rsaquo; Email Batches
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="batch-dashboard">
+    <!-- Header -->
+    <div class="dashboard-header">
+        <h1 class="dashboard-title"><span>📧</span> Email Batch Manager</h1>
+        <div class="header-actions">
+            <a href="{% url 'admin:core_notifyuser_bulk_notify' %}" class="btn btn-primary">
+                ➕ Create New Batch
+            </a>
+            <a href="{% url 'admin:core_notifyuser_changelist' %}" class="btn btn-secondary">
+                📢 All Notifications
+            </a>
+        </div>
+    </div>
+
+    <!-- Rate Limit Banner -->
+    <div class="rate-limit-banner">
+        <div class="rate-limit-icon">📊</div>
+        <div class="rate-limit-info">
+            <div class="rate-limit-title">Email Rate Status</div>
+            <div class="rate-limit-stats">
+                <span class="rate-stat-item">This hour: <strong>{{ rate_status.emails_sent_last_hour }}</strong> /
+                    <strong>{{ rate_status.hourly_limit }}</strong></span>
+                <span class="rate-stat-item">Remaining today: <strong>{{ rate_status.remaining_today }}</strong></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stats Grid -->
+    <div class="stats-grid">
+        <div class="stat-card in-progress">
+            <div class="stat-label">In Progress</div>
+            <div class="stat-value">{{ stats.in_progress|default:0 }}</div>
+        </div>
+        <div class="stat-card pending">
+            <div class="stat-label">Pending</div>
+            <div class="stat-value">{{ stats.pending|default:0 }}</div>
+        </div>
+        <div class="stat-card completed">
+            <div class="stat-label">Completed</div>
+            <div class="stat-value">{{ stats.completed|default:0 }}</div>
+        </div>
+        <div class="stat-card failed">
+            <div class="stat-label">Failed / Paused</div>
+            <div class="stat-value">{{ stats.failed_paused|default:0 }}</div>
+        </div>
+    </div>
+
+    <!-- Batch List -->
+    <div class="batch-list">
+        <div class="batch-list-header">
+            <span class="batch-list-title">Recent Email Batches</span>
+        </div>
+
+        <div id="batch-list-content">
+            {% if batches %}
+            {% for batch in batches %}
+            <div class="batch-item">
+                <div class="batch-row">
+                    <div class="batch-info">
+                        <div class="batch-title">
+                            <a href="{{ batch.id }}/change/">{{ batch.title }}</a>
+                        </div>
+                        <div class="batch-subject">📝 {{ batch.subject }}</div>
+                        <div class="batch-meta">
+                            <span class="batch-meta-item">📅 {{ batch.created_at|date:"M d, Y H:i" }}</span>
+                            <span class="batch-meta-item">👤 {{ batch.filter_description|default:"All users" }}</span>
+                        </div>
+                    </div>
+
+                    <div class="batch-progress-section">
+                        <div class="progress-stats">
+                            <span class="progress-stat sent">✅ {{ batch.sent_count }} sent</span>
+                            <span class="progress-stat failed">❌ {{ batch.failed_count }} failed</span>
+                            <span class="progress-stat pending">⏳ {{ batch.pending_count }} pending</span>
+                        </div>
+                        <div class="progress-bar-container">
+                            <div class="progress-bar {{ batch.status }}"
+                                style="width: {{ batch.progress_percentage }}%"></div>
+                        </div>
+                        <div class="progress-text">{{ batch.progress_percentage }}% complete • {{ batch.total_recipients
+                            }} total recipients</div>
+                    </div>
+
+                    <div class="batch-status-actions">
+                        <span class="status-badge {{ batch.status }}">{{ batch.get_status_display }}</span>
+                        <div class="action-buttons">
+                            {% if batch.can_resume %}
+                            <a href="{{ batch.id }}/resume/" class="action-btn resume">▶️ Resume</a>
+                            {% endif %}
+                            {% if batch.can_pause %}
+                            <a href="{{ batch.id }}/pause/" class="action-btn pause">⏸️ Pause</a>
+                            {% endif %}
+                            {% if batch.status != "completed" and batch.status != "cancelled" %}
+                            <a href="{{ batch.id }}/cancel/" class="action-btn cancel"
+                                onclick="return confirm('Cancel this batch?')">🚫</a>
+                            {% endif %}
+                            <a href="{{ batch.id }}/change/" class="action-btn view">👁️</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+            {% else %}
+            <div class="empty-state">
+                <div class="empty-state-icon">📭</div>
+                <div class="empty-state-title">No email batches yet</div>
+                <div class="empty-state-desc">Create your first email batch to get started</div>
+                <a href="{% url 'admin:core_notifyuser_bulk_notify' %}" class="btn btn-primary">
+                    ➕ Create Email Batch
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<script>
+    // Auto-refresh every 10 seconds if there are in-progress batches
+    {% if has_in_progress %}
+    setInterval(() => {
+        window.location.reload();
+    }, 10000);
+    {% endif %}
+</script>
+{% endblock %}

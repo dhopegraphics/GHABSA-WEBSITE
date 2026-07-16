@@ -1,0 +1,1 @@
+Hi {{ fname }}, your Student Email (@st.knust.edu.gh) is not set in your CSS KNUST profile. Please update it by going to Profile → Account Setting on the Website. Thank you!

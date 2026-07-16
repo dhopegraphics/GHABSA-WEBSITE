@@ -1,0 +1,685 @@
+{% extends "seller_admin/seller_base_site.html" %}
+{% load i18n static %}
+
+{% block extrastyle %}
+{{ block.super }}
+<style>
+    .account-form-container {
+        max-width: 700px;
+    }
+
+    .page-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 32px;
+    }
+
+    .page-header h1 {
+        font-size: 28px;
+        font-weight: 800;
+        color: var(--gray-900);
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .page-header h1 i {
+        color: var(--primary);
+    }
+
+    /* Form Card */
+    .form-card {
+        background: white;
+        border-radius: 20px;
+        border: 1px solid var(--gray-200);
+        overflow: hidden;
+    }
+
+    .form-card-header {
+        background: var(--gradient-primary);
+        color: white;
+        padding: 28px 32px;
+    }
+
+    .form-card-header h3 {
+        font-size: 20px;
+        font-weight: 700;
+        margin: 0 0 8px 0;
+    }
+
+    .form-card-header p {
+        font-size: 14px;
+        opacity: 0.9;
+        margin: 0;
+    }
+
+    .form-card-body {
+        padding: 32px;
+    }
+
+    /* Account Type Selection */
+    .account-type-selection {
+        margin-bottom: 32px;
+    }
+
+    .account-type-selection label {
+        display: block;
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--gray-700);
+        margin-bottom: 16px;
+    }
+
+    .account-types {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 16px;
+    }
+
+    .account-type-card {
+        padding: 24px;
+        border: 2px solid var(--gray-200);
+        border-radius: 16px;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .account-type-card:hover {
+        border-color: var(--primary);
+    }
+
+    .account-type-card.selected {
+        border-color: var(--primary);
+        background: linear-gradient(135deg, rgba(124, 58, 237, 0.05), rgba(236, 72, 153, 0.05));
+    }
+
+    .account-type-card input {
+        display: none;
+    }
+
+    .account-type-icon {
+        width: 64px;
+        height: 64px;
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 28px;
+        margin: 0 auto 12px;
+        transition: all 0.2s ease;
+    }
+
+    .account-type-card:not(.selected) .account-type-icon {
+        background: var(--gray-100);
+        color: var(--gray-500);
+    }
+
+    .account-type-card.selected .account-type-icon.bank {
+        background: linear-gradient(135deg, #3B82F6, #1D4ED8);
+        color: white;
+    }
+
+    .account-type-card.selected .account-type-icon.momo {
+        background: linear-gradient(135deg, #FCD34D, #F59E0B);
+        color: white;
+    }
+
+    .account-type-card h4 {
+        font-size: 16px;
+        font-weight: 600;
+        color: var(--gray-800);
+        margin: 0 0 4px 0;
+    }
+
+    .account-type-card p {
+        font-size: 13px;
+        color: var(--gray-500);
+        margin: 0;
+    }
+
+    /* Form Fields */
+    .form-section {
+        margin-bottom: 32px;
+    }
+
+    .form-section:last-child {
+        margin-bottom: 0;
+    }
+
+    .form-section-title {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 16px;
+        font-weight: 700;
+        color: var(--gray-800);
+        margin-bottom: 20px;
+        padding-bottom: 12px;
+        border-bottom: 1px solid var(--gray-200);
+    }
+
+    .form-section-title i {
+        color: var(--primary);
+    }
+
+    .form-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+    }
+
+    .form-grid.single {
+        grid-template-columns: 1fr;
+    }
+
+    .form-group {
+        margin-bottom: 0;
+    }
+
+    .form-group.full {
+        grid-column: span 2;
+    }
+
+    .form-label {
+        display: block;
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--gray-700);
+        margin-bottom: 8px;
+    }
+
+    .form-label .required {
+        color: var(--danger);
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 14px 18px;
+        border: 2px solid var(--gray-200);
+        border-radius: 12px;
+        font-size: 15px;
+        font-family: inherit;
+        transition: all 0.2s ease;
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1);
+    }
+
+    .form-control::placeholder {
+        color: var(--gray-400);
+    }
+
+    select.form-control {
+        cursor: pointer;
+        background: white;
+    }
+
+    .form-help {
+        font-size: 12px;
+        color: var(--gray-500);
+        margin-top: 6px;
+    }
+
+    /* Checkbox */
+    .checkbox-group {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 16px;
+        background: linear-gradient(135deg, rgba(124, 58, 237, 0.05), rgba(236, 72, 153, 0.05));
+        border-radius: 12px;
+        margin-top: 24px;
+    }
+
+    .checkbox-group input {
+        width: 22px;
+        height: 22px;
+        accent-color: var(--primary);
+        cursor: pointer;
+    }
+
+    .checkbox-group label {
+        font-size: 14px;
+        font-weight: 500;
+        color: var(--gray-700);
+        cursor: pointer;
+    }
+
+    /* Bank Selector Grid */
+    .bank-selector {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
+        margin-bottom: 24px;
+    }
+
+    .bank-option {
+        padding: 16px 12px;
+        border: 2px solid var(--gray-200);
+        border-radius: 12px;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        background: white;
+    }
+
+    .bank-option:hover {
+        border-color: var(--primary);
+        background: rgba(124, 58, 237, 0.02);
+    }
+
+    .bank-option.selected {
+        border-color: var(--primary);
+        background: linear-gradient(135deg, rgba(124, 58, 237, 0.08), rgba(236, 72, 153, 0.05));
+        box-shadow: 0 4px 12px rgba(124, 58, 237, 0.15);
+    }
+
+    .bank-option input[type="radio"] {
+        display: none;
+    }
+
+    .bank-option .bank-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 20px;
+        font-weight: 800;
+        margin: 0 auto 10px;
+        transition: all 0.2s ease;
+    }
+
+    .bank-option:not(.selected) .bank-icon {
+        background: var(--gray-100);
+        color: var(--gray-500);
+    }
+
+    .bank-option.selected .bank-icon {
+        background: var(--gradient-primary);
+        color: white;
+    }
+
+    .bank-option .bank-name {
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--gray-700);
+        line-height: 1.3;
+    }
+
+    .bank-option.selected .bank-name {
+        color: var(--primary);
+    }
+
+    @media (max-width: 600px) {
+        .bank-selector {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    /* Actions */
+    .form-actions {
+        padding: 24px 32px;
+        border-top: 1px solid var(--gray-100);
+        display: flex;
+        gap: 12px;
+        justify-content: flex-end;
+    }
+
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        padding: 14px 28px;
+        border-radius: 12px;
+        font-size: 15px;
+        font-weight: 600;
+        text-decoration: none;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        border: none;
+    }
+
+    .btn-primary,
+    .btn-primary:link,
+    .btn-primary:visited,
+    a.btn-primary {
+        background: var(--gradient-primary);
+        color: #ffffff !important;
+    }
+
+    .btn-primary:hover,
+    a.btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(124, 58, 237, 0.4);
+        color: #ffffff !important;
+    }
+
+    .btn-primary i {
+        color: #ffffff !important;
+    }
+
+    .btn-outline {
+        background: white;
+        color: var(--gray-700);
+        border: 2px solid var(--gray-200);
+    }
+
+    .btn-outline:hover {
+        border-color: var(--primary);
+        color: var(--primary);
+    }
+
+    .btn-danger {
+        background: transparent;
+        color: var(--danger);
+        border: 2px solid var(--danger);
+    }
+
+    .btn-danger:hover {
+        background: var(--danger);
+        color: white;
+    }
+
+    /* Mobile Money Providers */
+    .momo-providers {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
+    }
+
+    .momo-provider {
+        padding: 20px;
+        border: 2px solid var(--gray-200);
+        border-radius: 12px;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .momo-provider:hover {
+        border-color: var(--primary);
+    }
+
+    .momo-provider.selected {
+        border-color: var(--primary);
+        background: rgba(124, 58, 237, 0.05);
+    }
+
+    .momo-provider .icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        margin: 0 auto 10px;
+    }
+
+    .momo-provider.mtn .icon {
+        background: #FFCC00;
+        color: #000;
+    }
+
+    .momo-provider.vodafone .icon {
+        background: #E60000;
+        color: white;
+    }
+
+    .momo-provider.airteltigo .icon {
+        background: #0055B8;
+        color: white;
+    }
+
+    .momo-provider span {
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--gray-700);
+    }
+
+    /* Conditional Sections */
+    .bank-fields, .momo-fields {
+        display: none;
+    }
+
+    .bank-fields.active, .momo-fields.active {
+        display: block;
+    }
+
+    /* Info Alert */
+    .info-alert {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        padding: 16px;
+        background: rgba(99, 102, 241, 0.1);
+        border-radius: 12px;
+        margin-bottom: 24px;
+    }
+
+    .info-alert i {
+        font-size: 20px;
+        color: var(--info);
+    }
+
+    .info-alert p {
+        font-size: 13px;
+        color: var(--gray-700);
+        margin: 0;
+        line-height: 1.6;
+    }
+
+    /* Hide Django */
+    fieldset, .form-row, .submit-row {
+        display: none !important;
+    }
+</style>
+{% endblock %}
+
+{% block breadcrumbs %}
+<a href="{% url 'seller_admin:index' %}">Dashboard</a>
+<span>/</span>
+<a href="{% url 'seller_admin:el_mercado_payoutrequest_changelist' %}">Payouts</a>
+<span>/</span>
+<a href="{% url 'seller_admin:el_mercado_sellerpayoutaccount_changelist' %}">Bank Accounts</a>
+<span>/</span>
+<span>{% if add %}Add Account{% else %}Edit Account{% endif %}</span>
+{% endblock %}
+
+{% block content %}
+<div class="account-form-container">
+    <div class="page-header">
+        <h1>
+            <i class="ri-bank-card-line"></i>
+            {% if add %}Add Payout Account{% else %}Edit Account{% endif %}
+        </h1>
+    </div>
+
+    <form method="post" action="" class="form-card">
+        {% csrf_token %}
+
+        <div class="form-card-header">
+            <h3>{% if add %}Set Up Your Payout Account{% else %}Update Account Details{% endif %}</h3>
+            <p>{% if add %}Add your bank or mobile money details to receive payouts{% else %}Modify your payout account information{% endif %}</p>
+        </div>
+
+        <div class="form-card-body">
+            <div class="info-alert">
+                <i class="ri-shield-check-line"></i>
+                <p>Your payment information is securely encrypted. We will only use this information to process your payouts.</p>
+            </div>
+
+            <!-- Account Type Selection -->
+            <div class="account-type-selection">
+                <label>Select Account Type</label>
+                <div class="account-types">
+                    <label class="account-type-card {% if not original or original.account_type == 'BANK' %}selected{% endif %}" onclick="selectAccountType('bank')">
+                        <input type="radio" name="account_type" value="BANK" {% if not original or original.account_type == 'BANK' %}checked{% endif %}>
+                        <div class="account-type-icon bank">
+                            <i class="ri-bank-line"></i>
+                        </div>
+                        <h4>Bank Account</h4>
+                        <p>GH₵0 transfer fee</p>
+                    </label>
+                    <label class="account-type-card {% if original and original.account_type == 'MOBILE_MONEY' %}selected{% endif %}" onclick="selectAccountType('momo')">
+                        <input type="radio" name="account_type" value="MOBILE_MONEY" {% if original and original.account_type == 'MOBILE_MONEY' %}checked{% endif %}>
+                        <div class="account-type-icon momo">
+                            <i class="ri-smartphone-line"></i>
+                        </div>
+                        <h4>Mobile Money</h4>
+                        <p>Instant transfer</p>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Bank Account Fields -->
+            <div class="bank-fields {% if not original or original.account_type == 'BANK' %}active{% endif %}" id="bankFields">
+                <div class="form-section">
+                    <div class="form-section-title">
+                        <i class="ri-bank-line"></i>
+                        Bank Details
+                    </div>
+                    
+                    <label class="form-label">Bank Name <span class="required">*</span></label>
+                    <input type="text" class="form-control" name="bank_name" placeholder="Enter bank name" value="{{ original.bank_name|default:'' }}">
+                    
+                    <div class="form-grid" style="margin-top: 16px;">
+                        <div class="form-group">
+                            <label class="form-label">Account Number <span class="required">*</span></label>
+                            <input type="text" class="form-control" name="account_number" placeholder="Enter account number" value="{{ original.account_number|default:'' }}">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Bank Code</label>
+                            <input type="text" class="form-control" name="bank_code" placeholder="Bank code (optional)" value="{{ original.bank_code|default:'' }}">
+                        </div>
+                        <div class="form-group full">
+                            <label class="form-label">Account Holder Name <span class="required">*</span></label>
+                            <input type="text" class="form-control" name="account_name" placeholder="Name as it appears on account" value="{{ original.account_name|default:'' }}">
+                            <p class="form-help">Must match your registered name for verification</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mobile Money Fields -->
+            <div class="momo-fields {% if original and original.account_type == 'MOBILE_MONEY' %}active{% endif %}" id="momoFields">
+                <div class="form-section">
+                    <div class="form-section-title">
+                        <i class="ri-smartphone-line"></i>
+                        Mobile Money Details
+                    </div>
+
+                    <label class="form-label">Provider <span class="required">*</span></label>
+                    <input type="text" class="form-control" name="mobile_money_provider" placeholder="e.g., MTN, Vodafone, AirtelTigo" value="{{ original.mobile_money_provider|default:'' }}" style="margin-bottom: 16px;">
+
+                    <div class="form-grid single">
+                        <div class="form-group">
+                            <label class="form-label">Phone Number <span class="required">*</span></label>
+                            <input type="tel" class="form-control" name="mobile_money_number" placeholder="e.g. 0241234567" value="{{ original.mobile_money_number|default:'' }}">
+                            <p class="form-help">Enter your registered mobile money number</p>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Account Name <span class="required">*</span></label>
+                            <input type="text" class="form-control" name="mobile_money_name" placeholder="Name registered on MoMo" value="{{ original.mobile_money_name|default:'' }}">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Primary Account Checkbox -->
+            <div class="checkbox-group">
+                <input type="checkbox" id="setPrimary" name="is_default" {% if original and original.is_default %}checked{% endif %}>
+                <label for="setPrimary">Set as primary payout account</label>
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <a href="{% url 'seller_admin:el_mercado_sellerpayoutaccount_changelist' %}" class="btn btn-outline">
+                Cancel
+            </a>
+            {% if not add %}
+            <a href="{% url 'seller_admin:el_mercado_sellerpayoutaccount_delete' original.pk %}" class="btn btn-danger">
+                <i class="ri-delete-bin-line"></i>
+                Delete
+            </a>
+            {% endif %}
+            <button type="submit" class="btn btn-primary">
+                <i class="ri-save-line"></i>
+                {% if add %}Add Account{% else %}Save Changes{% endif %}
+            </button>
+        </div>
+    </form>
+</div>
+
+<script>
+function selectAccountType(type) {
+    document.querySelectorAll('.account-type-card').forEach(card => {
+        card.classList.remove('selected');
+    });
+    event.currentTarget.classList.add('selected');
+    
+    const bankFields = document.getElementById('bankFields');
+    const momoFields = document.getElementById('momoFields');
+    
+    if (type === 'bank') {
+        bankFields.classList.add('active');
+        momoFields.classList.remove('active');
+        // Enable bank field validation, disable momo
+        bankFields.querySelectorAll('input[required]').forEach(input => input.disabled = false);
+        momoFields.querySelectorAll('input').forEach(input => input.disabled = true);
+    } else {
+        bankFields.classList.remove('active');
+        momoFields.classList.add('active');
+        // Enable momo field validation, disable bank
+        momoFields.querySelectorAll('input').forEach(input => input.disabled = false);
+        bankFields.querySelectorAll('input').forEach(input => input.disabled = true);
+    }
+}
+
+// Bank selection
+function selectBank(element, value) {
+    document.querySelectorAll('.bank-option').forEach(opt => {
+        opt.classList.remove('selected');
+    });
+    element.classList.add('selected');
+    element.querySelector('input').checked = true;
+}
+
+// Mobile Money provider selection
+document.querySelectorAll('.momo-provider').forEach(provider => {
+    provider.addEventListener('click', function() {
+        document.querySelectorAll('.momo-provider').forEach(p => p.classList.remove('selected'));
+        this.classList.add('selected');
+        this.querySelector('input').checked = true;
+    });
+});
+
+// Initialize: Set correct state based on account type
+document.addEventListener('DOMContentLoaded', function() {
+    const accountType = document.querySelector('input[name="account_type"]:checked').value;
+    const bankFields = document.getElementById('bankFields');
+    const momoFields = document.getElementById('momoFields');
+    
+    if (accountType === 'MOBILE_MONEY') {
+        bankFields.classList.remove('active');
+        momoFields.classList.add('active');
+        bankFields.querySelectorAll('input').forEach(input => input.disabled = true);
+        momoFields.querySelectorAll('input').forEach(input => input.disabled = false);
+    } else {
+        bankFields.classList.add('active');
+        momoFields.classList.remove('active');
+        bankFields.querySelectorAll('input').forEach(input => input.disabled = false);
+        momoFields.querySelectorAll('input').forEach(input => input.disabled = true);
+    }
+});
+</script>
+{% endblock %}

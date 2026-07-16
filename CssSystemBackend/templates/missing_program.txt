@@ -1,0 +1,1 @@
+Hi {{ fname }}, your program (CS or IT) is not set in your CSS KNUST profile. Please update it by going to Profile → Account Setting on the Website. Thank you!

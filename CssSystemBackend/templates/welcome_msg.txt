@@ -1,0 +1,9 @@
+Welcome to Css Knust, {{ fname }}!
+
+We’re thrilled to have you join our community.
+
+Please verify your account by visiting Account Settings on the site.
+
+If you didn’t sign up, you can ignore this message.
+
+The Css Knust Team

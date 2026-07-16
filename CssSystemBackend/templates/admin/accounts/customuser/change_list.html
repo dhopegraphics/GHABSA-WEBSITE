@@ -1,0 +1,918 @@
+{% extends "admin/change_list.html" %}
+
+{% load i18n %}
+
+{% block content_title %}
+<style>
+    .modern-header {
+        margin-bottom: 2rem;
+    }
+
+    .analytics-card {
+        margin: 1.5rem 0;
+        padding: 1.5rem;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 12px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .analytics-btn {
+        display: inline-block;
+        padding: 12px 28px;
+        background: white;
+        color: #667eea;
+        text-decoration: none;
+        border-radius: 8px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    }
+
+    .analytics-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        color: #667eea;
+    }
+
+    .warning-card {
+        margin-bottom: 1.5rem;
+        padding: 1rem 1.25rem;
+        background: #fff3e0;
+        border-left: 4px solid #ff9800;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    }
+
+    .warning-title {
+        color: #e65100;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+    }
+
+    .columns-card {
+        margin-bottom: 1.5rem;
+        padding: 0;
+        background: white;
+        border: 1px solid #e0e0e0;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        overflow: hidden;
+    }
+
+    .columns-form {
+        display: flex;
+        flex-direction: column;
+        gap: 1.25rem;
+    }
+
+    .columns-header {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #333;
+        margin: 0;
+    }
+
+    /* Collapsible summary styling */
+    .columns-card summary {
+        list-style: none;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem 1.25rem;
+        cursor: pointer;
+        background: transparent;
+    }
+
+    .columns-card summary::-webkit-details-marker {
+        display: none;
+    }
+
+    .columns-card .columns-body {
+        padding: 1rem 1.25rem 1.5rem 1.25rem;
+        display: block;
+    }
+
+    .toggle-indicator {
+        font-size: 1.05rem;
+        color: #667eea;
+        transition: transform 0.2s ease;
+    }
+
+    .columns-card[open] .toggle-indicator {
+        transform: rotate(180deg);
+    }
+
+    .checkbox-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 0.75rem;
+    }
+
+    .checkbox-label {
+        display: flex;
+        align-items: center;
+        padding: 0.5rem 0.75rem;
+        background: #f8f9fa;
+        border: 2px solid #e9ecef;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .checkbox-label:hover {
+        background: #e9ecef;
+        border-color: #667eea;
+    }
+
+    .checkbox-label input[type="checkbox"] {
+        margin-right: 0.5rem;
+        width: 18px;
+        height: 18px;
+        cursor: pointer;
+    }
+
+    .checkbox-label input[type="checkbox"]:checked {
+        accent-color: #667eea;
+    }
+
+    .checkbox-text {
+        font-size: 0.9rem;
+        color: #495057;
+        font-weight: 500;
+    }
+
+    .button-group {
+        display: flex;
+        gap: 0.75rem;
+        margin-top: 0.5rem;
+    }
+
+    .btn-apply {
+        padding: 0.625rem 1.5rem;
+        background: #667eea;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .btn-apply:hover {
+        background: #5568d3;
+        transform: translateY(-1px);
+    }
+
+    .btn-reset {
+        padding: 0.625rem 1.5rem;
+        background: white;
+        color: #666;
+        border: 2px solid #dee2e6;
+        border-radius: 6px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.2s ease;
+        display: inline-block;
+    }
+
+    .btn-reset:hover {
+        border-color: #adb5bd;
+        color: #495057;
+    }
+
+    .info-note {
+        margin-top: 1rem;
+        padding: 0.75rem 1rem;
+        background: #e3f2fd;
+        border-left: 4px solid #2196f3;
+        border-radius: 6px;
+        font-size: 0.875rem;
+        color: #1565c0;
+    }
+
+    .info-note strong {
+        font-weight: 600;
+    }
+
+    /* Clear Field Data Styles */
+    .clear-field-card {
+        margin-bottom: 1.5rem;
+        padding: 0;
+        background: white;
+        border: 1px solid #e0e0e0;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        overflow: hidden;
+    }
+
+    .clear-field-card summary {
+        list-style: none;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem 1.25rem;
+        cursor: pointer;
+        background: linear-gradient(135deg, #ff6b6b 0%, #ee5a5a 100%);
+        color: white;
+    }
+
+    .clear-field-card summary::-webkit-details-marker {
+        display: none;
+    }
+
+    .clear-field-header {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: white;
+        margin: 0;
+    }
+
+    .clear-field-card .toggle-indicator {
+        color: white;
+    }
+
+    .clear-field-body {
+        padding: 1.25rem;
+    }
+
+    .clear-field-form {
+        display: flex;
+        flex-direction: column;
+        gap: 1.25rem;
+    }
+
+    .form-row {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1rem;
+    }
+
+    .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .form-group label {
+        font-weight: 600;
+        color: #333;
+        font-size: 0.9rem;
+    }
+
+    .form-group select {
+        padding: 0.625rem 1rem;
+        border: 2px solid #e9ecef;
+        border-radius: 6px;
+        font-size: 0.95rem;
+        background: white;
+        cursor: pointer;
+        transition: border-color 0.2s ease;
+    }
+
+    .form-group select:focus {
+        outline: none;
+        border-color: #667eea;
+    }
+
+    .form-group select:hover {
+        border-color: #adb5bd;
+    }
+
+    .all-years-checkbox {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem 0;
+    }
+
+    .all-years-checkbox input {
+        width: 18px;
+        height: 18px;
+        cursor: pointer;
+        accent-color: #667eea;
+    }
+
+    .all-years-checkbox span {
+        font-size: 0.9rem;
+        color: #495057;
+    }
+
+    .btn-preview {
+        padding: 0.625rem 1.5rem;
+        background: #ffc107;
+        color: #333;
+        border: none;
+        border-radius: 6px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .btn-preview:hover {
+        background: #e0a800;
+        transform: translateY(-1px);
+    }
+
+    .btn-clear {
+        padding: 0.625rem 1.5rem;
+        background: #dc3545;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .btn-clear:hover {
+        background: #c82333;
+        transform: translateY(-1px);
+    }
+
+    .btn-clear:disabled,
+    .btn-preview:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        transform: none;
+    }
+
+    .danger-note {
+        margin-top: 1rem;
+        padding: 0.75rem 1rem;
+        background: #ffebee;
+        border-left: 4px solid #dc3545;
+        border-radius: 6px;
+        font-size: 0.875rem;
+        color: #c62828;
+    }
+
+    /* Preview Modal */
+    .preview-modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 9999;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .preview-modal.active {
+        display: flex;
+    }
+
+    .preview-content {
+        background: white;
+        border-radius: 12px;
+        max-width: 800px;
+        width: 90%;
+        max-height: 80vh;
+        overflow: hidden;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    .preview-header {
+        padding: 1rem 1.5rem;
+        background: linear-gradient(135deg, #ff6b6b 0%, #ee5a5a 100%);
+        color: white;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .preview-header h3 {
+        margin: 0;
+        font-size: 1.1rem;
+    }
+
+    .preview-close {
+        background: none;
+        border: none;
+        color: white;
+        font-size: 1.5rem;
+        cursor: pointer;
+        padding: 0;
+        line-height: 1;
+    }
+
+    .preview-body {
+        padding: 1.5rem;
+        max-height: 50vh;
+        overflow-y: auto;
+    }
+
+    .preview-summary {
+        padding: 1rem;
+        background: #fff3e0;
+        border-radius: 8px;
+        margin-bottom: 1rem;
+    }
+
+    .preview-summary p {
+        margin: 0.25rem 0;
+    }
+
+    .preview-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.875rem;
+    }
+
+    .preview-table th,
+    .preview-table td {
+        padding: 0.625rem;
+        border: 1px solid #e0e0e0;
+        text-align: left;
+    }
+
+    .preview-table th {
+        background: #f5f5f5;
+        font-weight: 600;
+    }
+
+    .preview-table tr:hover {
+        background: #f8f9fa;
+    }
+
+    .preview-footer {
+        padding: 1rem 1.5rem;
+        background: #f8f9fa;
+        display: flex;
+        justify-content: flex-end;
+        gap: 0.75rem;
+        border-top: 1px solid #e0e0e0;
+    }
+
+    .btn-cancel {
+        padding: 0.625rem 1.5rem;
+        background: white;
+        color: #666;
+        border: 2px solid #dee2e6;
+        border-radius: 6px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .btn-cancel:hover {
+        border-color: #adb5bd;
+        color: #495057;
+    }
+
+    .btn-confirm-clear {
+        padding: 0.625rem 1.5rem;
+        background: #dc3545;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .btn-confirm-clear:hover {
+        background: #c82333;
+    }
+
+    /* Result Message */
+    .result-message {
+        margin-top: 1rem;
+        padding: 1rem;
+        border-radius: 8px;
+        display: none;
+    }
+
+    .result-message.success {
+        background: #e8f5e9;
+        border-left: 4px solid #4caf50;
+        color: #2e7d32;
+        display: block;
+    }
+
+    .result-message.error {
+        background: #ffebee;
+        border-left: 4px solid #f44336;
+        color: #c62828;
+        display: block;
+    }
+
+    /* Spinner */
+    .spinner {
+        display: inline-block;
+        width: 16px;
+        height: 16px;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        border-radius: 50%;
+        border-top-color: white;
+        animation: spin 0.8s linear infinite;
+        margin-right: 0.5rem;
+    }
+
+    @keyframes spin {
+        to { transform: rotate(360deg); }
+    }
+</style>
+
+<div class="modern-header">
+    <h1>{{ title }}</h1>
+
+    {% if has_analytics_perm %}
+    <div class="analytics-card">
+        <a href="{% url 'admin:accounts_analytics' %}" class="analytics-btn">
+            📊 View Accounts Analytics Dashboard
+        </a>
+    </div>
+    {% endif %}
+
+    {% if not has_sensitive_perm %}
+    <div class="warning-card">
+        <div class="warning-title">🔒 Limited Access</div>
+        <div>
+            You don't have permission to view sensitive student data (Student IDs, Index Numbers, Emails, Phone
+            Numbers).
+            Contact an administrator to request the <code>view_sensitive_student_data</code> permission.
+        </div>
+    </div>
+    {% endif %}
+
+    {% if has_change_perm and clearable_fields %}
+    <!-- Clear Field Data Section -->
+    <details class="clear-field-card">
+        <summary>
+            <span class="clear-field-header">🗑️ Clear Field Data (Bulk Reset)</span>
+            <span class="toggle-indicator" aria-hidden="true">▾</span>
+        </summary>
+
+        <div class="clear-field-body">
+            <form id="clearFieldForm" class="clear-field-form">
+                {% csrf_token %}
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="field_name">Select Field to Clear</label>
+                        <select id="field_name" name="field_name" required>
+                            <option value="">-- Choose a field --</option>
+                            {% for key, field in clearable_fields.items %}
+                            <option value="{{ key }}" title="{{ field.description }}">{{ field.label }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="graduation_year">Select Graduation Year</label>
+                        <select id="graduation_year" name="graduation_year">
+                            <option value="">-- Choose a year --</option>
+                            {% for year_info in graduation_years_choices %}
+                            <option value="{{ year_info.year }}">{{ year_info.year }} ({{ year_info.academic_year }} - {{ year_info.count }} users)</option>
+                            {% endfor %}
+                        </select>
+                        <label class="all-years-checkbox">
+                            <input type="checkbox" id="include_all_years" name="include_all_years">
+                            <span>Apply to all years (⚠️ use with caution)</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="button-group">
+                    <button type="button" id="previewBtn" class="btn-preview">
+                        👁️ Preview Changes
+                    </button>
+                    <button type="button" id="directClearBtn" class="btn-clear">
+                        🗑️ Clear Data
+                    </button>
+                </div>
+                
+                <div id="clearResultMessage" class="result-message"></div>
+            </form>
+
+            <div class="danger-note">
+                <strong>⚠️ Warning:</strong> This action will permanently clear the selected field data for all matching users.
+                This cannot be undone. Always preview changes before clearing.
+            </div>
+        </div>
+    </details>
+
+    <!-- Preview Modal -->
+    <div id="previewModal" class="preview-modal">
+        <div class="preview-content">
+            <div class="preview-header">
+                <h3>🔍 Preview: Users Affected</h3>
+                <button class="preview-close" onclick="closePreviewModal()">&times;</button>
+            </div>
+            <div class="preview-body">
+                <div id="previewSummary" class="preview-summary"></div>
+                <table class="preview-table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Phone</th>
+                            <th>Graduation Year</th>
+                            <th>Current Value</th>
+                        </tr>
+                    </thead>
+                    <tbody id="previewTableBody">
+                    </tbody>
+                </table>
+            </div>
+            <div class="preview-footer">
+                <button class="btn-cancel" onclick="closePreviewModal()">Cancel</button>
+                <button id="confirmClearBtn" class="btn-confirm-clear">
+                    🗑️ Confirm & Clear Data
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+        const clearFieldUrl = '{% url "admin:clear_field_data" %}';
+        
+        let previewData = null;
+        
+        function getFormData() {
+            const fieldName = document.getElementById('field_name').value;
+            const graduationYear = document.getElementById('graduation_year').value;
+            const includeAllYears = document.getElementById('include_all_years').checked;
+            
+            return {
+                field_name: fieldName,
+                graduation_year: graduationYear,
+                include_all_years: includeAllYears ? 'true' : 'false'
+            };
+        }
+        
+        function validateForm() {
+            const formData = getFormData();
+            if (!formData.field_name) {
+                showResult('Please select a field to clear.', 'error');
+                return false;
+            }
+            if (!formData.include_all_years && !formData.graduation_year) {
+                showResult('Please select a graduation year or check "Apply to all years".', 'error');
+                return false;
+            }
+            return true;
+        }
+        
+        function showResult(message, type) {
+            const resultDiv = document.getElementById('clearResultMessage');
+            resultDiv.textContent = message;
+            resultDiv.className = 'result-message ' + type;
+            resultDiv.style.display = 'block';
+        }
+        
+        function hideResult() {
+            const resultDiv = document.getElementById('clearResultMessage');
+            resultDiv.style.display = 'none';
+        }
+        
+        function setButtonLoading(btn, loading) {
+            if (loading) {
+                btn.disabled = true;
+                btn.dataset.originalText = btn.innerHTML;
+                btn.innerHTML = '<span class="spinner"></span>Loading...';
+            } else {
+                btn.disabled = false;
+                btn.innerHTML = btn.dataset.originalText || btn.innerHTML;
+            }
+        }
+        
+        async function previewChanges() {
+            if (!validateForm()) return;
+            
+            const previewBtn = document.getElementById('previewBtn');
+            setButtonLoading(previewBtn, true);
+            hideResult();
+            
+            try {
+                const formData = new FormData();
+                const data = getFormData();
+                formData.append('field_name', data.field_name);
+                formData.append('graduation_year', data.graduation_year);
+                formData.append('include_all_years', data.include_all_years);
+                formData.append('dry_run', 'true');
+                formData.append('csrfmiddlewaretoken', csrfToken);
+                
+                const response = await fetch(clearFieldUrl, {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const result = await response.json();
+                
+                if (!result.success) {
+                    showResult(result.error || 'An error occurred.', 'error');
+                    return;
+                }
+                
+                if (result.count === 0) {
+                    showResult(result.message, 'success');
+                    return;
+                }
+                
+                // Store preview data and show modal
+                previewData = result;
+                showPreviewModal(result);
+                
+            } catch (error) {
+                showResult('Network error: ' + error.message, 'error');
+            } finally {
+                setButtonLoading(previewBtn, false);
+            }
+        }
+        
+        function showPreviewModal(data) {
+            const modal = document.getElementById('previewModal');
+            const summary = document.getElementById('previewSummary');
+            const tbody = document.getElementById('previewTableBody');
+            
+            // Update summary
+            summary.innerHTML = `
+                <p><strong>Field:</strong> ${data.field_label}</p>
+                <p><strong>Graduation Year:</strong> ${data.graduation_year}</p>
+                <p><strong>Users Affected:</strong> ${data.count}</p>
+                ${data.count > 50 ? '<p><em>Showing first 50 of ' + data.count + ' users...</em></p>' : ''}
+            `;
+            
+            // Update table
+            tbody.innerHTML = '';
+            data.users_preview.forEach(user => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${user.name}</td>
+                    <td>${user.phone}</td>
+                    <td>${user.graduation_year}</td>
+                    <td><code>${user.current_value || '(empty)'}</code></td>
+                `;
+                tbody.appendChild(row);
+            });
+            
+            modal.classList.add('active');
+        }
+        
+        function closePreviewModal() {
+            const modal = document.getElementById('previewModal');
+            modal.classList.remove('active');
+            previewData = null;
+        }
+        
+        async function confirmClear() {
+            if (!previewData) return;
+            
+            const confirmBtn = document.getElementById('confirmClearBtn');
+            setButtonLoading(confirmBtn, true);
+            
+            try {
+                const formData = new FormData();
+                formData.append('field_name', previewData.field_name);
+                formData.append('graduation_year', previewData.graduation_year === 'All' ? '' : previewData.graduation_year);
+                formData.append('include_all_years', previewData.graduation_year === 'All' ? 'true' : 'false');
+                formData.append('dry_run', 'false');
+                formData.append('csrfmiddlewaretoken', csrfToken);
+                
+                const response = await fetch(clearFieldUrl, {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const result = await response.json();
+                
+                closePreviewModal();
+                
+                if (result.success) {
+                    showResult(result.message, 'success');
+                    // Refresh the page after a short delay to show updated data
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 2000);
+                } else {
+                    showResult(result.error || 'An error occurred.', 'error');
+                }
+                
+            } catch (error) {
+                showResult('Network error: ' + error.message, 'error');
+            } finally {
+                setButtonLoading(confirmBtn, false);
+            }
+        }
+        
+        async function directClear() {
+            if (!validateForm()) return;
+            
+            const data = getFormData();
+            const yearText = data.include_all_years === 'true' ? 'ALL years' : `year ${data.graduation_year}`;
+            
+            if (!confirm(`⚠️ Are you sure you want to clear this field data for ${yearText}?\n\nThis action cannot be undone!`)) {
+                return;
+            }
+            
+            const clearBtn = document.getElementById('directClearBtn');
+            setButtonLoading(clearBtn, true);
+            hideResult();
+            
+            try {
+                const formData = new FormData();
+                formData.append('field_name', data.field_name);
+                formData.append('graduation_year', data.graduation_year);
+                formData.append('include_all_years', data.include_all_years);
+                formData.append('dry_run', 'false');
+                formData.append('csrfmiddlewaretoken', csrfToken);
+                
+                const response = await fetch(clearFieldUrl, {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showResult(result.message, 'success');
+                    if (result.cleared_count > 0) {
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 2000);
+                    }
+                } else {
+                    showResult(result.error || 'An error occurred.', 'error');
+                }
+                
+            } catch (error) {
+                showResult('Network error: ' + error.message, 'error');
+            } finally {
+                setButtonLoading(clearBtn, false);
+            }
+        }
+        
+        // Toggle graduation year dropdown based on "all years" checkbox
+        document.getElementById('include_all_years').addEventListener('change', function() {
+            const yearSelect = document.getElementById('graduation_year');
+            yearSelect.disabled = this.checked;
+            if (this.checked) {
+                yearSelect.value = '';
+            }
+        });
+        
+        // Event listeners
+        document.getElementById('previewBtn').addEventListener('click', previewChanges);
+        document.getElementById('directClearBtn').addEventListener('click', directClear);
+        document.getElementById('confirmClearBtn').addEventListener('click', confirmClear);
+        
+        // Close modal when clicking outside
+        document.getElementById('previewModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closePreviewModal();
+            }
+        });
+        
+        // Close modal with Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closePreviewModal();
+            }
+        });
+    </script>
+    {% endif %}
+
+    <details class="columns-card">
+        <summary class="columns-summary">
+            <span class="columns-header">Select Columns to Display</span>
+            <span class="toggle-indicator" aria-hidden="true">▾</span>
+        </summary>
+
+        <div class="columns-body">
+            <form method="post" class="columns-form">
+                {% csrf_token %}
+
+                <div class="checkbox-grid">
+                    {% for col in available_columns %}
+                    <label class="checkbox-label">
+                        {% if col in selected_columns %}
+                        <input type="checkbox" name="selected_columns" value="{{ col }}" checked>
+                        {% else %}
+                        <input type="checkbox" name="selected_columns" value="{{ col }}">
+                        {% endif %}
+                        <span class="checkbox-text">{{ col }}</span>
+                    </label>
+                    {% endfor %}
+                </div>
+
+                <div class="button-group">
+                    <button type="submit" class="btn-apply">Apply Selection</button>
+                    <a href="?reset_columns=1" class="btn-reset">Reset to Default</a>
+                </div>
+            </form>
+
+            {% if not has_sensitive_perm %}
+            <div class="info-note">
+                <strong>ℹ️ Note:</strong> Only columns you have permission to view are shown above.
+            </div>
+            {% endif %}
+        </div>
+    </details>
+</div>
+{% endblock %}
+
+{{ block.super }}

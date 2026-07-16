@@ -1,0 +1,1781 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Donation Withdrawals Dashboard | CS Society Admin</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --info: #3b82f6;
+            --purple: #8b5cf6;
+            --gray-50: #f9fafb;
+            --gray-100: #f3f4f6;
+            --gray-200: #e5e7eb;
+            --gray-300: #d1d5db;
+            --gray-400: #9ca3af;
+            --gray-500: #6b7280;
+            --gray-600: #4b5563;
+            --gray-700: #374151;
+            --gray-800: #1f2937;
+            --gray-900: #111827;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--gray-100);
+            color: var(--gray-800);
+            line-height: 1.5;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--purple) 100%);
+            color: white;
+            padding: 1.5rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .header h1 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .header-actions a {
+            color: white;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            background: rgba(255, 255, 255, 0.2);
+            font-size: 0.875rem;
+            transition: background 0.2s;
+        }
+
+        .header-actions a:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        /* Main Layout */
+        .main-container {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 1.5rem;
+            padding: 1.5rem;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        @media (max-width: 1200px) {
+            .main-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 1rem;
+            padding: 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+        }
+
+        .stat-icon.balance {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+        }
+
+        .stat-icon.pending {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: white;
+        }
+
+        .stat-icon.processing {
+            background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+            color: white;
+        }
+
+        .stat-icon.completed {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            color: white;
+        }
+
+        .stat-info h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--gray-900);
+        }
+
+        .stat-info p {
+            font-size: 0.75rem;
+            color: var(--gray-500);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        /* Withdrawals Table Section */
+        .withdrawals-section {
+            background: white;
+            border-radius: 1rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .section-header {
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid var(--gray-200);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .section-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* Filters */
+        .filters {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-select,
+        .filter-input {
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--gray-300);
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            background: white;
+            color: var(--gray-700);
+        }
+
+        .filter-select:focus,
+        .filter-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+
+        /* Bulk Actions */
+        .bulk-actions {
+            padding: 0.75rem 1.5rem;
+            background: var(--gray-50);
+            border-bottom: 1px solid var(--gray-200);
+            display: none;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .bulk-actions.visible {
+            display: flex;
+        }
+
+        .bulk-actions span {
+            font-size: 0.875rem;
+            color: var(--gray-600);
+        }
+
+        /* Table */
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            text-align: left;
+            padding: 0.875rem 1rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--gray-500);
+            background: var(--gray-50);
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--gray-100);
+            font-size: 0.875rem;
+        }
+
+        tr:hover {
+            background: var(--gray-50);
+        }
+
+        .checkbox-cell {
+            width: 40px;
+        }
+
+        .checkbox-cell input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        /* Status Badge */
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.375rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .status-badge.pending {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .status-badge.approved {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .status-badge.processing {
+            background: #ede9fe;
+            color: #5b21b6;
+        }
+
+        .status-badge.completed {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .status-badge.failed {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .status-badge.rejected {
+            background: #fecaca;
+            color: #7f1d1d;
+        }
+
+        /* Method Badge */
+        .method-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.375rem;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .method-badge.gateway {
+            background: var(--primary);
+            color: white;
+        }
+
+        .method-badge.manual {
+            background: var(--gray-500);
+            color: white;
+        }
+
+        /* Amount */
+        .amount {
+            font-weight: 600;
+            font-family: 'SF Mono', Monaco, monospace;
+        }
+
+        .amount.debit {
+            color: var(--danger);
+        }
+
+        /* Action Buttons */
+        .action-btn {
+            padding: 0.375rem 0.75rem;
+            border: none;
+            border-radius: 0.375rem;
+            font-size: 0.75rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .action-btn.primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .action-btn.primary:hover {
+            background: var(--primary-dark);
+        }
+
+        .action-btn.success {
+            background: var(--success);
+            color: white;
+        }
+
+        .action-btn.success:hover {
+            background: #059669;
+        }
+
+        .action-btn.warning {
+            background: var(--warning);
+            color: white;
+        }
+
+        .action-btn.warning:hover {
+            background: #d97706;
+        }
+
+        .action-btn.danger {
+            background: var(--danger);
+            color: white;
+        }
+
+        .action-btn.danger:hover {
+            background: #dc2626;
+        }
+
+        .action-btn.secondary {
+            background: var(--gray-200);
+            color: var(--gray-700);
+        }
+
+        .action-btn.secondary:hover {
+            background: var(--gray-300);
+        }
+
+        .action-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .actions-cell {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .sidebar-card {
+            background: white;
+            border-radius: 1rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .sidebar-card-header {
+            padding: 1rem 1.25rem;
+            border-bottom: 1px solid var(--gray-200);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .sidebar-card-body {
+            padding: 1.25rem;
+        }
+
+        /* New Withdrawal Form */
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: var(--gray-600);
+            margin-bottom: 0.375rem;
+            text-transform: uppercase;
+            letter-spacing: 0.025em;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.625rem 0.875rem;
+            border: 1px solid var(--gray-300);
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 60px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.75rem;
+        }
+
+        .btn-full {
+            width: 100%;
+            padding: 0.75rem;
+            font-size: 0.875rem;
+        }
+
+        /* Recent Donations */
+        .donation-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--gray-100);
+        }
+
+        .donation-item:last-child {
+            border-bottom: none;
+        }
+
+        .donation-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .donation-donor {
+            font-weight: 500;
+            font-size: 0.875rem;
+        }
+
+        .donation-date {
+            font-size: 0.75rem;
+            color: var(--gray-500);
+        }
+
+        .donation-amount {
+            font-weight: 600;
+            color: var(--success);
+        }
+
+        /* Pagination */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 1rem;
+            border-top: 1px solid var(--gray-200);
+        }
+
+        .pagination a,
+        .pagination span {
+            padding: 0.5rem 0.75rem;
+            border-radius: 0.375rem;
+            font-size: 0.875rem;
+            text-decoration: none;
+            color: var(--gray-600);
+        }
+
+        .pagination a:hover {
+            background: var(--gray-100);
+        }
+
+        .pagination .current {
+            background: var(--primary);
+            color: white;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal {
+            background: white;
+            border-radius: 1rem;
+            width: 90%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+            transform: scale(0.9);
+            transition: transform 0.3s;
+        }
+
+        .modal-overlay.active .modal {
+            transform: scale(1);
+        }
+
+        .modal-header {
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid var(--gray-200);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h3 {
+            font-size: 1.125rem;
+            font-weight: 600;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--gray-400);
+            line-height: 1;
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+        }
+
+        .modal-footer {
+            padding: 1rem 1.5rem;
+            border-top: 1px solid var(--gray-200);
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.75rem;
+        }
+
+        /* Detail View */
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--gray-100);
+        }
+
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+
+        .detail-label {
+            color: var(--gray-500);
+            font-size: 0.875rem;
+        }
+
+        .detail-value {
+            font-weight: 500;
+            text-align: right;
+        }
+
+        /* Toast Notifications */
+        .toast-container {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            z-index: 1100;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .toast {
+            padding: 1rem 1.5rem;
+            border-radius: 0.5rem;
+            color: white;
+            font-size: 0.875rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            animation: slideIn 0.3s ease;
+        }
+
+        .toast.success {
+            background: var(--success);
+        }
+
+        .toast.error {
+            background: var(--danger);
+        }
+
+        .toast.warning {
+            background: var(--warning);
+        }
+
+        .toast.info {
+            background: var(--info);
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: var(--gray-500);
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: var(--gray-300);
+        }
+
+        /* Loading Spinner */
+        .spinner {
+            width: 16px;
+            height: 16px;
+            border: 2px solid transparent;
+            border-top-color: currentColor;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Recipient Info */
+        .recipient-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .recipient-name {
+            font-weight: 500;
+        }
+
+        .recipient-account {
+            font-size: 0.75rem;
+            color: var(--gray-500);
+            font-family: monospace;
+        }
+
+        /* Warning Banner */
+        .warning-banner {
+            background: #fef3c7;
+            border: 1px solid #fcd34d;
+            color: #92400e;
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Header -->
+    <header class="header">
+        <h1>
+            <i class="fas fa-wallet"></i>
+            Donation Withdrawals Dashboard
+        </h1>
+        <div class="header-actions">
+            <button onclick="syncPendingTransfers()" class="sync-btn"
+                style="background: rgba(34, 197, 94, 0.3); border: none; cursor: pointer; color: white; padding: 0.5rem 1rem; border-radius: 0.5rem; font-size: 0.875rem; display: flex; align-items: center; gap: 0.5rem;">
+                <i class="fas fa-sync-alt" id="sync-icon"></i> Sync Transfers
+            </button>
+            <a href="/executive-dashboard-cb/donations/donation/"><i class="fas fa-heart"></i> Donations</a>
+            <a href="/executive-dashboard-cb/donations/donationwallet/"><i class="fas fa-piggy-bank"></i> Wallet</a>
+            <a href="/executive-dashboard-cb/"><i class="fas fa-cog"></i> Admin Home</a>
+        </div>
+    </header>
+
+    <div class="main-container">
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Stats Grid -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon balance">
+                        <i class="fas fa-wallet"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>GH₵{{ wallet.balance|floatformat:2 }}</h3>
+                        <p>Available Balance</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon pending">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>{{ stats.pending }}</h3>
+                        <p>Pending</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon processing">
+                        <i class="fas fa-spinner"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>{{ stats.processing }}</h3>
+                        <p>Processing</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon completed">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>{{ stats.completed }}</h3>
+                        <p>Completed</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Withdrawals Table -->
+            <div class="withdrawals-section">
+                <div class="section-header">
+                    <h2 class="section-title">
+                        <i class="fas fa-list"></i>
+                        Withdrawal Requests
+                    </h2>
+                    <div class="filters">
+                        <!-- prettier-ignore-start -->
+                        <select class="filter-select" id="statusFilter" onchange="applyFilters()">
+                            <option value="all" {% if status_filter == "all" %}selected{% endif %}>All Status</option>
+                            <option value="pending" {% if status_filter == "pending" %}selected{% endif %}>Pending</option>
+                            <option value="approved" {% if status_filter == "approved" %}selected{% endif %}>Approved</option>
+                            <option value="processing" {% if status_filter == "processing" %}selected{% endif %}>Processing</option>
+                            <option value="completed" {% if status_filter == "completed" %}selected{% endif %}>Completed</option>
+                            <option value="failed" {% if status_filter == "failed" %}selected{% endif %}>Failed</option>
+                            <option value="rejected" {% if status_filter == "rejected" %}selected{% endif %}>Rejected</option>
+                        </select>
+                        <select class="filter-select" id="methodFilter" onchange="applyFilters()">
+                            <option value="all" {% if method_filter == "all" %}selected{% endif %}>All Methods</option>
+                            <option value="gateway" {% if method_filter == "gateway" %}selected{% endif %}>Gateway</option>
+                            <option value="manual" {% if method_filter == "manual" %}selected{% endif %}>Manual</option>
+                        </select>
+                        <!-- prettier-ignore-end -->
+                        <input type="text" class="filter-input" id="searchInput" placeholder="Search..."
+                            value="{{ search }}" onkeypress="if(event.key==='Enter') applyFilters()">
+                    </div>
+                </div>
+
+                <!-- Bulk Actions -->
+                <div class="bulk-actions" id="bulkActions">
+                    <span><strong id="selectedCount">0</strong> selected</span>
+                    <button class="action-btn success" onclick="bulkAction('approve')">
+                        <i class="fas fa-check"></i> Approve All
+                    </button>
+                    <button class="action-btn primary" onclick="bulkAction('process')">
+                        <i class="fas fa-bolt"></i> Process All
+                    </button>
+                    <button class="action-btn danger" onclick="bulkAction('reject')">
+                        <i class="fas fa-times"></i> Reject All
+                    </button>
+                </div>
+
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th class="checkbox-cell">
+                                    <input type="checkbox" id="selectAll" onchange="toggleSelectAll()">
+                                </th>
+                                <th>Reference</th>
+                                <th>Amount</th>
+                                <th>Recipient</th>
+                                <th>Purpose</th>
+                                <th>Method</th>
+                                <th>Status</th>
+                                <th>Initiated By</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for w in withdrawals %}
+                            <tr data-id="{{ w.id }}">
+                                <td class="checkbox-cell">
+                                    {% if w.status in 'pending,approved' %}
+                                    <input type="checkbox" class="row-checkbox" value="{{ w.id }}"
+                                        onchange="updateBulkActions()">
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <a href="javascript:void(0)" onclick="showDetails('{{ w.id }}')"
+                                        style="color: var(--primary); font-weight: 500;">
+                                        {{ w.reference }}
+                                    </a>
+                                </td>
+                                <td>
+                                    <span class="amount debit">GH₵{{ w.amount|floatformat:2 }}</span>
+                                </td>
+                                <td>
+                                    <div class="recipient-info">
+                                        <span class="recipient-name">{{ w.recipient_name }}</span>
+                                        <span class="recipient-account">{{ w.recipient_account|default:"-" }}</span>
+                                    </div>
+                                </td>
+                                <td>{{ w.purpose|truncatechars:30 }}</td>
+                                <td>
+                                    <span class="method-badge {{ w.transfer_method }}">
+                                        {% if w.transfer_method == 'gateway' %}
+                                        <i class="fas fa-bolt"></i> Gateway
+                                        {% else %}
+                                        <i class="fas fa-hand-paper"></i> Manual
+                                        {% endif %}
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="status-badge {{ w.status }}">
+                                        {% if w.status == 'pending' %}<i class="fas fa-clock"></i>
+                                        {% elif w.status == 'approved' %}<i class="fas fa-check"></i>
+                                        {% elif w.status == 'processing' %}<i class="fas fa-spinner fa-spin"></i>
+                                        {% elif w.status == 'completed' %}<i class="fas fa-check-circle"></i>
+                                        {% elif w.status == 'failed' %}<i class="fas fa-exclamation-triangle"></i>
+                                        {% elif w.status == 'rejected' %}<i class="fas fa-times-circle"></i>
+                                        {% endif %}
+                                        {{ w.get_status_display }}
+                                    </span>
+                                </td>
+                                <td>{{ w.initiated_by.get_full_name|default:w.initiated_by.username }}</td>
+                                <td class="actions-cell">
+                                    {% if w.status == 'pending' %}
+                                    <button class="action-btn success" onclick="approveWithdrawal('{{ w.id }}')"
+                                        title="Approve">
+                                        <i class="fas fa-check"></i>
+                                    </button>
+                                    {% if w.recipient_bank_code and w.recipient_account %}
+                                    <button class="action-btn primary" onclick="processTransfer('{{ w.id }}')"
+                                        title="Process Transfer">
+                                        <i class="fas fa-bolt"></i>
+                                    </button>
+                                    {% endif %}
+                                    <button class="action-btn danger" onclick="rejectWithdrawal('{{ w.id }}')"
+                                        title="Reject">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                    <button class="action-btn secondary" onclick="editWithdrawal('{{ w.id }}')"
+                                        title="Edit">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    {% elif w.status == 'approved' %}
+                                    {% if w.transfer_method == 'gateway' %}
+                                    <button class="action-btn primary" onclick="processTransfer('{{ w.id }}')"
+                                        title="Process Gateway Transfer">
+                                        <i class="fas fa-bolt"></i> Send
+                                    </button>
+                                    {% else %}
+                                    <button class="action-btn success" onclick="markComplete('{{ w.id }}')"
+                                        title="Mark Complete">
+                                        <i class="fas fa-check-circle"></i> Complete
+                                    </button>
+                                    {% endif %}
+                                    {% elif w.status == 'processing' %}
+                                    {% if w.gateway_transfer_code %}
+                                    <button class="action-btn primary"
+                                        onclick="openOtpModal('{{ w.id }}', '{{ w.gateway_transfer_code }}')"
+                                        title="Enter OTP to finalize">
+                                        <i class="fas fa-key"></i> OTP
+                                    </button>
+                                    {% endif %}
+                                    <button class="action-btn warning" onclick="verifyTransfer('{{ w.id }}')"
+                                        title="Verify Status">
+                                        <i class="fas fa-sync"></i> Verify
+                                    </button>
+                                    {% elif w.status == 'completed' %}
+                                    <button class="action-btn secondary" onclick="showDetails('{{ w.id }}')"
+                                        title="View Receipt">
+                                        <i class="fas fa-receipt"></i>
+                                    </button>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="9">
+                                    <div class="empty-state">
+                                        <i class="fas fa-inbox"></i>
+                                        <p>No withdrawal requests found</p>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Pagination -->
+                {% if withdrawals.has_other_pages %}
+                <div class="pagination">
+                    {% if withdrawals.has_previous %}
+                    <a
+                        href="?page={{ withdrawals.previous_page_number }}&status={{ status_filter }}&method={{ method_filter }}&search={{ search }}">
+                        <i class="fas fa-chevron-left"></i>
+                    </a>
+                    {% endif %}
+
+                    {% for num in withdrawals.paginator.page_range %}
+                    {% if withdrawals.number == num %}
+                    <span class="current">{{ num }}</span>
+                    {% elif num > withdrawals.number|add:'-3' and num < withdrawals.number|add:'3' %} <a
+                        href="?page={{ num }}&status={{ status_filter }}&method={{ method_filter }}&search={{ search }}">
+                        {{ num }}</a>
+                        {% endif %}
+                        {% endfor %}
+
+                        {% if withdrawals.has_next %}
+                        <a
+                            href="?page={{ withdrawals.next_page_number }}&status={{ status_filter }}&method={{ method_filter }}&search={{ search }}">
+                            <i class="fas fa-chevron-right"></i>
+                        </a>
+                        {% endif %}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <!-- New Withdrawal Form -->
+            <div class="sidebar-card">
+                <div class="sidebar-card-header">
+                    <i class="fas fa-plus-circle"></i>
+                    New Withdrawal Request
+                </div>
+                <div class="sidebar-card-body">
+                    <form id="newWithdrawalForm">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label>Amount (GH₵)</label>
+                            <input type="number" name="amount" step="0.01" min="1" required placeholder="0.00"
+                                max="{{ wallet.balance }}">
+                        </div>
+                        <div class="form-group">
+                            <label>Recipient Name</label>
+                            <input type="text" name="recipient_name" required placeholder="Full name">
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Account Number</label>
+                                <input type="text" name="recipient_account" required placeholder="Account/Phone">
+                            </div>
+                            <div class="form-group">
+                                <label>Bank/Provider</label>
+                                <select name="recipient_bank_code" required>
+                                    <option value="">Select...</option>
+                                    <optgroup label="Mobile Money">
+                                        {% for code, name in bank_choices %}
+                                        {% if code == 'MTN' or code == 'VOD' or code == 'ATL' %}
+                                        <option value="{{ code }}">{{ name }}</option>
+                                        {% endif %}
+                                        {% endfor %}
+                                    </optgroup>
+                                    <optgroup label="Banks">
+                                        {% for code, name in bank_choices %}
+                                        {% if code != 'MTN' and code != 'VOD' and code != 'ATL' %}
+                                        <option value="{{ code }}">{{ name }}</option>
+                                        {% endif %}
+                                        {% endfor %}
+                                    </optgroup>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Purpose</label>
+                            <input type="text" name="purpose" required placeholder="What is this for?">
+                        </div>
+                        <div class="form-group">
+                            <label>Description (Optional)</label>
+                            <textarea name="description" placeholder="Additional details..."></textarea>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Category</label>
+                                <select name="category">
+                                    <option value="other">Other</option>
+                                    <option value="scholarship">Scholarship</option>
+                                    <option value="event">Event</option>
+                                    <option value="equipment">Equipment</option>
+                                    <option value="welfare">Welfare</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Transfer Method</label>
+                                <select name="transfer_method">
+                                    <option value="gateway">⚡ Gateway (Auto)</option>
+                                    <option value="manual">📝 Manual</option>
+                                </select>
+                            </div>
+                        </div>
+                        <button type="submit" class="action-btn primary btn-full">
+                            <i class="fas fa-paper-plane"></i> Create Withdrawal Request
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Recent Donations -->
+            <div class="sidebar-card">
+                <div class="sidebar-card-header">
+                    <i class="fas fa-heart"></i>
+                    Recent Donations
+                </div>
+                <div class="sidebar-card-body">
+                    {% for d in recent_donations %}
+                    <div class="donation-item">
+                        <div class="donation-info">
+                            <span class="donation-donor">{{ d.donor_name|default:"Anonymous" }}</span>
+                            <span class="donation-date">{{ d.created_at|timesince }} ago</span>
+                        </div>
+                        <span class="donation-amount">+GH₵{{ d.amount|floatformat:2 }}</span>
+                    </div>
+                    {% empty %}
+                    <p style="color: var(--gray-500); font-size: 0.875rem; text-align: center;">
+                        No recent donations
+                    </p>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Help Card -->
+            <div class="sidebar-card">
+                <div class="sidebar-card-header">
+                    <i class="fas fa-info-circle"></i>
+                    Quick Help
+                </div>
+                <div class="sidebar-card-body" style="font-size: 0.8rem; color: var(--gray-600);">
+                    <p><strong>⚡ Gateway Transfer:</strong> Automatic via Paystack. Money sent directly to recipient.
+                    </p>
+                    <p style="margin-top: 0.5rem;"><strong>📝 Manual Transfer:</strong> You transfer manually and upload
+                        receipt.</p>
+                    <p style="margin-top: 0.5rem;"><strong>Status Flow:</strong> Pending → Approved → Processing →
+                        Completed</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Detail Modal -->
+    <div class="modal-overlay" id="detailModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3><i class="fas fa-receipt"></i> Withdrawal Details</h3>
+                <button class="modal-close" onclick="closeModal('detailModal')">&times;</button>
+            </div>
+            <div class="modal-body" id="detailModalContent">
+                <!-- Filled by JS -->
+            </div>
+            <div class="modal-footer">
+                <button class="action-btn secondary" onclick="closeModal('detailModal')">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Modal -->
+    <div class="modal-overlay" id="editModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3><i class="fas fa-edit"></i> Edit Withdrawal</h3>
+                <button class="modal-close" onclick="closeModal('editModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="editWithdrawalForm">
+                    <input type="hidden" name="withdrawal_id" id="editWithdrawalId">
+                    <div class="form-group">
+                        <label>Recipient Name</label>
+                        <input type="text" name="recipient_name" id="editRecipientName" required>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Account Number</label>
+                            <input type="text" name="recipient_account" id="editRecipientAccount" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Bank/Provider</label>
+                            <select name="recipient_bank_code" id="editRecipientBankCode">
+                                <option value="">Select...</option>
+                                <optgroup label="Mobile Money">
+                                    {% for code, name in bank_choices %}
+                                    {% if code == 'MTN' or code == 'VOD' or code == 'ATL' %}
+                                    <option value="{{ code }}">{{ name }}</option>
+                                    {% endif %}
+                                    {% endfor %}
+                                </optgroup>
+                                <optgroup label="Banks">
+                                    {% for code, name in bank_choices %}
+                                    {% if code != 'MTN' and code != 'VOD' and code != 'ATL' %}
+                                    <option value="{{ code }}">{{ name }}</option>
+                                    {% endif %}
+                                    {% endfor %}
+                                </optgroup>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Purpose</label>
+                        <input type="text" name="purpose" id="editPurpose" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Transfer Method</label>
+                        <select name="transfer_method" id="editTransferMethod">
+                            <option value="gateway">⚡ Gateway (Auto)</option>
+                            <option value="manual">📝 Manual</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="action-btn secondary" onclick="closeModal('editModal')">Cancel</button>
+                <button class="action-btn primary" onclick="saveEdit()">Save Changes</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Reject Modal -->
+    <div class="modal-overlay" id="rejectModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3><i class="fas fa-times-circle"></i> Reject Withdrawal</h3>
+                <button class="modal-close" onclick="closeModal('rejectModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="rejectWithdrawalId">
+                <div class="form-group">
+                    <label>Reason for Rejection</label>
+                    <textarea id="rejectReason" placeholder="Provide a reason..." rows="3"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="action-btn secondary" onclick="closeModal('rejectModal')">Cancel</button>
+                <button class="action-btn danger" onclick="confirmReject()">Reject Withdrawal</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Manual Complete Modal -->
+    <div class="modal-overlay" id="completeModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3><i class="fas fa-check-circle"></i> Complete Manual Transfer</h3>
+                <button class="modal-close" onclick="closeModal('completeModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="completeForm" enctype="multipart/form-data">
+                    <input type="hidden" id="completeWithdrawalId">
+                    <div class="warning-banner">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        Upload proof of transfer (screenshot/receipt)
+                    </div>
+                    <div class="form-group">
+                        <label>Receipt Image</label>
+                        <input type="file" name="receipt" id="receiptFile" accept="image/*" required>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="action-btn secondary" onclick="closeModal('completeModal')">Cancel</button>
+                <button class="action-btn success" onclick="confirmComplete()">Mark as Completed</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- OTP Modal -->
+    <div class="modal-overlay" id="otpModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3><i class="fas fa-key"></i> Enter Transfer OTP</h3>
+                <button class="modal-close" onclick="closeModal('otpModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="warning-banner" style="background: #dbeafe; border-color: #60a5fa; color: #1e40af;">
+                    <i class="fas fa-info-circle"></i>
+                    Paystack sent an OTP to authorize this transfer. Check your registered phone/email.
+                </div>
+                <form id="otpForm" onsubmit="event.preventDefault(); submitOtp();">
+                    <div class="form-group">
+                        <label for="otpInput">OTP Code</label>
+                        <input type="text" id="otpInput" name="otp" required placeholder="Enter 6-digit OTP"
+                            maxlength="10" autocomplete="one-time-code"
+                            style="font-size: 1.25rem; letter-spacing: 0.25em; text-align: center;">
+                    </div>
+                    <input type="hidden" id="otpTransferCode" name="transfer_code">
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="action-btn secondary" onclick="closeModal('otpModal')">Cancel</button>
+                <button class="action-btn primary" onclick="submitOtp()">
+                    <i class="fas fa-check"></i> Verify & Complete Transfer
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script>
+        // CSRF Token
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+        // Sync Pending Transfers - Check with Paystack and update status
+        async function syncPendingTransfers() {
+            const syncIcon = document.getElementById('sync-icon');
+            syncIcon.classList.add('fa-spin');
+
+            try {
+                const response = await fetch('/donations/admin/sync-transfers/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': csrfToken
+                    }
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    const results = data.results;
+                    showToast(
+                        `Sync complete: ${results.completed} completed, ${results.failed} failed, ${results.still_pending} pending`,
+                        results.completed > 0 ? 'success' : 'info'
+                    );
+
+                    // Reload page if any changes
+                    if (results.completed > 0 || results.failed > 0) {
+                        setTimeout(() => location.reload(), 1500);
+                    }
+                } else {
+                    showToast(data.error || 'Sync failed', 'error');
+                }
+            } catch (error) {
+                showToast('Failed to sync transfers: ' + error.message, 'error');
+            } finally {
+                syncIcon.classList.remove('fa-spin');
+            }
+        }
+
+        // Toast Notification
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.innerHTML = `
+                <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'times-circle' : 'info-circle'}"></i>
+                ${message}
+            `;
+            container.appendChild(toast);
+            setTimeout(() => toast.remove(), 5000);
+        }
+
+        // Modal Functions
+        function openModal(id) {
+            document.getElementById(id).classList.add('active');
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).classList.remove('active');
+        }
+
+        // Filter Functions
+        function applyFilters() {
+            const status = document.getElementById('statusFilter').value;
+            const method = document.getElementById('methodFilter').value;
+            const search = document.getElementById('searchInput').value;
+            window.location.href = `?status=${status}&method=${method}&search=${encodeURIComponent(search)}`;
+        }
+
+        // Bulk Selection
+        function toggleSelectAll() {
+            const selectAll = document.getElementById('selectAll').checked;
+            document.querySelectorAll('.row-checkbox').forEach(cb => cb.checked = selectAll);
+            updateBulkActions();
+        }
+
+        function updateBulkActions() {
+            const checked = document.querySelectorAll('.row-checkbox:checked').length;
+            document.getElementById('selectedCount').textContent = checked;
+            document.getElementById('bulkActions').classList.toggle('visible', checked > 0);
+        }
+
+        // Bulk Action
+        async function bulkAction(action) {
+            const ids = Array.from(document.querySelectorAll('.row-checkbox:checked')).map(cb => cb.value);
+            if (!ids.length) return;
+
+            if (!confirm(`Are you sure you want to ${action} ${ids.length} withdrawal(s)?`)) return;
+
+            try {
+                const response = await fetch('/donations/admin/bulk-process/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': csrfToken
+                    },
+                    body: JSON.stringify({ withdrawal_ids: ids, action })
+                });
+
+                const data = await response.json();
+                showToast(data.message, data.success ? 'success' : 'error');
+                if (data.success) setTimeout(() => location.reload(), 1500);
+            } catch (error) {
+                showToast('An error occurred', 'error');
+            }
+        }
+
+        // New Withdrawal Form
+        document.getElementById('newWithdrawalForm').addEventListener('submit', async function (e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+            const data = Object.fromEntries(formData);
+
+            try {
+                const response = await fetch('/donations/admin/create/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': csrfToken
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+                showToast(result.message || result.error, result.success ? 'success' : 'error');
+                if (result.success) {
+                    this.reset();
+                    setTimeout(() => location.reload(), 1500);
+                }
+            } catch (error) {
+                showToast('An error occurred', 'error');
+            }
+        });
+
+        // Approve Withdrawal
+        async function approveWithdrawal(id) {
+            if (!confirm('Approve this withdrawal request?')) return;
+
+            try {
+                const response = await fetch(`/donations/admin/approve/${id}/`, {
+                    method: 'POST',
+                    headers: { 'X-CSRFToken': csrfToken }
+                });
+
+                const data = await response.json();
+                showToast(data.message || data.error, data.success ? 'success' : 'error');
+                if (data.success) setTimeout(() => location.reload(), 1000);
+            } catch (error) {
+                showToast('An error occurred', 'error');
+            }
+        }
+
+        // Reject Withdrawal
+        let rejectingId = null;
+        function rejectWithdrawal(id) {
+            rejectingId = id;
+            document.getElementById('rejectWithdrawalId').value = id;
+            document.getElementById('rejectReason').value = '';
+            openModal('rejectModal');
+        }
+
+        async function confirmReject() {
+            const reason = document.getElementById('rejectReason').value;
+
+            try {
+                const response = await fetch(`/donations/admin/reject/${rejectingId}/`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': csrfToken
+                    },
+                    body: JSON.stringify({ reason })
+                });
+
+                const data = await response.json();
+                showToast(data.message || data.error, data.success ? 'success' : 'error');
+                closeModal('rejectModal');
+                if (data.success) setTimeout(() => location.reload(), 1000);
+            } catch (error) {
+                showToast('An error occurred', 'error');
+            }
+        }
+
+        // ========== OTP Modal Logic (Global Scope) ==========
+        let currentOtpWithdrawalId = null;
+
+        function openOtpModal(withdrawalId, transferCode) {
+            currentOtpWithdrawalId = withdrawalId;
+            document.getElementById('otpTransferCode').value = transferCode;
+            document.getElementById('otpInput').value = '';
+            openModal('otpModal');
+        }
+
+        async function submitOtp() {
+            const otp = document.getElementById('otpInput').value.trim();
+            const transferCode = document.getElementById('otpTransferCode').value;
+
+            if (!otp) {
+                showToast('Please enter the OTP code', 'error');
+                return;
+            }
+
+            if (!currentOtpWithdrawalId) {
+                showToast('No withdrawal selected', 'error');
+                return;
+            }
+
+            // Show loading state
+            const submitBtn = document.querySelector('#otpModal .action-btn.primary');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<span class="spinner"></span> Verifying...';
+            submitBtn.disabled = true;
+
+            try {
+                const response = await fetch(`/donations/admin/finalize-otp/${currentOtpWithdrawalId}/`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': csrfToken,
+                    },
+                    body: JSON.stringify({ otp: otp })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    showToast(result.message || 'Transfer finalized successfully!', 'success');
+                    closeModal('otpModal');
+                    setTimeout(() => location.reload(), 1500);
+                } else {
+                    showToast(result.error || 'Failed to verify OTP', 'error');
+                }
+            } catch (err) {
+                showToast('Error finalizing transfer', 'error');
+            } finally {
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            }
+        }
+
+        // Process Gateway Transfer
+        async function processTransfer(id) {
+            if (!confirm('Process this withdrawal via Paystack? Money will be sent immediately.')) return;
+
+            try {
+                const response = await fetch(`/donations/admin/process/${id}/`, {
+                    method: 'POST',
+                    headers: { 'X-CSRFToken': csrfToken }
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    // Check if OTP is required (transfer initiated but needs verification)
+                    // Paystack may return status 'otp' or the transfer code indicates OTP needed
+                    if (data.transfer_code && data.status === 'processing') {
+                        // Show success message first
+                        showToast('Transfer initiated! Please check for OTP if required.', 'success');
+
+                        // Ask if they received an OTP
+                        setTimeout(() => {
+                            if (confirm('Did you receive an OTP via SMS/email to authorize this transfer? Click OK to enter OTP, or Cancel to wait for automatic processing.')) {
+                                openOtpModal(id, data.transfer_code);
+                            } else {
+                                setTimeout(() => location.reload(), 1000);
+                            }
+                        }, 500);
+                    } else {
+                        showToast(data.message || 'Transfer processed successfully', 'success');
+                        setTimeout(() => location.reload(), 1500);
+                    }
+                } else {
+                    showToast(data.error || 'Transfer failed', 'error');
+                }
+            } catch (error) {
+                showToast('An error occurred', 'error');
+            }
+        }
+
+        // Verify Transfer
+        async function verifyTransfer(id) {
+            try {
+                const response = await fetch(`/donations/admin/verify/${id}/`, {
+                    method: 'POST',
+                    headers: { 'X-CSRFToken': csrfToken }
+                });
+
+                const data = await response.json();
+                showToast(data.message || data.error, data.success ? 'success' : 'error');
+                if (data.success) setTimeout(() => location.reload(), 1000);
+            } catch (error) {
+                showToast('An error occurred', 'error');
+            }
+        }
+
+        // Mark Manual Complete
+        function markComplete(id) {
+            document.getElementById('completeWithdrawalId').value = id;
+            document.getElementById('receiptFile').value = '';
+            openModal('completeModal');
+        }
+
+        async function confirmComplete() {
+            const id = document.getElementById('completeWithdrawalId').value;
+            const fileInput = document.getElementById('receiptFile');
+
+            if (!fileInput.files[0]) {
+                showToast('Please upload a receipt image', 'error');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('receipt', fileInput.files[0]);
+
+            try {
+                const response = await fetch(`/donations/admin/complete/${id}/`, {
+                    method: 'POST',
+                    headers: { 'X-CSRFToken': csrfToken },
+                    body: formData
+                });
+
+                const data = await response.json();
+                showToast(data.message || data.error, data.success ? 'success' : 'error');
+                closeModal('completeModal');
+                if (data.success) setTimeout(() => location.reload(), 1000);
+            } catch (error) {
+                showToast('An error occurred', 'error');
+            }
+        }
+
+        // Show Details
+        async function showDetails(id) {
+            try {
+                const response = await fetch(`/donations/admin/detail/${id}/`);
+                const result = await response.json();
+
+                if (result.success) {
+                    const d = result.data;
+                    document.getElementById('detailModalContent').innerHTML = `
+                        <div class="detail-row">
+                            <span class="detail-label">Reference</span>
+                            <span class="detail-value">${d.reference}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Amount</span>
+                            <span class="detail-value" style="color: var(--danger); font-size: 1.25rem;">GH₵${d.amount.toFixed(2)}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Status</span>
+                            <span class="detail-value"><span class="status-badge ${d.status}">${d.status_display}</span></span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Transfer Method</span>
+                            <span class="detail-value">${d.transfer_method === 'gateway' ? '⚡ Gateway' : '📝 Manual'}</span>
+                        </div>
+                        <hr style="margin: 1rem 0; border: none; border-top: 1px solid var(--gray-200);">
+                        <div class="detail-row">
+                            <span class="detail-label">Recipient</span>
+                            <span class="detail-value">${d.recipient_name}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Account</span>
+                            <span class="detail-value" style="font-family: monospace;">${d.recipient_account || '-'}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Bank/Provider</span>
+                            <span class="detail-value">${d.recipient_bank || '-'}</span>
+                        </div>
+                        <hr style="margin: 1rem 0; border: none; border-top: 1px solid var(--gray-200);">
+                        <div class="detail-row">
+                            <span class="detail-label">Purpose</span>
+                            <span class="detail-value">${d.purpose}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Category</span>
+                            <span class="detail-value">${d.category}</span>
+                        </div>
+                        ${d.description ? `
+                        <div class="detail-row">
+                            <span class="detail-label">Description</span>
+                            <span class="detail-value">${d.description}</span>
+                        </div>
+                        ` : ''}
+                        <hr style="margin: 1rem 0; border: none; border-top: 1px solid var(--gray-200);">
+                        <div class="detail-row">
+                            <span class="detail-label">Initiated By</span>
+                            <span class="detail-value">${d.initiated_by || '-'}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Approved By</span>
+                            <span class="detail-value">${d.approved_by || '-'}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Approved At</span>
+                            <span class="detail-value">${d.approved_at || '-'}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Completed At</span>
+                            <span class="detail-value">${d.completed_at || '-'}</span>
+                        </div>
+                        ${d.gateway_transfer_code ? `
+                        <hr style="margin: 1rem 0; border: none; border-top: 1px solid var(--gray-200);">
+                        <div style="background: var(--gray-50); padding: 1rem; border-radius: 0.5rem; font-family: monospace; font-size: 0.8rem;">
+                            <strong>Gateway Receipt</strong><br>
+                            Transfer Code: ${d.gateway_transfer_code}<br>
+                            Fee: GH₵${d.gateway_fee.toFixed(2)}<br>
+                            ${d.status_message || ''}
+                        </div>
+                        ` : ''}
+                        ${d.receipt_url ? `
+                        <hr style="margin: 1rem 0; border: none; border-top: 1px solid var(--gray-200);">
+                        <div>
+                            <strong>Receipt Image</strong><br>
+                            <img src="${d.receipt_url}" style="max-width: 100%; border-radius: 0.5rem; margin-top: 0.5rem;">
+                        </div>
+                        ` : ''}
+                    `;
+                    openModal('detailModal');
+                }
+            } catch (error) {
+                showToast('Failed to load details', 'error');
+            }
+        }
+
+        // Edit Withdrawal
+        async function editWithdrawal(id) {
+            try {
+                const response = await fetch(`/donations/admin/detail/${id}/`);
+                const result = await response.json();
+
+                if (result.success) {
+                    const d = result.data;
+                    document.getElementById('editWithdrawalId').value = d.id;
+                    document.getElementById('editRecipientName').value = d.recipient_name;
+                    document.getElementById('editRecipientAccount').value = d.recipient_account || '';
+                    document.getElementById('editRecipientBankCode').value = d.recipient_bank_code || '';
+                    document.getElementById('editPurpose').value = d.purpose;
+                    document.getElementById('editTransferMethod').value = d.transfer_method;
+                    openModal('editModal');
+                }
+            } catch (error) {
+                showToast('Failed to load withdrawal', 'error');
+            }
+        }
+
+        async function saveEdit() {
+            const id = document.getElementById('editWithdrawalId').value;
+            const data = {
+                recipient_name: document.getElementById('editRecipientName').value,
+                recipient_account: document.getElementById('editRecipientAccount').value,
+                recipient_bank_code: document.getElementById('editRecipientBankCode').value,
+                purpose: document.getElementById('editPurpose').value,
+                transfer_method: document.getElementById('editTransferMethod').value,
+            };
+
+            try {
+                const response = await fetch(`/donations/admin/update/${id}/`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': csrfToken
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+                showToast(result.message || result.error, result.success ? 'success' : 'error');
+                closeModal('editModal');
+                if (result.success) setTimeout(() => location.reload(), 1000);
+            } catch (error) {
+                showToast('An error occurred', 'error');
+            }
+        }
+    </script>
+</body>
+
+</html>

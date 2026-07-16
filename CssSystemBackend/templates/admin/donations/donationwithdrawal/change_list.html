@@ -1,0 +1,34 @@
+{% extends "admin/change_list.html" %}
+
+{% block object-tools-items %}
+{% if show_dashboard_button %}
+<li>
+    <a href="/donations/admin/dashboard/" class="button"
+        style="background: linear-gradient(135deg, #6366f1, #8b5cf6); color: white; padding: 10px 15px; border-radius: 6px; text-decoration: none; font-weight: 600;">
+        🚀 Open Full Dashboard
+    </a>
+</li>
+{% endif %}
+{{ block.super }}
+{% endblock %}
+
+{% block content %}
+{% if show_dashboard_button %}
+<div
+    style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; border-radius: 12px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;">
+    <div>
+        <h2 style="margin: 0 0 5px 0; font-size: 1.25rem;">💰 Withdrawal Management Dashboard</h2>
+        <p style="margin: 0; opacity: 0.9; font-size: 0.9rem;">
+            For a better experience with one-click approvals, gateway transfers, and bulk operations, use the standalone
+            dashboard.
+        </p>
+    </div>
+    <a href="/donations/admin/dashboard/"
+        style="background: white; color: #6366f1; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: 600; display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
+        <span style="font-size: 1.25rem;">🚀</span>
+        Open Full Dashboard
+    </a>
+</div>
+{% endif %}
+{{ block.super }}
+{% endblock %}
