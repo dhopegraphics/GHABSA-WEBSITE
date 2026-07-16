@@ -6,7 +6,7 @@ Setup on PythonAnywhere:
 1. Go to "Tasks" tab in your PythonAnywhere dashboard
 2. Add a scheduled task
 3. Set it to run every 5 or 10 minutes (hourly on free accounts)
-4. Command: cd /home/yourusername/CssSystemBackend && python manage.py retry_pending_transactions
+4. Command: cd /home/yourusername/BIOCHEM-KNUST-Backend && python manage.py retry_pending_transactions
 """
 from django.core.management.base import BaseCommand
 from django.utils import timezone

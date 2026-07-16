@@ -11,10 +11,10 @@ SETUP ON PYTHONANYWHERE:
 2. Add these scheduled tasks:
 
    a) Every hour (or more frequently on paid accounts):
-      Command: cd /home/yourusername/CssSystemBackend && python manage.py retry_pending_transactions
+      Command: cd /home/yourusername/BIOCHEM-KNUST-Backend && python manage.py retry_pending_transactions
       
    b) Daily at 3:00 AM:
-      Command: cd /home/yourusername/CssSystemBackend && python manage.py cleanup_abandoned_transactions
+      Command: cd /home/yourusername/BIOCHEM-KNUST-Backend && python manage.py cleanup_abandoned_transactions
 
 AVAILABLE COMMANDS:
 ===================
@@ -84,4 +84,3 @@ These commands provide the same functionality as the disabled Celery tasks below
 #     """Debug task for testing Celery setup"""
 #     logger = logging.getLogger('celery')
 #     logger.info(f'Debug task executed: {self.request!r}')
-

@@ -5,7 +5,7 @@ For PythonAnywhere - Run as daily scheduled task
 Setup on PythonAnywhere:
 1. Go to "Tasks" tab in your PythonAnywhere dashboard
 2. Add a daily scheduled task (e.g., 3:00 AM)
-3. Command: cd /home/yourusername/CssSystemBackend && python manage.py cleanup_abandoned_transactions
+3. Command: cd /home/yourusername/BIOCHEM-KNUST-Backend && python manage.py cleanup_abandoned_transactions
 """
 from django.core.management.base import BaseCommand
 from django.utils import timezone
