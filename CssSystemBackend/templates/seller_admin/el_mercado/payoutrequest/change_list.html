@@ -1,0 +1,923 @@
+{% extends "seller_admin/seller_base_site.html" %}
+{% load i18n static %}
+
+{% block extrastyle %}
+{{ block.super }}
+<style>
+    .payouts-container {
+        max-width: 1400px;
+    }
+
+    .page-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 32px;
+        flex-wrap: wrap;
+        gap: 20px;
+    }
+
+    .page-header h1 {
+        font-size: 28px;
+        font-weight: 800;
+        color: var(--gray-900);
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .page-header h1 i {
+        color: var(--primary);
+    }
+
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 12px 24px;
+        border-radius: 10px;
+        font-size: 14px;
+        font-weight: 600;
+        text-decoration: none;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        border: none;
+    }
+
+    .btn-primary,
+    .btn-primary:link,
+    .btn-primary:visited,
+    a.btn-primary {
+        background: var(--gradient-primary);
+        color: #ffffff !important;
+    }
+
+    .btn-primary:hover,
+    a.btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(124, 58, 237, 0.4);
+        color: #ffffff !important;
+    }
+
+    .btn-primary i {
+        color: #ffffff !important;
+    }
+
+    /* Earnings Overview */
+    .earnings-overview {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 24px;
+        margin-bottom: 32px;
+    }
+
+    .earnings-card {
+        background: white;
+        border-radius: 20px;
+        padding: 28px;
+        border: 1px solid var(--gray-200);
+        transition: all 0.2s ease;
+    }
+
+    .earnings-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08);
+    }
+
+    .earnings-card.highlight {
+        background: var(--gradient-primary);
+        color: white;
+        border: none;
+    }
+
+    .earnings-card-header {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+        margin-bottom: 16px;
+    }
+
+    .earnings-card-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 22px;
+    }
+
+    .earnings-card:not(.highlight) .earnings-card-icon {
+        background: linear-gradient(135deg, rgba(124, 58, 237, 0.15), rgba(236, 72, 153, 0.15));
+        color: var(--primary);
+    }
+
+    .earnings-card.highlight .earnings-card-icon {
+        background: rgba(255, 255, 255, 0.2);
+        color: white;
+    }
+
+    .earnings-card-label {
+        font-size: 13px;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        font-weight: 600;
+        opacity: 0.8;
+    }
+
+    .earnings-card:not(.highlight) .earnings-card-label {
+        color: var(--gray-500);
+    }
+
+    .earnings-amount {
+        font-size: 36px;
+        font-weight: 800;
+        margin-bottom: 8px;
+        display: block;
+    }
+
+    .earnings-card:not(.highlight) .earnings-amount {
+        color: var(--gray-900);
+    }
+
+    .earnings-change {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    .earnings-change.positive {
+        color: var(--success);
+    }
+
+    .earnings-change.negative {
+        color: var(--danger);
+    }
+
+    .earnings-card.highlight .earnings-change {
+        color: rgba(255, 255, 255, 0.8);
+    }
+
+    .withdraw-btn {
+        margin-top: 20px;
+        width: 100%;
+        background: white;
+        color: var(--primary);
+        padding: 14px;
+        border-radius: 12px;
+        font-size: 15px;
+        font-weight: 700;
+        border: none;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        text-decoration: none;
+    }
+
+    .withdraw-btn:hover {
+        background: rgba(255, 255, 255, 0.9);
+        transform: translateY(-2px);
+    }
+
+    /* Payout Requests Table */
+    .section-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 20px;
+    }
+
+    .section-header h2 {
+        font-size: 20px;
+        font-weight: 700;
+        color: var(--gray-900);
+        margin: 0;
+    }
+
+    .payouts-table-wrapper {
+        background: white;
+        border-radius: 20px;
+        border: 1px solid var(--gray-200);
+        overflow: hidden;
+        margin-bottom: 32px;
+    }
+
+    .payouts-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .payouts-table thead th {
+        background: var(--gray-50);
+        padding: 16px 20px;
+        text-align: left;
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--gray-500);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        border-bottom: 1px solid var(--gray-200);
+    }
+
+    .payouts-table thead th:first-child {
+        padding-left: 24px;
+    }
+
+    .payouts-table tbody tr {
+        transition: all 0.2s ease;
+    }
+
+    .payouts-table tbody tr:hover {
+        background: var(--gray-50);
+    }
+
+    .payouts-table tbody td {
+        padding: 20px;
+        border-bottom: 1px solid var(--gray-100);
+        vertical-align: middle;
+    }
+
+    .payouts-table tbody td:first-child {
+        padding-left: 24px;
+    }
+
+    .payouts-table tbody tr:last-child td {
+        border-bottom: none;
+    }
+
+    .payout-id {
+        font-family: 'SF Mono', 'Monaco', monospace;
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--gray-900);
+    }
+
+    .payout-amount {
+        font-size: 16px;
+        font-weight: 700;
+        color: var(--gray-900);
+    }
+
+    .payout-date {
+        font-size: 14px;
+        color: var(--gray-600);
+    }
+
+    .payout-method {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .method-icon {
+        width: 36px;
+        height: 36px;
+        border-radius: 8px;
+        background: var(--gray-100);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+        color: var(--gray-600);
+    }
+
+    .method-details {
+        font-size: 14px;
+    }
+
+    .method-name {
+        font-weight: 600;
+        color: var(--gray-900);
+    }
+
+    .method-account {
+        font-size: 12px;
+        color: var(--gray-500);
+    }
+
+    /* Status Badge */
+    .status-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 14px;
+        border-radius: 100px;
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+    .status-badge.pending {
+        background: rgba(245, 158, 11, 0.15);
+        color: var(--warning);
+    }
+
+    .status-badge.processing {
+        background: rgba(99, 102, 241, 0.15);
+        color: var(--info);
+    }
+
+    .status-badge.completed {
+        background: rgba(16, 185, 129, 0.15);
+        color: var(--success);
+    }
+
+    .status-badge.failed {
+        background: rgba(239, 68, 68, 0.15);
+        color: var(--danger);
+    }
+
+    /* Empty State */
+    .empty-state {
+        padding: 80px 40px;
+        text-align: center;
+    }
+
+    .empty-state i {
+        font-size: 64px;
+        color: var(--gray-300);
+        margin-bottom: 24px;
+    }
+
+    .empty-state h3 {
+        font-size: 20px;
+        font-weight: 700;
+        color: var(--gray-700);
+        margin: 0 0 8px 0;
+    }
+
+    .empty-state p {
+        font-size: 14px;
+        color: var(--gray-500);
+        margin: 0 0 24px 0;
+    }
+
+    /* Payout History Chart */
+    .chart-card {
+        background: white;
+        border-radius: 20px;
+        border: 1px solid var(--gray-200);
+        padding: 28px;
+        margin-bottom: 32px;
+    }
+
+    .chart-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 24px;
+    }
+
+    .chart-header h3 {
+        font-size: 18px;
+        font-weight: 700;
+        color: var(--gray-900);
+        margin: 0;
+    }
+
+    .chart-tabs {
+        display: flex;
+        gap: 8px;
+    }
+
+    .chart-tab {
+        padding: 8px 16px;
+        border-radius: 100px;
+        font-size: 13px;
+        font-weight: 600;
+        background: var(--gray-100);
+        color: var(--gray-600);
+        cursor: pointer;
+        border: none;
+        transition: all 0.2s ease;
+    }
+
+    .chart-tab.active {
+        background: var(--gradient-primary);
+        color: white;
+    }
+
+    .chart-tab:hover:not(.active) {
+        background: var(--gray-200);
+    }
+
+    .chart-container {
+        height: 280px;
+        position: relative;
+    }
+
+    .chart-summary {
+        display: flex;
+        gap: 32px;
+        margin-bottom: 20px;
+        padding-bottom: 16px;
+        border-bottom: 1px solid var(--gray-100);
+    }
+
+    .summary-item {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    .summary-label {
+        font-size: 12px;
+        color: var(--gray-500);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        font-weight: 600;
+    }
+
+    .summary-value {
+        font-size: 18px;
+        font-weight: 700;
+        color: var(--gray-900);
+    }
+
+    .summary-value.positive {
+        color: var(--success);
+    }
+
+    .summary-value.negative {
+        color: var(--danger);
+    }
+
+    .chart-loading {
+        height: 280px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        color: var(--gray-500);
+    }
+
+    .chart-loading i {
+        font-size: 32px;
+        animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+
+    .chart-placeholder {
+        height: 200px;
+        background: var(--gray-50);
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--gray-400);
+    }
+
+    /* Quick Actions */
+    .quick-actions {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 16px;
+    }
+
+    .quick-action {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        padding: 20px;
+        background: white;
+        border-radius: 16px;
+        border: 1px solid var(--gray-200);
+        text-decoration: none;
+        transition: all 0.2s ease;
+    }
+
+    .quick-action:hover {
+        border-color: var(--primary);
+        background: linear-gradient(135deg, rgba(124, 58, 237, 0.03), rgba(236, 72, 153, 0.03));
+    }
+
+    .quick-action-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+        background: var(--gray-100);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 22px;
+        color: var(--gray-600);
+    }
+
+    .quick-action:hover .quick-action-icon {
+        background: linear-gradient(135deg, rgba(124, 58, 237, 0.15), rgba(236, 72, 153, 0.15));
+        color: var(--primary);
+    }
+
+    .quick-action-text h4 {
+        font-size: 15px;
+        font-weight: 600;
+        color: var(--gray-900);
+        margin: 0 0 4px 0;
+    }
+
+    .quick-action-text p {
+        font-size: 13px;
+        color: var(--gray-500);
+        margin: 0;
+    }
+
+    /* Hide Django admin stuff */
+    #changelist-filter, #toolbar, .paginator, #changelist table {
+        display: none !important;
+    }
+</style>
+{% endblock %}
+
+{% block breadcrumbs %}
+<a href="{% url 'seller_admin:index' %}">Dashboard</a>
+<span>/</span>
+<span>Payouts</span>
+{% endblock %}
+
+{% block content %}
+<div class="payouts-container">
+    <div class="page-header">
+        <h1>
+            <i class="ri-wallet-3-line"></i>
+            Payouts
+        </h1>
+        <a href="{% url 'seller_admin:el_mercado_payoutrequest_add' %}" class="btn btn-primary">
+            <i class="ri-add-line"></i>
+            Request Payout
+        </a>
+    </div>
+
+    <!-- Earnings Overview -->
+    <div class="earnings-overview">
+        <div class="earnings-card highlight">
+            <div class="earnings-card-header">
+                <div class="earnings-card-icon">
+                    <i class="ri-money-dollar-circle-line"></i>
+                </div>
+                <span class="earnings-card-label">Available Balance</span>
+            </div>
+            <div class="earnings-amount">GH₵{{ available_balance|default:"0.00" }}</div>
+            <span class="earnings-change positive">
+                <i class="ri-arrow-up-line"></i>
+                Ready to withdraw
+            </span>
+            <a href="{% url 'seller_admin:el_mercado_payoutrequest_add' %}" class="withdraw-btn">
+                <i class="ri-download-2-line"></i>
+                Withdraw Funds
+            </a>
+        </div>
+
+        <div class="earnings-card">
+            <div class="earnings-card-header">
+                <div class="earnings-card-icon">
+                    <i class="ri-lock-line"></i>
+                </div>
+                <span class="earnings-card-label">In Escrow</span>
+            </div>
+            <div class="earnings-amount">GH₵{{ pending_balance|default:"0.00" }}</div>
+            <span class="earnings-change" style="color: var(--gray-500);">
+                <i class="ri-box-3-line"></i>
+                From delivered orders not yet completed
+            </span>
+        </div>
+
+        <div class="earnings-card">
+            <div class="earnings-card-header">
+                <div class="earnings-card-icon">
+                    <i class="ri-history-line"></i>
+                </div>
+                <span class="earnings-card-label">Total Earned</span>
+            </div>
+            <div class="earnings-amount">GH₵{{ total_earned|default:"0.00" }}</div>
+            <span class="earnings-change positive">
+                <i class="ri-arrow-up-line"></i>
+                All time earnings
+            </span>
+        </div>
+
+        <div class="earnings-card">
+            <div class="earnings-card-header">
+                <div class="earnings-card-icon">
+                    <i class="ri-bank-card-line"></i>
+                </div>
+                <span class="earnings-card-label">Total Withdrawn</span>
+            </div>
+            <div class="earnings-amount">GH₵{{ total_withdrawn|default:"0.00" }}</div>
+            <span class="earnings-change" style="color: var(--gray-500);">
+                {{ cl.result_count }} payout{{ cl.result_count|pluralize }}
+            </span>
+        </div>
+    </div>
+
+    <!-- Earnings Chart -->
+    <div class="chart-card">
+        <div class="chart-header">
+            <h3>Earnings Overview</h3>
+            <div class="chart-tabs">
+                <button class="chart-tab active" data-period="7">7 Days</button>
+                <button class="chart-tab" data-period="30">30 Days</button>
+                <button class="chart-tab" data-period="90">90 Days</button>
+            </div>
+        </div>
+        <div class="chart-summary" id="chartSummary">
+            <div class="summary-item">
+                <span class="summary-label">Total Earnings</span>
+                <span class="summary-value" id="summaryEarnings">GH₵0.00</span>
+            </div>
+            <div class="summary-item">
+                <span class="summary-label">Total Payouts</span>
+                <span class="summary-value" id="summaryPayouts">GH₵0.00</span>
+            </div>
+            <div class="summary-item">
+                <span class="summary-label">Net</span>
+                <span class="summary-value" id="summaryNet">GH₵0.00</span>
+            </div>
+        </div>
+        <div class="chart-container" id="chartContainer">
+            <canvas id="earningsChart"></canvas>
+        </div>
+        <div class="chart-loading" id="chartLoading" style="display: none;">
+            <i class="ri-loader-4-line"></i>
+            <span>Loading chart data...</span>
+        </div>
+    </div>
+
+    <!-- Payout Requests -->
+    <div class="section-header">
+        <h2>Payout Requests</h2>
+    </div>
+
+    <div class="payouts-table-wrapper">
+        {% if cl.result_list %}
+        <table class="payouts-table">
+            <thead>
+                <tr>
+                    <th>Request ID</th>
+                    <th>Requested</th>
+                    <th>Processing Fee</th>
+                    <th>Net Amount</th>
+                    <th>Method</th>
+                    <th>Status</th>
+                    <th>Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for payout in cl.result_list %}
+                <tr>
+                    <td>
+                        <a href="{% url 'seller_admin:el_mercado_payoutrequest_change' payout.pk %}" class="payout-id">
+                            {{ payout.reference }}
+                        </a>
+                    </td>
+                    <td>
+                        <span class="payout-amount">GH₵{{ payout.amount }}</span>
+                    </td>
+                    <td>
+                        <span style="color: var(--danger); font-size: 14px; font-weight: 600;">- GH₵{{ payout.processing_fee|default:"0.00" }}</span>
+                    </td>
+                    <td>
+                        <span style="color: var(--success); font-size: 15px; font-weight: 700;">GH₵{{ payout.net_amount|default:payout.amount }}</span>
+                    </td>
+                    <td>
+                        <div class="payout-method">
+                            <div class="method-icon">
+                                {% if payout.payout_method == 'BANK_TRANSFER' %}
+                                <i class="ri-bank-line"></i>
+                                {% else %}
+                                <i class="ri-smartphone-line"></i>
+                                {% endif %}
+                            </div>
+                            <div class="method-details">
+                                <div class="method-name">{{ payout.get_payout_method_display|default:"Bank Transfer" }}</div>
+                                <div class="method-account">{% if payout.payout_method == 'BANK_TRANSFER' %}****{{ payout.account_number|slice:"-4:" }}{% else %}****{{ payout.mobile_money_number|slice:"-4:" }}{% endif %}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <span class="status-badge {% if payout.status == 'PENDING' %}pending{% elif payout.status == 'PROCESSING' %}processing{% elif payout.status == 'COMPLETED' %}completed{% else %}failed{% endif %}">
+                            {% if payout.status == 'PENDING' %}<i class="ri-time-line"></i>{% elif payout.status == 'PROCESSING' %}<i class="ri-loader-4-line"></i>{% elif payout.status == 'COMPLETED' %}<i class="ri-check-line"></i>{% else %}<i class="ri-close-line"></i>{% endif %}
+                            {{ payout.get_status_display }}
+                        </span>
+                    </td>
+                    <td class="payout-date">{{ payout.created_at|date:"M d, Y" }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <div class="empty-state">
+            <i class="ri-wallet-3-line"></i>
+            <h3>No payout requests yet</h3>
+            <p>When you request payouts, they'll appear here</p>
+            <a href="{% url 'seller_admin:el_mercado_payoutrequest_add' %}" class="btn btn-primary">
+                <i class="ri-add-line"></i>
+                Request Your First Payout
+            </a>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="section-header">
+        <h2>Quick Actions</h2>
+    </div>
+    <div class="quick-actions">
+        <a href="{% url 'seller_admin:el_mercado_sellerpayoutaccount_changelist' %}" class="quick-action">
+            <div class="quick-action-icon">
+                <i class="ri-bank-card-line"></i>
+            </div>
+            <div class="quick-action-text">
+                <h4>Bank Accounts</h4>
+                <p>Manage payout methods</p>
+            </div>
+        </a>
+        <a href="{% url 'seller_admin:wallet_transactions' %}" class="quick-action">
+            <div class="quick-action-icon">
+                <i class="ri-file-list-3-line"></i>
+            </div>
+            <div class="quick-action-text">
+                <h4>Transaction History</h4>
+                <p>View all transactions</p>
+            </div>
+        </a>
+        <a href="{% url 'seller_admin:payout_settings' %}" class="quick-action">
+            <div class="quick-action-icon">
+                <i class="ri-settings-4-line"></i>
+            </div>
+            <div class="quick-action-text">
+                <h4>Payout Settings</h4>
+                <p>Configure auto-payouts</p>
+            </div>
+        </a>
+    </div>
+</div>
+{% endblock %}
+
+{% block extrascript %}
+{{ block.super }}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Chart instance
+    let earningsChart = null;
+    const chartContainer = document.getElementById('chartContainer');
+    const chartLoading = document.getElementById('chartLoading');
+    const ctx = document.getElementById('earningsChart').getContext('2d');
+    
+    // Summary elements
+    const summaryEarnings = document.getElementById('summaryEarnings');
+    const summaryPayouts = document.getElementById('summaryPayouts');
+    const summaryNet = document.getElementById('summaryNet');
+    
+    // Format currency
+    function formatCurrency(value) {
+        return 'GH₵' + value.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    }
+    
+    // Update summary display
+    function updateSummary(summary) {
+        summaryEarnings.textContent = formatCurrency(summary.total_earnings);
+        summaryPayouts.textContent = formatCurrency(summary.total_payouts);
+        summaryNet.textContent = formatCurrency(summary.net);
+        
+        // Add color class for net
+        summaryNet.classList.remove('positive', 'negative');
+        if (summary.net > 0) {
+            summaryNet.classList.add('positive');
+        } else if (summary.net < 0) {
+            summaryNet.classList.add('negative');
+        }
+    }
+    
+    // Fetch and render chart
+    async function loadChartData(period) {
+        chartContainer.style.display = 'none';
+        chartLoading.style.display = 'flex';
+        
+        try {
+            const response = await fetch(`{% url 'seller_admin:earnings_chart_data' %}?period=${period}`);
+            const data = await response.json();
+            
+            if (data.error) {
+                console.error('Error loading chart:', data.error);
+                return;
+            }
+            
+            // Update summary
+            updateSummary(data.summary);
+            
+            // Destroy existing chart
+            if (earningsChart) {
+                earningsChart.destroy();
+            }
+            
+            // Create new chart
+            earningsChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: data.labels,
+                    datasets: data.datasets
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false,
+                    },
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'top',
+                            labels: {
+                                usePointStyle: true,
+                                padding: 20,
+                                font: {
+                                    size: 12,
+                                    weight: '600'
+                                }
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: '#1f2937',
+                            titleColor: '#fff',
+                            bodyColor: '#fff',
+                            padding: 12,
+                            cornerRadius: 8,
+                            displayColors: true,
+                            callbacks: {
+                                label: function(context) {
+                                    return context.dataset.label + ': GH₵' + context.raw.toFixed(2);
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: {
+                                display: false
+                            },
+                            ticks: {
+                                font: {
+                                    size: 11
+                                },
+                                color: '#9ca3af'
+                            }
+                        },
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.05)'
+                            },
+                            ticks: {
+                                font: {
+                                    size: 11
+                                },
+                                color: '#9ca3af',
+                                callback: function(value) {
+                                    return 'GH₵' + value;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+            
+        } catch (error) {
+            console.error('Failed to load chart data:', error);
+        } finally {
+            chartLoading.style.display = 'none';
+            chartContainer.style.display = 'block';
+        }
+    }
+    
+    // Tab click handlers
+    const chartTabs = document.querySelectorAll('.chart-tab');
+    chartTabs.forEach(tab => {
+        tab.addEventListener('click', function() {
+            // Update active state
+            chartTabs.forEach(t => t.classList.remove('active'));
+            this.classList.add('active');
+            
+            // Load data for selected period
+            const period = this.dataset.period;
+            loadChartData(period);
+        });
+    });
+    
+    // Initial load
+    loadChartData(7);
+});
+</script>
+{% endblock %}

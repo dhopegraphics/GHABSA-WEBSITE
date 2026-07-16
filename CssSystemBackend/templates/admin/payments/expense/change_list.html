@@ -1,0 +1,65 @@
+{% extends "admin/payments/expense_base.html" %}
+{% load static i18n admin_urls %}
+
+{% block expense_header %}
+<div class="expense-module-header">
+    <div class="module-header-top">
+        <div class="module-title">
+            <div class="module-icon purple">
+                <i class="ri-money-dollar-circle-line"></i>
+            </div>
+            <div class="module-info">
+                <h2>💰 Expense Management</h2>
+                <p>Track, categorize, and manage all organizational expenses</p>
+            </div>
+        </div>
+        <div class="module-actions">
+            <a href="{% url 'payments:expense-dashboard' %}" class="btn-modern btn-secondary-modern">
+                <i class="ri-dashboard-3-line"></i> Full Dashboard
+            </a>
+            <a href="{% url 'admin:payments_expense_add' %}" class="btn-modern btn-primary-modern">
+                <i class="ri-add-line"></i> Add Expense
+            </a>
+        </div>
+    </div>
+    
+    <div class="quick-stats">
+        <div class="quick-stat">
+            <div class="quick-stat-icon purple">
+                <i class="ri-file-list-3-line"></i>
+            </div>
+            <div class="quick-stat-info">
+                <h4>{{ total_expenses|default:"0" }}</h4>
+                <span>Total Expenses</span>
+            </div>
+        </div>
+        <div class="quick-stat">
+            <div class="quick-stat-icon green">
+                <i class="ri-checkbox-circle-line"></i>
+            </div>
+            <div class="quick-stat-info">
+                <h4>{{ paid_count|default:"0" }}</h4>
+                <span>Paid</span>
+            </div>
+        </div>
+        <div class="quick-stat">
+            <div class="quick-stat-icon orange">
+                <i class="ri-time-line"></i>
+            </div>
+            <div class="quick-stat-info">
+                <h4>{{ pending_count|default:"0" }}</h4>
+                <span>Pending</span>
+            </div>
+        </div>
+        <div class="quick-stat">
+            <div class="quick-stat-icon red">
+                <i class="ri-money-dollar-circle-line"></i>
+            </div>
+            <div class="quick-stat-info">
+                <h4>GH₵ {{ total_amount|floatformat:0|default:"0" }}</h4>
+                <span>Total Spent</span>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

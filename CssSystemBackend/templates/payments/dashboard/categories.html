@@ -1,0 +1,212 @@
+{% extends "payments/dashboard_base.html" %}
+{% load static %}
+
+{% block title %}Expense Categories{% endblock %}
+
+{% block content %}
+<!-- Header -->
+<header class="header">
+    <div class="header-left">
+        <h1>📂 Expense Categories</h1>
+        <p>Organize and manage expense categories</p>
+    </div>
+    <div class="header-right">
+        <button type="button" class="btn btn-primary" onclick="openAddModal()">
+            <i class="ri-add-line"></i>
+            Add Category
+        </button>
+    </div>
+</header>
+
+<!-- Stats Cards -->
+<div class="stats-grid">
+    <div class="stat-card purple">
+        <div class="stat-card-header">
+            <div class="stat-card-icon">
+                <i class="ri-folder-line"></i>
+            </div>
+        </div>
+        <div class="stat-card-value">{{ categories|length }}</div>
+        <div class="stat-card-label">Total Categories</div>
+    </div>
+
+    <div class="stat-card green">
+        <div class="stat-card-header">
+            <div class="stat-card-icon">
+                <i class="ri-check-line"></i>
+            </div>
+        </div>
+        <div class="stat-card-value">{{ active_count|default:"0" }}</div>
+        <div class="stat-card-label">Active</div>
+    </div>
+
+    <div class="stat-card orange">
+        <div class="stat-card-header">
+            <div class="stat-card-icon">
+                <i class="ri-money-dollar-circle-line"></i>
+            </div>
+        </div>
+        <div class="stat-card-value">GH₵ {{ total_budgeted|floatformat:0|default:"0" }}</div>
+        <div class="stat-card-label">Total Budgeted</div>
+    </div>
+
+    <div class="stat-card blue">
+        <div class="stat-card-header">
+            <div class="stat-card-icon">
+                <i class="ri-bar-chart-line"></i>
+            </div>
+        </div>
+        <div class="stat-card-value">{{ most_used|default:"-" }}</div>
+        <div class="stat-card-label">Most Used</div>
+    </div>
+</div>
+
+<!-- Categories Grid -->
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">All Categories</h3>
+    </div>
+
+    {% if categories %}
+    <div class="categories-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; padding: 20px;">
+        {% for cat in categories %}
+        <div class="category-card" style="background: linear-gradient(135deg, {{ cat.color }}15 0%, {{ cat.color }}05 100%); border: 1px solid {{ cat.color }}30; border-radius: 16px; padding: 20px; transition: all 0.3s ease;">
+            <div class="category-header" style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px;">
+                <div class="category-icon" style="width: 48px; height: 48px; background: {{ cat.color }}; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px;">
+                    {{ cat.icon|default:'📁' }}
+                </div>
+                <div class="action-btns">
+                    <button class="action-btn action-btn-edit" title="Edit" onclick="openEditModal('{{ cat.id }}', '{{ cat.name|escapejs }}', '{{ cat.icon }}', '{{ cat.color }}', '{{ cat.description|escapejs }}', {{ cat.budget_limit|default:'0' }}, {{ cat.is_active|yesno:'true,false' }})">
+                        <i class="ri-edit-line"></i>
+                    </button>
+                </div>
+            </div>
+            <h4 style="font-size: 18px; font-weight: 600; color: var(--gray-900); margin-bottom: 8px;">{{ cat.name }}</h4>
+            <p style="font-size: 14px; color: var(--gray-500); margin-bottom: 16px; min-height: 40px;">{{ cat.description|truncatechars:60|default:'No description' }}</p>
+            
+            <div class="category-stats" style="display: flex; justify-content: space-between; padding-top: 16px; border-top: 1px solid {{ cat.color }}20;">
+                <div style="text-align: center;">
+                    <div style="font-size: 18px; font-weight: 600; color: {{ cat.color }};">{{ cat.expense_count|default:0 }}</div>
+                    <div style="font-size: 12px; color: var(--gray-500);">Expenses</div>
+                </div>
+                <div style="text-align: center;">
+                    <div style="font-size: 18px; font-weight: 600; color: {{ cat.color }};">GH₵{{ cat.total_spent|floatformat:0|default:'0' }}</div>
+                    <div style="font-size: 12px; color: var(--gray-500);">Spent</div>
+                </div>
+                <div style="text-align: center;">
+                    <div style="font-size: 18px; font-weight: 600; color: {{ cat.color }};">GH₵{{ cat.budget_limit|floatformat:0|default:'0' }}</div>
+                    <div style="font-size: 12px; color: var(--gray-500);">Budget</div>
+                </div>
+            </div>
+            
+            {% if cat.budget_limit %}
+            <div class="progress-bar" style="height: 6px; background: var(--gray-200); border-radius: 3px; margin-top: 12px; overflow: hidden;">
+                {% widthratio cat.total_spent cat.budget_limit 100 as usage_pct %}
+                <div class="progress-fill" style="height: 100%; width: {{ usage_pct|default:0 }}%; background: {{ cat.color }}; border-radius: 3px; transition: width 0.3s ease;"></div>
+            </div>
+            <div style="text-align: center; font-size: 12px; color: var(--gray-500); margin-top: 4px;">{{ usage_pct|default:0 }}% of budget used</div>
+            {% endif %}
+            
+            {% if not cat.is_active %}
+            <span class="badge badge-warning" style="margin-top: 12px;">Inactive</span>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <div class="empty-state-icon"><i class="ri-folder-line"></i></div>
+        <h3>No Categories Yet</h3>
+        <p>Create your first expense category to organize your expenses</p>
+        <button type="button" class="btn btn-primary" onclick="openAddModal()">
+            <i class="ri-add-line"></i> Add Category
+        </button>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Add/Edit Category Modal -->
+<div class="modal-overlay" id="categoryModal">
+    <div class="modal">
+        <div class="modal-header">
+            <h3 class="modal-title" id="modalTitle">➕ Add Category</h3>
+            <button class="modal-close" onclick="closeCategoryModal()">
+                <i class="ri-close-line"></i>
+            </button>
+        </div>
+        <form id="categoryForm" method="POST" action="{% url 'payments:category-add' %}">
+            {% csrf_token %}
+            <div class="modal-body">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">Category Name *</label>
+                        <input type="text" name="name" class="form-input" id="catName" required placeholder="e.g., Office Supplies">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Icon/Emoji *</label>
+                        <input type="text" name="icon" class="form-input" id="catIcon" required placeholder="e.g., 🏢" maxlength="10">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Color *</label>
+                        <input type="color" name="color" class="form-input" id="catColor" value="#6366f1" style="height: 48px;">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Budget Amount (GH₵)</label>
+                        <input type="number" name="budget_limit" class="form-input" id="catBudget" placeholder="0.00" step="0.01" min="0">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Description</label>
+                    <textarea name="description" class="form-input" id="catDesc" rows="3" placeholder="Brief description of this category..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" name="is_active" id="catActive" checked>
+                        <span>Active</span>
+                    </label>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeCategoryModal()">Cancel</button>
+                <button type="submit" class="btn btn-primary">
+                    <i class="ri-save-line"></i> Save Category
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function openAddModal() {
+        document.getElementById('modalTitle').textContent = '➕ Add Category';
+        document.getElementById('categoryForm').action = '{% url "payments:category-add" %}';
+        document.getElementById('categoryForm').reset();
+        document.getElementById('catColor').value = '#6366f1';
+        document.getElementById('catActive').checked = true;
+        document.getElementById('categoryModal').classList.add('active');
+    }
+
+    function openEditModal(id, name, icon, color, description, budget, isActive) {
+        document.getElementById('modalTitle').textContent = '✏️ Edit Category';
+        document.getElementById('categoryForm').action = '{% url "payments:category-add" %}?edit=' + id;
+        document.getElementById('catName').value = name;
+        document.getElementById('catIcon').value = icon;
+        document.getElementById('catColor').value = color;
+        document.getElementById('catDesc').value = description;
+        document.getElementById('catBudget').value = budget || '';
+        document.getElementById('catActive').checked = isActive;
+        document.getElementById('categoryModal').classList.add('active');
+    }
+
+    function closeCategoryModal() {
+        document.getElementById('categoryModal').classList.remove('active');
+        // Reset form
+        document.getElementById('modalTitle').textContent = '➕ Add Category';
+        document.getElementById('categoryForm').action = '{% url "payments:category-add" %}';
+        document.getElementById('categoryForm').reset();
+        document.getElementById('catColor').value = '#6366f1';
+    }
+</script>
+{% endblock %}

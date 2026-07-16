@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://thecssknust.com/sitemap.xml

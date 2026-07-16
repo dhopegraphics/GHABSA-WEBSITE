@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seller Withdrawal Request - El Mercado</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 600px;
+            margin: 20px auto;
+            background-color: #ffffff;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+        .header {
+            background: linear-gradient(135deg, #7c3aed 0%, #5b21b6 100%);
+            color: #fff;
+            padding: 30px;
+            text-align: center;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 22px;
+        }
+        .header p {
+            margin: 10px 0 0;
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        .content {
+            padding: 30px;
+        }
+        .greeting {
+            font-size: 16px;
+            margin-bottom: 20px;
+            color: #555;
+        }
+        
+        /* Notice Banner */
+        .notice-banner {
+            background-color: #fef3c7;
+            color: #92400e;
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 4px solid #f59e0b;
+            font-weight: 500;
+        }
+        
+        /* Amount Highlight Box */
+        .amount-box {
+            background-color: #d1fae5;
+            padding: 25px;
+            border-radius: 12px;
+            margin: 25px 0;
+            text-align: center;
+            border: 2px solid #10b981;
+        }
+        .amount-label {
+            font-size: 14px;
+            color: #065f46;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .amount-value {
+            font-size: 32px;
+            font-weight: bold;
+            color: #047857;
+            margin: 10px 0;
+        }
+        .amount-note {
+            font-size: 12px;
+            color: #065f46;
+        }
+        
+        /* Info Sections */
+        .info-section {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        .info-section h3 {
+            margin: 0 0 15px;
+            color: #333;
+            font-size: 15px;
+            border-bottom: 2px solid #7c3aed;
+            padding-bottom: 10px;
+        }
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            font-size: 14px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .info-row:last-child {
+            border-bottom: none;
+        }
+        .info-label {
+            color: #666;
+        }
+        .info-value {
+            color: #333;
+            font-weight: 500;
+            text-align: right;
+        }
+        
+        /* Seller Info */
+        .seller-info {
+            background-color: #eff6ff;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        .seller-info h3 {
+            margin: 0 0 15px;
+            color: #1e40af;
+            font-size: 15px;
+        }
+        .seller-detail {
+            margin: 8px 0;
+            font-size: 14px;
+            color: #333;
+        }
+        .seller-detail strong {
+            color: #1e40af;
+        }
+        
+        /* Account Details */
+        .account-section {
+            background-color: #faf5ff;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 4px solid #7c3aed;
+        }
+        .account-section h3 {
+            margin: 0 0 15px;
+            color: #5b21b6;
+            font-size: 15px;
+        }
+        .account-detail {
+            margin: 8px 0;
+            font-size: 14px;
+            color: #333;
+        }
+        .account-detail strong {
+            color: #5b21b6;
+        }
+        
+        /* Breakdown */
+        .breakdown {
+            background-color: #fff7ed;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        .breakdown h3 {
+            margin: 0 0 15px;
+            color: #c2410c;
+            font-size: 15px;
+        }
+        .breakdown-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            font-size: 14px;
+        }
+        .breakdown-row.final {
+            border-top: 2px solid #fb923c;
+            margin-top: 10px;
+            padding-top: 15px;
+            font-weight: bold;
+            color: #047857;
+            font-size: 16px;
+        }
+        
+        /* Button */
+        .action-button {
+            display: block;
+            width: 100%;
+            padding: 15px 25px;
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: #fff !important;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            text-align: center;
+            margin: 15px 0;
+            box-sizing: border-box;
+        }
+        .secondary-button {
+            display: block;
+            width: 100%;
+            padding: 12px 25px;
+            background: #f3f4f6;
+            color: #374151 !important;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 500;
+            text-align: center;
+            margin: 10px 0;
+            box-sizing: border-box;
+            border: 1px solid #d1d5db;
+            box-sizing: border-box;
+        }
+        
+        /* Footer */
+        .footer {
+            background-color: #f8f9fa;
+            padding: 20px;
+            text-align: center;
+            font-size: 12px;
+            color: #666;
+        }
+        
+        /* Mobile Responsive */
+        @media only screen and (max-width: 600px) {
+            .container {
+                margin: 10px;
+                border-radius: 0;
+            }
+            .content {
+                padding: 20px;
+            }
+            .amount-value {
+                font-size: 26px;
+            }
+            .info-row, .breakdown-row {
+                flex-direction: column;
+            }
+            .info-value, .breakdown-row span:last-child {
+                text-align: left;
+                margin-top: 5px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>Seller Withdrawal Request</h1>
+            <p>El Mercado Marketplace</p>
+        </div>
+        
+        <!-- Content -->
+        <div class="content">
+            <p class="greeting">Hello {{ president_name }},</p>
+            
+            <!-- Notice Banner -->
+            <div class="notice-banner">
+                A seller has submitted a withdrawal request. Please review and process the transfer.
+            </div>
+            
+            <!-- Net Amount -->
+            <div class="amount-box">
+                <div class="amount-label">Transfer Amount</div>
+                <p class="amount-value">GHS {{ net_amount }}</p>
+                <div class="amount-note">After fee deduction</div>
+            </div>
+            
+            <!-- Seller Information -->
+            <div class="seller-info">
+                <h3>Seller Details</h3>
+                <div class="seller-detail"><strong>Name:</strong> {{ seller_name }}</div>
+                <div class="seller-detail"><strong>Phone:</strong> {{ seller_phone }}</div>
+                <div class="seller-detail"><strong>Email:</strong> {{ seller_email }}</div>
+            </div>
+            
+            <!-- Account Details -->
+            <div class="account-section">
+                <h3>Recipient Account</h3>
+                {% if payout_account.type == 'Mobile Money' %}
+                    <div class="account-detail"><strong>Type:</strong> {{ payout_account.type }}</div>
+                    <div class="account-detail"><strong>Provider:</strong> {{ payout_account.provider }}</div>
+                    <div class="account-detail"><strong>Number:</strong> {{ payout_account.number }}</div>
+                    <div class="account-detail"><strong>Name:</strong> {{ payout_account.name }}</div>
+                {% else %}
+                    <div class="account-detail"><strong>Type:</strong> {{ payout_account.type }}</div>
+                    <div class="account-detail"><strong>Bank:</strong> {{ payout_account.bank }}</div>
+                    <div class="account-detail"><strong>Account Number:</strong> {{ payout_account.account_number }}</div>
+                    <div class="account-detail"><strong>Account Name:</strong> {{ payout_account.account_name }}</div>
+                {% endif %}
+            </div>
+            
+            <!-- Breakdown -->
+            <div class="breakdown">
+                <h3>Breakdown</h3>
+                <div class="breakdown-row">
+                    <span>Requested:</span>
+                    <span>GHS {{ request_amount }}</span>
+                </div>
+                <div class="breakdown-row">
+                    <span>Processing Fee:</span>
+                    <span>- GHS {{ processing_fee }}</span>
+                </div>
+                <div class="breakdown-row final">
+                    <span>To Transfer:</span>
+                    <span>GHS {{ net_amount }}</span>
+                </div>
+            </div>
+            
+            <!-- Reference Info -->
+            <div class="info-section">
+                <h3>Request Details</h3>
+                <div class="info-row">
+                    <span class="info-label">Reference:</span>
+                    <span class="info-value">{{ payout_reference }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Method:</span>
+                    <span class="info-value">{{ payout_method }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Date:</span>
+                    <span class="info-value">{{ created_at|date:"d M Y, H:i" }}</span>
+                </div>
+            </div>
+            
+            <!-- Primary Action: Mark as Sent -->
+            <a href="{{ confirm_url }}" class="action-button">
+                Mark Payout as Sent
+            </a>
+            
+            <p style="color: #666; font-size: 13px; text-align: center; margin-bottom: 15px;">
+                Click after completing the mobile money transfer to automatically update the status.
+            </p>
+            
+            <!-- Secondary: Admin Dashboard -->
+            <a href="{{ admin_url }}" class="secondary-button">
+                View in Admin Dashboard
+            </a>
+        </div>
+        
+        <!-- Footer -->
+        <div class="footer">
+            <p>El Mercado - Computer Science Society, KNUST</p>
+            <p>{{ year }}</p>
+        </div>
+    </div>
+</body>
+</html>

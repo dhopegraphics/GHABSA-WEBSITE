@@ -1,0 +1,1 @@
+Hi {{ fname }}, some of your profile information is incomplete. Please update it by going to Profile → Account Setting on the Website. Thank you!

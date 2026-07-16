@@ -1,0 +1,761 @@
+{% extends "admin/base_site.html" %}
+{% load static %}
+
+{% block title %}KNUST Admissions Data Scraper{% endblock %}
+
+{% block extrastyle %}
+<style>
+    .scraper-dashboard {
+        padding: 20px;
+    }
+
+    .dashboard-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 30px;
+        border-radius: 10px;
+        margin-bottom: 30px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .dashboard-header h1 {
+        margin: 0 0 10px 0;
+        font-size: 2em;
+    }
+
+    .dashboard-header p {
+        margin: 0;
+        opacity: 0.9;
+    }
+
+    .action-buttons {
+        display: flex;
+        gap: 15px;
+        margin-bottom: 30px;
+    }
+
+    .btn-primary,
+    .btn-success,
+    .btn-info {
+        padding: 12px 24px;
+        border: none;
+        border-radius: 6px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+        text-decoration: none;
+        display: inline-block;
+    }
+
+    .btn-primary {
+        background: #4CAF50;
+        color: white;
+    }
+
+    .btn-primary:hover {
+        background: #45a049;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .btn-success {
+        background: #2196F3;
+        color: white;
+    }
+
+    .btn-success:hover {
+        background: #0b7dda;
+    }
+
+    .btn-info {
+        background: #ff9800;
+        color: white;
+    }
+
+    .btn-info:hover {
+        background: #e68900;
+    }
+
+    .btn-warning {
+        background: #dc3545;
+        color: white;
+    }
+
+    .btn-warning:hover {
+        background: #c82333;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .btn-sync {
+        background: #17a2b8;
+        color: white;
+    }
+
+    .btn-sync:hover {
+        background: #138496;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .btn-primary:disabled,
+    .btn-warning:disabled,
+    .btn-sync:disabled {
+        background: #cccccc;
+        cursor: not-allowed;
+        transform: none;
+    }
+
+    .btn-upload {
+        background: #6f42c1;
+        color: white;
+    }
+
+    .btn-upload:hover {
+        background: #5a32a3;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .upload-section {
+        background: white;
+        padding: 25px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        margin-bottom: 30px;
+        border-left: 4px solid #6f42c1;
+    }
+
+    .upload-section h3 {
+        margin: 0 0 15px 0;
+        color: #333;
+    }
+
+    .upload-form {
+        display: flex;
+        gap: 15px;
+        align-items: flex-end;
+        flex-wrap: wrap;
+    }
+
+    .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+    }
+
+    .form-group label {
+        font-weight: 600;
+        font-size: 14px;
+        color: #555;
+    }
+
+    .form-group input[type="file"],
+    .form-group select {
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 14px;
+    }
+
+    .year-stats-section {
+        background: white;
+        padding: 25px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        margin-bottom: 30px;
+    }
+
+    .year-stats-section h3 {
+        margin: 0 0 20px 0;
+        color: #333;
+    }
+
+    .year-stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 15px;
+    }
+
+    .year-card {
+        background: #f8f9fa;
+        padding: 15px;
+        border-radius: 6px;
+        border-left: 4px solid #667eea;
+    }
+
+    .year-card h4 {
+        margin: 0 0 10px 0;
+        color: #333;
+    }
+
+    .year-card .stats-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 5px 0;
+        border-bottom: 1px solid #eee;
+    }
+
+    .year-card .stats-row:last-child {
+        border-bottom: none;
+    }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+        margin-bottom: 30px;
+    }
+
+    .stat-card {
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        border-left: 4px solid #4CAF50;
+    }
+
+    .stat-card h3 {
+        margin: 0 0 10px 0;
+        color: #666;
+        font-size: 14px;
+        text-transform: uppercase;
+    }
+
+    .stat-card p {
+        margin: 0;
+        font-size: 24px;
+        font-weight: bold;
+        color: #333;
+    }
+
+    .alert {
+        padding: 15px;
+        border-radius: 6px;
+        margin-bottom: 20px;
+        display: none;
+    }
+
+    .alert-success {
+        background: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+    }
+
+    .alert-error {
+        background: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+    }
+
+    .alert-info {
+        background: #d1ecf1;
+        color: #0c5460;
+        border: 1px solid #bee5eb;
+    }
+
+    .loading-spinner {
+        display: none;
+        text-align: center;
+        padding: 20px;
+    }
+
+    .spinner {
+        border: 4px solid #f3f3f3;
+        border-top: 4px solid #4CAF50;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        animation: spin 1s linear infinite;
+        margin: 0 auto;
+    }
+
+    @keyframes spin {
+        0% {
+            transform: rotate(0deg);
+        }
+
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+
+    .data-table-container {
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        overflow-x: auto;
+    }
+
+    .data-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+    }
+
+    .data-table th {
+        background: #f8f9fa;
+        padding: 12px;
+        text-align: left;
+        font-weight: 600;
+        border-bottom: 2px solid #dee2e6;
+        position: sticky;
+        top: 0;
+    }
+
+    .data-table td {
+        padding: 12px;
+        border-bottom: 1px solid #dee2e6;
+    }
+
+    .data-table tr:hover {
+        background: #f8f9fa;
+    }
+
+    .no-data {
+        text-align: center;
+        padding: 40px;
+        color: #666;
+    }
+
+    .no-data-icon {
+        font-size: 48px;
+        margin-bottom: 20px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="scraper-dashboard">
+    <div class="dashboard-header">
+        <h1>🎓 KNUST CS/IT Admissions Scraper</h1>
+        <p>Fetch and manage Computer Science & Information Technology admission data automatically</p>
+    </div>
+
+    <!-- Alert Messages -->
+    <div id="alert-container"></div>
+
+    <!-- Loading Spinner -->
+    <div id="loading-spinner" class="loading-spinner">
+        <div class="spinner"></div>
+        <p>Processing... Please wait...</p>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="action-buttons">
+        <button id="run-scraper-btn" class="btn-primary" onclick="runScraper()">
+            🔄 Fetch New CS/IT Data from KNUST
+        </button>
+
+        {% if file_info %}
+        <a href="{% url 'admissions:download_excel' %}" class="btn-success">
+            📥 Download Excel File
+        </a>
+        <button class="btn-info" onclick="location.reload()">
+            🔃 Refresh View
+        </button>
+        {% if has_mismatch %}
+        <button id="sync-excel-btn" class="btn-sync" onclick="syncExcelWithDB()">
+            🔗 Sync Excel with Database
+        </button>
+        {% endif %}
+        {% endif %}
+    </div>
+
+    <!-- Excel Upload Section -->
+    <div class="upload-section">
+        <h3>📤 Upload Admission Data (Excel)</h3>
+        <p style="margin-bottom: 15px; color: #666;">
+            Upload an Excel file with columns: <strong>Applicant ID</strong>, <strong>Name</strong>, <strong>Programme</strong> (optional), <strong>Status</strong> (optional: Regular/Fee Paying/Mature/etc.)
+        </p>
+        <form id="upload-form" class="upload-form" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="excel-file">Excel File (.xlsx)</label>
+                <input type="file" id="excel-file" name="file" accept=".xlsx,.xls" required>
+            </div>
+            <div class="form-group">
+                <label for="academic-year">Academic Year</label>
+                <select id="academic-year" name="academic_year">
+                    <option value="{{ current_academic_year }}" selected>{{ current_academic_year }} (Current)</option>
+                    <option value="2024/2025">2024/2025</option>
+                    <option value="2023/2024">2023/2024</option>
+                    <option value="2022/2023">2022/2023</option>
+                </select>
+            </div>
+            <button type="submit" class="btn-upload">📤 Upload & Import</button>
+        </form>
+    </div>
+
+    <!-- Year Statistics Section -->
+    {% if year_stats %}
+    <div class="year-stats-section">
+        <h3>📊 Admission Statistics by Academic Year</h3>
+        <div class="year-stats-grid">
+            {% for year, stats in year_stats.items %}
+            <div class="year-card">
+                <h4>📅 {{ year }}</h4>
+                <div class="stats-row">
+                    <span>Total Admissions:</span>
+                    <strong>{{ stats.total }}</strong>
+                </div>
+                <div class="stats-row">
+                    <span>Computer Science:</span>
+                    <strong>{{ stats.CS }}</strong>
+                </div>
+                <div class="stats-row">
+                    <span>Information Technology:</span>
+                    <strong>{{ stats.IT }}</strong>
+                </div>
+                {% for status, count in stats.by_status.items %}
+                <div class="stats-row" style="font-size: 13px; color: #666;">
+                    <span>{{ status }}:</span>
+                    <span>{{ count }}</span>
+                </div>
+                {% endfor %}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Mismatch Warning -->
+    {% if has_mismatch %}
+    <div class="alert alert-warning" style="display: block; background: #fff3cd; color: #856404; border: 1px solid #ffc107;">
+        <strong>⚠️ Data Mismatch Detected!</strong> Excel has {{ file_info.total_records }} records but Database has {{ db_total }}. 
+        Click "🔗 Sync Excel with Database" to rebuild Excel from the database (source of truth).
+    </div>
+    {% endif %}
+
+    <!-- Statistics Cards -->
+    {% if file_info %}
+    <div class="stats-grid">
+        <div class="stat-card">
+            <h3>Excel Records</h3>
+            <p id="total-records">{{ file_info.total_records }}</p>
+        </div>
+
+        <div class="stat-card">
+            <h3>Database Records</h3>
+            <p id="db-records">{{ db_total }}</p>
+        </div>
+        <div class="stat-card" style="border-left-color: #2196F3;">
+            <h3>File Size</h3>
+            <p>{{ file_info.file_size }}</p>
+        </div>
+        <div class="stat-card" style="border-left-color: #ff9800;">
+            <h3>Last Updated</h3>
+            <p style="font-size: 16px;">{{ file_info.last_modified }}</p>
+        </div>
+        <div class="stat-card" style="border-left-color: #9c27b0;">
+            <h3>Current Year</h3>
+            <p style="font-size: 18px;">{{ current_academic_year }}</p>
+        </div>
+    </div>
+    {% else %}
+    <div class="alert alert-info" style="display: block;">
+        <strong>ℹ️ No data available yet.</strong> Click "Fetch New Data from KNUST" to start scraping.
+    </div>
+    {% endif %}
+
+    <!-- Data Table -->
+    {% if has_data %}
+    <div class="data-table-container">
+        <h2>Latest Admission Records (Top 50)</h2>
+        <table class="data-table">
+            <thead>
+                <tr>
+                    {% for header in headers %}
+                    <th>{{ header }}</th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in rows %}
+                <tr>
+                    {% for cell in row %}
+                    <td>{{ cell }}</td>
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <p style="margin-top: 20px; color: #666; font-size: 14px;">
+            Showing top 50 records. Download the Excel file to view all data.
+        </p>
+    </div>
+    {% else %}
+    <div class="data-table-container">
+        <div class="no-data">
+            <div class="no-data-icon">📊</div>
+            <h3>No Data Available</h3>
+            <p>Click "Fetch New Data from KNUST" to start collecting admission records.</p>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<script>
+    function showAlert(message, type) {
+        const container = document.getElementById('alert-container');
+        const alertClass = type === 'success' ? 'alert-success' : (type === 'error' ? 'alert-error' : 'alert-info');
+
+        container.innerHTML = `
+        <div class="alert ${alertClass}" style="display: block; max-height: 400px; overflow-y: auto;">
+            ${message}
+        </div>
+    `;
+
+        // Auto-hide after 15 seconds for success (more time to read), 5 for others
+        const hideDelay = type === 'success' ? 15000 : 5000;
+        setTimeout(() => {
+            container.innerHTML = '';
+        }, hideDelay);
+    }
+
+    function showLoading() {
+        document.getElementById('loading-spinner').style.display = 'block';
+        document.getElementById('run-scraper-btn').disabled = true;
+    }
+
+    function hideLoading() {
+        document.getElementById('loading-spinner').style.display = 'none';
+        document.getElementById('run-scraper-btn').disabled = false;
+    }
+
+    function updateStats(stats) {
+        if (stats.total_fetched !== undefined) {
+            let message = `
+            <strong>✅ Scraping Completed!</strong><br>
+            📊 Total Fetched: ${stats.total_fetched} records<br>
+            🔢 Unique Records: ${stats.unique_records || stats.total_fetched}<br>
+            ✨ New Records: ${stats.new_records}<br>
+            📝 Existing Records: ${stats.existing_records}<br>
+            🕒 Timestamp: ${stats.timestamp}
+        `;
+            
+            // Add duplicate analysis
+            if (stats.duplicates_same_name > 0 || stats.duplicates_diff_name > 0) {
+                message += `<br><br><strong>📋 Duplicate Analysis:</strong><br>`;
+                if (stats.duplicates_same_name > 0) {
+                    message += `👥 ${stats.duplicates_same_name} duplicate(s) with SAME name (safe to ignore)<br>`;
+                }
+                if (stats.duplicates_diff_name > 0) {
+                    message += `⚠️ ${stats.duplicates_diff_name} duplicate ID(s) with DIFFERENT names:<br>`;
+                    if (stats.duplicate_details && stats.duplicate_details.diff_name) {
+                        stats.duplicate_details.diff_name.forEach(dup => {
+                            message += `&nbsp;&nbsp;• ID: ${dup.applicant_id}<br>`;
+                            message += `&nbsp;&nbsp;&nbsp;&nbsp;Name 1: "${dup.existing_name}" (${dup.existing_group})<br>`;
+                            message += `&nbsp;&nbsp;&nbsp;&nbsp;Name 2: "${dup.new_name}" (${dup.new_group})<br>`;
+                        });
+                    }
+                }
+            }
+            
+            showAlert(message, 'success');
+
+            // Update total records if element exists
+            const totalRecordsEl = document.getElementById('total-records');
+            if (totalRecordsEl && stats.new_records > 0) {
+                const currentTotal = parseInt(totalRecordsEl.textContent) || 0;
+                totalRecordsEl.textContent = currentTotal + stats.new_records;
+            }
+
+            // Reload page after 3 seconds to show updated data
+            setTimeout(() => {
+                location.reload();
+            }, 3000);
+        }
+    }
+
+    async function runScraper() {
+        showLoading();
+        showAlert('🔄 Fetching data from KNUST admissions portal...', 'info');
+
+        try {
+            const response = await fetch("{% url 'admissions:run_scraper' %}", {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}',
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            const data = await response.json();
+
+            hideLoading();
+
+            if (data.success) {
+                updateStats(data.stats);
+            } else {
+                showAlert(`❌ Error: ${data.message}`, 'error');
+            }
+        } catch (error) {
+            hideLoading();
+            showAlert(`❌ Network error: ${error.message}`, 'error');
+        }
+    }
+
+    async function cleanDuplicates() {
+        if (!confirm('This will remove duplicate entries from the Excel file. Continue?')) {
+            return;
+        }
+
+        showLoading();
+        showAlert('🧹 Cleaning duplicate entries from Excel file...', 'info');
+
+        try {
+            const response = await fetch("{% url 'admissions:clean_excel_duplicates' %}", {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}',
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            const data = await response.json();
+
+            hideLoading();
+
+            if (data.success) {
+                showAlert(data.message, 'success');
+
+                // Update the display
+                const totalRecordsEl = document.getElementById('total-records');
+                const dbRecordsEl = document.getElementById('db-records');
+                if (totalRecordsEl) {
+                    totalRecordsEl.textContent = data.excel_total;
+                }
+                if (dbRecordsEl) {
+                    dbRecordsEl.textContent = data.db_total;
+                }
+
+                // Reload page after 2 seconds
+                setTimeout(() => {
+                    location.reload();
+                }, 2000);
+            } else {
+                showAlert(`❌ Error: ${data.message}`, 'error');
+            }
+        } catch (error) {
+            hideLoading();
+            showAlert(`❌ Network error: ${error.message}`, 'error');
+        }
+    }
+
+    async function syncExcelWithDB() {
+        if (!confirm('This will rebuild the Excel file from the database. The database is the source of truth. Continue?')) {
+            return;
+        }
+
+        showLoading();
+        showAlert('🔗 Syncing Excel file with database...', 'info');
+
+        try {
+            const response = await fetch("{% url 'admissions:sync_excel_with_db' %}", {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}',
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            const data = await response.json();
+
+            hideLoading();
+
+            if (data.success) {
+                showAlert(data.message, 'success');
+
+                // Update the display
+                const totalRecordsEl = document.getElementById('total-records');
+                const dbRecordsEl = document.getElementById('db-records');
+                if (totalRecordsEl) {
+                    totalRecordsEl.textContent = data.excel_total;
+                }
+                if (dbRecordsEl) {
+                    dbRecordsEl.textContent = data.db_total;
+                }
+
+                // Reload page after 2 seconds
+                setTimeout(() => {
+                    location.reload();
+                }, 2000);
+            } else {
+                showAlert(`❌ Error: ${data.message}`, 'error');
+            }
+        } catch (error) {
+            hideLoading();
+            showAlert(`❌ Network error: ${error.message}`, 'error');
+        }
+    }
+
+    // Handle Excel upload form
+    document.getElementById('upload-form').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const fileInput = document.getElementById('excel-file');
+        const yearSelect = document.getElementById('academic-year');
+        
+        if (!fileInput.files.length) {
+            showAlert('❌ Please select an Excel file', 'error');
+            return;
+        }
+        
+        showLoading();
+        showAlert('📤 Uploading and importing data...', 'info');
+        
+        const formData = new FormData();
+        formData.append('file', fileInput.files[0]);
+        formData.append('academic_year', yearSelect.value);
+        
+        try {
+            const response = await fetch("{% url 'admissions:upload_excel' %}", {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: formData
+            });
+            
+            const data = await response.json();
+            
+            hideLoading();
+            
+            if (data.success) {
+                let message = `<strong>${data.message}</strong><br>`;
+                if (data.stats) {
+                    message += `<br>📊 Import Details:<br>`;
+                    message += `✅ Added: ${data.stats.added}<br>`;
+                    message += `🔄 Updated: ${data.stats.updated}<br>`;
+                    message += `⏭️ Skipped: ${data.stats.skipped}<br>`;
+                    message += `📅 Academic Year: ${data.stats.academic_year}`;
+                    
+                    if (data.stats.total_errors > 0) {
+                        message += `<br><br>⚠️ Errors (${data.stats.total_errors}):<br>`;
+                        data.stats.errors.forEach(err => {
+                            message += `• ${err}<br>`;
+                        });
+                    }
+                }
+                showAlert(message, 'success');
+                
+                // Reset form
+                fileInput.value = '';
+                
+                // Reload page after 3 seconds
+                setTimeout(() => {
+                    location.reload();
+                }, 3000);
+            } else {
+                showAlert(`❌ Error: ${data.message}`, 'error');
+            }
+        } catch (error) {
+            hideLoading();
+            showAlert(`❌ Network error: ${error.message}`, 'error');
+        }
+    });
+</script>
+{% endblock %}

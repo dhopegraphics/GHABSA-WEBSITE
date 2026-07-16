@@ -1,0 +1,7 @@
+CSS MEETING CANCELLED
+
+The meeting "{{ meeting_title }}" scheduled for {{ meeting_date }} has been cancelled.
+
+You will be notified if it is rescheduled.
+
+- CSS Executive

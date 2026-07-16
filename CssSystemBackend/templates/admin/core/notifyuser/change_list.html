@@ -1,0 +1,14 @@
+{% extends "admin/change_list.html" %}
+{% load static %}
+
+{% block object-tools-items %}
+{{ block.super }}
+{% if show_bulk_notify_button %}
+<li>
+    <a href="{% url 'admin:core_notifyuser_bulk_notify' %}" class="addlink"
+        style="background: #0566C7; color: white; padding: 10px 15px; border-radius: 5px; text-decoration: none; display: inline-block; font-weight: 600;">
+        📢 Bulk Notify Users
+    </a>
+</li>
+{% endif %}
+{% endblock %}

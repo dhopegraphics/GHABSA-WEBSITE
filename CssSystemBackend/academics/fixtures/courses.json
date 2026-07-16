@@ -1,0 +1,182 @@
+
+[
+    {
+        "model": "academics.course",
+        "pk": "9bb50b9b-d2fc-4b8a-a5b1-e1f3b5fba4b7",
+        "fields": {
+            "course_name": "Introduction to Computer Science",
+            "course_code": "CS101",
+            "level": 100,
+            "created_at": "2023-01-01T10:00:00Z",
+            "last_updated": "2023-01-01T10:00:00Z"
+        }
+    },
+    {
+        "model": "academics.course",
+        "pk": "1f4d1f9a-0b3f-42ad-a1a7-3d4f4f80f21f",
+        "fields": {
+            "course_name": "Basic Programming",
+            "course_code": "CS102",
+            "level": 100,
+            "created_at": "2023-01-02T11:00:00Z",
+            "last_updated": "2023-01-02T11:00:00Z"
+        }
+    },
+    {
+        "model": "academics.course",
+        "pk": "3c88b0fd-9e2d-487b-9a42-6fa68795d21f",
+        "fields": {
+            "course_name": "Discrete Mathematics",
+            "course_code": "MATH101",
+            "level": 100,
+            "created_at": "2023-01-03T12:00:00Z",
+            "last_updated": "2023-01-03T12:00:00Z"
+        }
+    },
+    {
+        "model": "academics.course",
+        "pk": "84dbec8f-bf51-4c61-8a29-e4a4f478e87d",
+        "fields": {
+            "course_name": "Introduction to Engineering",
+            "course_code": "ENG101",
+            "level": 100,
+            "created_at": "2023-01-04T13:00:00Z",
+            "last_updated": "2023-01-04T13:00:00Z"
+        }
+    },
+
+    {
+        "model": "academics.course",
+        "pk": "c073b7b9-e370-4c95-b1fb-d105a73a3197",
+        "fields": {
+            "course_name": "Data Structures and Algorithms",
+            "course_code": "CS201",
+            "level": 200,
+            "created_at": "2023-02-10T14:00:00Z",
+            "last_updated": "2023-02-10T14:00:00Z"
+        }
+    },
+    {
+        "model": "academics.course",
+        "pk": "36d57b7b-4439-4631-b6b1-17d0d22916bb",
+        "fields": {
+            "course_name": "Object-Oriented Programming",
+            "course_code": "CS202",
+            "level": 200,
+            "created_at": "2023-02-11T15:00:00Z",
+            "last_updated": "2023-02-11T15:00:00Z"
+        }
+    },
+    {
+        "model": "academics.course",
+        "pk": "67d5439c-f2c9-400e-9be6-ec6c53e57862",
+        "fields": {
+            "course_name": "Computer Networks",
+            "course_code": "CS203",
+            "level": 200,
+            "created_at": "2023-02-12T16:00:00Z",
+            "last_updated": "2023-02-12T16:00:00Z"
+        }
+    },
+    {
+        "model": "academics.course",
+        "pk": "e92fe93f-d931-4d87-beb4-d71259782d85",
+        "fields": {
+            "course_name": "Database Management Systems",
+            "course_code": "CS204",
+            "level": 200,
+            "created_at": "2023-02-13T17:00:00Z",
+            "last_updated": "2023-02-13T17:00:00Z"
+        }
+    },
+
+    {
+        "model": "academics.course",
+        "pk": "019d9e8d-c52a-44c4-a345-84b97b578035",
+        "fields": {
+            "course_name": "Software Engineering",
+            "course_code": "CS301",
+            "level": 300,
+            "created_at": "2023-04-05T10:00:00Z",
+            "last_updated": "2023-04-05T10:00:00Z"
+        }
+    },
+    {
+        "model": "academics.course",
+        "pk": "cce8adfd-fc09-44d1-a51b-91bc4b6d7a4b",
+        "fields": {
+            "course_name": "Operating Systems",
+            "course_code": "CS302",
+            "level": 300,
+            "created_at": "2023-04-06T11:00:00Z",
+            "last_updated": "2023-04-06T11:00:00Z"
+        }
+    },
+    {
+        "model": "academics.course",
+        "pk": "b5c830ff-d2e0-48c9-b264-5e826b35763e",
+        "fields": {
+            "course_name": "Artificial Intelligence",
+            "course_code": "CS303",
+            "level": 300,
+            "created_at": "2023-04-07T12:00:00Z",
+            "last_updated": "2023-04-07T12:00:00Z"
+        }
+    },
+    {
+        "model": "academics.course",
+        "pk": "5f87e7d7-dfe2-4f71-bcf3-b0a74f4b0b70",
+        "fields": {
+            "course_name": "Computer Graphics",
+            "course_code": "CS304",
+            "level": 300,
+            "created_at": "2023-04-08T13:00:00Z",
+            "last_updated": "2023-04-08T13:00:00Z"
+        }
+    },
+
+    {
+        "model": "academics.course",
+        "pk": "b0f8e3e7-9cb9-4c3b-8e3e-98a572bcf720",
+        "fields": {
+            "course_name": "Machine Learning",
+            "course_code": "CS401",
+            "level": 400,
+            "created_at": "2023-06-01T10:00:00Z",
+            "last_updated": "2023-06-01T10:00:00Z"
+        }
+    },
+    {
+        "model": "academics.course",
+        "pk": "5cb1b6e3-61b3-4429-a1a0-bad67c524f68",
+        "fields": {
+            "course_name": "Data Science",
+            "course_code": "CS402",
+            "level": 400,
+            "created_at": "2023-06-02T11:00:00Z",
+            "last_updated": "2023-06-02T11:00:00Z"
+        }
+    },
+    {
+        "model": "academics.course",
+        "pk": "f497c80d-7e6d-4bff-91c7-3c98b7d500b9",
+        "fields": {
+            "course_name": "Cloud Computing",
+            "course_code": "CS403",
+            "level": 400,
+            "created_at": "2023-06-03T12:00:00Z",
+            "last_updated": "2023-06-03T12:00:00Z"
+        }
+    },
+    {
+        "model": "academics.course",
+        "pk": "30fa8c74-b1ba-4901-b4b8-40a38844444f",
+        "fields": {
+            "course_name": "Cybersecurity",
+            "course_code": "CS404",
+            "level": 400,
+            "created_at": "2023-06-04T13:00:00Z",
+            "last_updated": "2023-06-04T13:00:00Z"
+        }
+    }
+]

@@ -1,0 +1,129 @@
+[
+    {
+        "model": "events.event",
+        "pk": "1c4b6a1f-e43c-4c7d-8c2f-9ab0105a74b4",
+        "fields": {
+            "event_name": "Hackathon 2025",
+            "description": "A 48-hour coding challenge to create innovative software solutions.",
+            "event_image_1": "event_images/Untitled.jpg",
+            "event_image_2": "event_images/FFF.jpg",
+            "event_date": "2025-02-01T00:00:00Z",
+            "organised_by": "Tech Innovators Group",
+            "created_at": "2024-12-01T08:00:00Z",
+            "last_updated": "2024-12-27T19:45:24.728Z"
+        }
+    },
+    {
+        "model": "events.event",
+        "pk": "2a1cdd6e-80f1-4c0f-b9a6-d3b1e1f0c640",
+        "fields": {
+            "event_name": "Programming Languages Trivia",
+            "description": "A fun trivia event to test your knowledge on programming languages and their history.",
+            "event_image_1": "event_images/432.jpg",
+            "event_image_2": "event_images/999.png",
+            "event_date": "2025-02-05T18:00:00Z",
+            "organised_by": "CodeMasters Society",
+            "created_at": "2024-12-05T14:00:00Z",
+            "last_updated": "2024-12-27T19:41:48.904Z"
+        }
+    },
+    {
+        "model": "events.event",
+        "pk": "4fbcbd2d-98f3-4410-a2fa-70c7ea4f5eb1",
+        "fields": {
+            "event_name": "Virtual Reality Showcase",
+            "description": "Experience the future of gaming and simulations with virtual reality demos.",
+            "event_image_1": "event_images/NN.jpg",
+            "event_image_2": "event_images/NNN.jpg",
+            "event_date": "2024-12-22T17:00:00Z",
+            "organised_by": "VR Pioneers Club",
+            "created_at": "2024-12-10T11:00:00Z",
+            "last_updated": "2024-12-27T19:52:43.301Z"
+        }
+    },
+    {
+        "model": "events.event",
+        "pk": "5b12032f-5db6-4b43-8261-3c7599d7a607",
+        "fields": {
+            "event_name": "AI & Machine Learning Workshop",
+            "description": "Learn the basics of Artificial Intelligence and Machine Learning in this hands-on workshop.",
+            "event_image_1": "event_images/ZZZ.jpg",
+            "event_image_2": "event_images/ZZ.jpg",
+            "event_date": "2024-12-10T10:00:00Z",
+            "organised_by": "AI Enthusiasts Club",
+            "created_at": "2024-11-25T15:00:00Z",
+            "last_updated": "2024-12-27T20:01:20.003Z"
+        }
+    },
+    {
+        "model": "events.event",
+        "pk": "5e17c19b-c1a5-45bb-b39b-5a9dbf5481fc",
+        "fields": {
+            "event_name": "Women in Tech Panel Discussion",
+            "description": "A panel discussion featuring successful women in the tech industry.",
+            "event_image_1": "event_images/VVV.jpg",
+            "event_image_2": "event_images/VV.jpg",
+            "event_date": "2024-12-15T16:00:00Z",
+            "organised_by": "Women in Tech Network",
+            "created_at": "2024-11-15T08:00:00Z",
+            "last_updated": "2024-12-27T19:58:21.649Z"
+        }
+    },
+    {
+        "model": "events.event",
+        "pk": "6fae7e5c-845d-465a-80d3-dcd9d408e92b",
+        "fields": {
+            "event_name": "Cybersecurity Awareness Event",
+            "description": "A session on online safety, cybersecurity best practices, and ethical hacking.",
+            "event_image_1": "event_images/MM.jpg",
+            "event_image_2": "event_images/MMM.jpg",
+            "event_date": "2025-01-10T14:00:00Z",
+            "organised_by": "Cyber Guardians Association",
+            "created_at": "2024-12-05T12:00:00Z",
+            "last_updated": "2024-12-27T19:51:11.605Z"
+        }
+    },
+    {
+        "model": "events.event",
+        "pk": "7d7ec77c-0f29-4908-a86f-df59b5b12e21",
+        "fields": {
+            "event_name": "Coding Bootcamp 2025",
+            "description": "A weekend coding bootcamp focusing on full-stack web development.",
+            "event_image_1": "event_images/boot1.jpg",
+            "event_image_2": "event_images/242.jpg",
+            "event_date": "2025-03-12T09:00:00Z",
+            "organised_by": "Full Stack Developers Society",
+            "created_at": "2024-12-01T12:00:00Z",
+            "last_updated": "2024-12-27T19:37:09.177Z"
+        }
+    },
+    {
+        "model": "events.event",
+        "pk": "e8f8f71a-1eaf-4b30-9277-e7f40d2d9c69",
+        "fields": {
+            "event_name": "Cloud Computing Seminar",
+            "description": "An introductory seminar to cloud computing, AWS, and Azure.",
+            "event_image_1": "event_images/BB.jpg",
+            "event_image_2": "event_images/BBB.jpg",
+            "event_date": "2024-12-18T16:00:00Z",
+            "organised_by": "Cloud Tech Foundation",
+            "created_at": "2024-11-30T09:00:00Z",
+            "last_updated": "2024-12-27T19:55:04.802Z"
+        }
+    },
+    {
+        "model": "events.event",
+        "pk": "fa3f577a-60a7-4f84-9c91-f91b9a433038",
+        "fields": {
+            "event_name": "Blockchain Workshop",
+            "description": "An introductory workshop on Blockchain technology and cryptocurrencies.",
+            "event_image_1": "event_images/DFGD.jpg",
+            "event_image_2": "event_images/P.jpg",
+            "event_date": "2025-01-25T11:00:00Z",
+            "organised_by": "Blockchain Enthusiasts Group",
+            "created_at": "2024-12-10T09:00:00Z",
+            "last_updated": "2024-12-27T19:49:15.822Z"
+        }
+    }
+]
+

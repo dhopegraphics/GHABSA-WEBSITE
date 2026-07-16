@@ -1,0 +1,4 @@
+Thanks for buying {{ product_name }} from Computer Science Society, KNUST. 
+Your purchase code: {{ purchase_code }}.  
+Keep it safe.  
+We'll process your order soon.

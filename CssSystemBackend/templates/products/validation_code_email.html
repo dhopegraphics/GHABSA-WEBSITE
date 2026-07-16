@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Validation Code - CSS KNUST</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 600px;
+            margin: 20px auto;
+            background-color: #ffffff;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 28px;
+        }
+        .header p {
+            margin: 10px 0 0 0;
+            opacity: 0.9;
+        }
+        .content {
+            padding: 30px;
+        }
+        .greeting {
+            font-size: 18px;
+            margin-bottom: 20px;
+            color: #555;
+        }
+        .success-message {
+            background-color: #d4edda;
+            border-left: 4px solid #28a745;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+        }
+        .validation-code-box {
+            background-color: #f8f9fa;
+            border: 2px dashed #667eea;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+        }
+        .validation-code {
+            font-size: 32px;
+            font-weight: bold;
+            color: #667eea;
+            letter-spacing: 4px;
+            font-family: 'Courier New', monospace;
+            margin: 10px 0;
+        }
+        .product-item {
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+            border-left: 4px solid #667eea;
+        }
+        .product-name {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 8px;
+        }
+        .product-details {
+            font-size: 14px;
+            color: #666;
+            margin: 5px 0;
+        }
+        .info-box {
+            background-color: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        .transaction-details {
+            background-color: #e7f3ff;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        .transaction-details table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .transaction-details td {
+            padding: 8px 0;
+            font-size: 14px;
+        }
+        .transaction-details td:first-child {
+            font-weight: bold;
+            color: #555;
+            width: 40%;
+        }
+        .footer {
+            background-color: #f8f9fa;
+            padding: 20px 30px;
+            text-align: center;
+            font-size: 14px;
+            color: #666;
+            border-top: 1px solid #dee2e6;
+        }
+        .footer a {
+            color: #667eea;
+            text-decoration: none;
+        }
+        .button {
+            display: inline-block;
+            padding: 12px 30px;
+            background-color: #667eea;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        .gift-badge {
+            display: inline-block;
+            background-color: #ff6b6b;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+        .on-behalf-badge {
+            display: inline-block;
+            background-color: #4ecdc4;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>🎉 Payment Successful!</h1>
+            <p>Your validation code{% if is_cart_purchase %}s are{% else %} is{% endif %} ready</p>
+        </div>
+
+        <!-- Content -->
+        <div class="content">
+            <div class="greeting">
+                Hello {{ user_name }},
+            </div>
+
+            <div class="success-message">
+                <strong>✅ Your payment has been confirmed!</strong><br>
+                Thank you for your purchase. {% if is_cart_purchase %}Here are your validation codes{% else %}Here is your validation code{% endif %} to collect your order{% if is_cart_purchase %}s{% endif %}.
+            </div>
+
+            <!-- Products and Validation Codes -->
+            {% if is_cart_purchase %}
+                <h3>Your Purchases ({{ total_items }} item{% if total_items > 1 %}s{% endif %})</h3>
+            {% endif %}
+
+            {% for item in validation_codes %}
+                <div class="product-item">
+                    <div class="product-name">
+                        {{ item.product_name }}
+                        {% if item.is_gift %}
+                            <span class="gift-badge">🎁 GIFT</span>
+                        {% elif item.is_on_behalf %}
+                            <span class="on-behalf-badge">👥 ON BEHALF</span>
+                        {% endif %}
+                    </div>
+                    
+                    {% if item.variant_info %}
+                        <div class="product-details">
+                            <strong>Variant:</strong> {{ item.variant_info }}
+                        </div>
+                    {% endif %}
+                    
+                    <div class="product-details">
+                        <strong>Quantity:</strong> {{ item.quantity }} | 
+                        <strong>Amount:</strong> GHS {{ item.amount }}
+                    </div>
+
+                    {% if item.is_gift or item.is_on_behalf %}
+                        <div class="product-details">
+                            <strong>{% if item.is_gift %}Gift recipient{% else %}Purchased for{% endif %}:</strong> {{ item.purchased_for_phone }}
+                        </div>
+                    {% endif %}
+
+                    <div class="validation-code-box">
+                        <div style="font-size: 14px; color: #666; margin-bottom: 5px;">Validation Code</div>
+                        <div class="validation-code">{{ item.validation_code }}</div>
+                        <div style="font-size: 12px; color: #888; margin-top: 5px;">
+                            Show this code when collecting your item
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+
+            <!-- Important Information -->
+            <div class="info-box">
+                <strong>📍 Important Information:</strong>
+                <ul style="margin: 10px 0; padding-left: 20px;">
+                    <li>Keep your validation code{% if is_cart_purchase %}s{% endif %} safe - you'll need {% if is_cart_purchase %}them{% else %}it{% endif %} to collect your order{% if is_cart_purchase %}s{% endif %}</li>
+                    <li>You can view your validation code{% if is_cart_purchase %}s{% endif %} anytime in your dashboard</li>
+                    <li>Collection location and time will be announced via email and SMS</li>
+                    <li>If you have any issues, please contact us immediately</li>
+                </ul>
+            </div>
+
+            <!-- Transaction Details -->
+            <div class="transaction-details">
+                <h4 style="margin-top: 0;">Transaction Details</h4>
+                <table>
+                    <tr>
+                        <td>Reference:</td>
+                        <td>{{ transaction_reference }}</td>
+                    </tr>
+                    <tr>
+                        <td>Amount Paid:</td>
+                        <td><strong>GHS {{ amount_paid }}</strong></td>
+                    </tr>
+                    <tr>
+                        <td>Date:</td>
+                        <td>{{ payment_date|date:"F d, Y g:i A" }}</td>
+                    </tr>
+                </table>
+            </div>
+
+            <!-- Call to Action -->
+            <div style="text-align: center; margin: 30px 0;">
+                <a href="https://www.thecssknust.com/dashboard/purchases" class="button">
+                    View My Purchases
+                </a>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p>
+                <strong>Computer Science Society - KNUST</strong><br>
+                For support, contact us at <a href="mailto:support@thecssknust.com">info@thecssknust.com</a><br>
+                or call <a href="tel:+233597959032">+233 59 795 9032</a>
+            </p>
+            <p style="font-size: 12px; color: #999; margin-top: 15px;">
+                This is an automated email. Please do not reply to this message.
+            </p>
+        </div>
+    </div>
+</body>
+</html>

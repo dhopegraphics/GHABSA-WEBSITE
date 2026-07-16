@@ -1,0 +1,1141 @@
+{% extends "seller_admin/seller_base_site.html" %}
+{% load i18n static %}
+
+{% block extrastyle %}
+{{ block.super }}
+<style>
+    .profile-container {
+        max-width: 1000px;
+    }
+
+    .page-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 32px;
+    }
+
+    .page-header h1 {
+        font-size: 28px;
+        font-weight: 800;
+        color: var(--gray-900);
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .page-header h1 i {
+        color: var(--primary);
+    }
+
+    /* Profile Layout */
+    .profile-layout {
+        display: grid;
+        grid-template-columns: 320px 1fr;
+        gap: 32px;
+    }
+
+    @media (max-width: 900px) {
+        .profile-layout {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    /* Profile Card */
+    .profile-card {
+        background: white;
+        border-radius: 20px;
+        border: 1px solid var(--gray-200);
+        overflow: hidden;
+        height: fit-content;
+    }
+
+    .profile-cover {
+        height: 100px;
+        background: var(--gradient-primary);
+        position: relative;
+    }
+
+    .profile-avatar-wrapper {
+        position: relative;
+        width: 100px;
+        height: 100px;
+        margin: -50px auto 0;
+    }
+
+    .profile-avatar {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #7C3AED 0%, #EC4899 100%);
+        border: 4px solid white;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 32px;
+        font-weight: 800;
+        color: white;
+        box-shadow: 0 4px 20px rgba(124, 58, 237, 0.3);
+    }
+
+    .profile-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .edit-avatar {
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        width: 32px;
+        height: 32px;
+        background: var(--primary);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        border: 3px solid white;
+        transition: all 0.2s ease;
+    }
+
+    .edit-avatar:hover {
+        background: #6D28D9;
+    }
+
+    .edit-avatar i {
+        color: white;
+        font-size: 14px;
+    }
+
+    .profile-info {
+        text-align: center;
+        padding: 60px 24px 24px;
+    }
+
+    .profile-name {
+        font-size: 20px;
+        font-weight: 700;
+        color: var(--gray-900);
+        margin: 0 0 4px 0;
+    }
+
+    .profile-store {
+        font-size: 14px;
+        color: var(--gray-500);
+        margin: 0 0 16px 0;
+    }
+
+    .profile-badges {
+        display: flex;
+        justify-content: center;
+        gap: 8px;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+    }
+
+    .badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        padding: 6px 12px;
+        border-radius: 100px;
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+    .badge.verified {
+        background: rgba(16, 185, 129, 0.15);
+        color: var(--success);
+    }
+
+    .badge.top-seller {
+        background: linear-gradient(135deg, rgba(124, 58, 237, 0.15), rgba(236, 72, 153, 0.15));
+        color: var(--primary);
+    }
+
+    .badge.vacation {
+        background: rgba(245, 158, 11, 0.15);
+        color: var(--warning);
+    }
+
+    .profile-stats {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        border-top: 1px solid var(--gray-100);
+    }
+
+    .profile-stat {
+        padding: 16px;
+        text-align: center;
+        border-right: 1px solid var(--gray-100);
+    }
+
+    .profile-stat:last-child {
+        border-right: none;
+    }
+
+    .profile-stat h4 {
+        font-size: 20px;
+        font-weight: 800;
+        color: var(--gray-900);
+        margin: 0;
+    }
+
+    .profile-stat p {
+        font-size: 11px;
+        color: var(--gray-500);
+        margin: 4px 0 0 0;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    /* Quick Links */
+    .quick-links {
+        padding: 16px 24px 24px;
+        border-top: 1px solid var(--gray-100);
+    }
+
+    .quick-link {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px;
+        margin: 0 -12px;
+        border-radius: 10px;
+        text-decoration: none;
+        color: var(--gray-700);
+        transition: all 0.2s ease;
+    }
+
+    .quick-link:hover {
+        background: var(--gray-50);
+        color: var(--primary);
+    }
+
+    .quick-link i {
+        font-size: 20px;
+        width: 24px;
+    }
+
+    /* Settings Sections */
+    .settings-sections {
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
+    }
+
+    .settings-card {
+        background: white;
+        border-radius: 20px;
+        border: 1px solid var(--gray-200);
+        overflow: hidden;
+    }
+
+    .settings-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 20px 24px;
+        border-bottom: 1px solid var(--gray-100);
+    }
+
+    .settings-header h3 {
+        font-size: 16px;
+        font-weight: 700;
+        color: var(--gray-900);
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .settings-header h3 i {
+        color: var(--primary);
+    }
+
+    .settings-body {
+        padding: 24px;
+    }
+
+    /* Form Elements */
+    .form-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+    }
+
+    @media (max-width: 700px) {
+        .form-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    .form-group {
+        margin-bottom: 0;
+    }
+
+    .form-group.full {
+        grid-column: span 2;
+    }
+
+    @media (max-width: 700px) {
+        .form-group.full {
+            grid-column: span 1;
+        }
+    }
+
+    .form-label {
+        display: block;
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--gray-700);
+        margin-bottom: 8px;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 12px 16px;
+        border: 2px solid var(--gray-200);
+        border-radius: 10px;
+        font-size: 14px;
+        font-family: inherit;
+        transition: all 0.2s ease;
+        box-sizing: border-box;
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1);
+    }
+
+    .form-control:read-only {
+        background: var(--gray-50);
+        color: var(--gray-500);
+        cursor: not-allowed;
+    }
+
+    textarea.form-control {
+        min-height: 100px;
+        resize: vertical;
+    }
+
+    .form-help {
+        font-size: 12px;
+        color: var(--gray-500);
+        margin-top: 6px;
+    }
+
+    /* Social Links */
+    .social-input {
+        display: flex;
+        align-items: center;
+        gap: 0;
+    }
+
+    .social-prefix {
+        padding: 12px 14px;
+        background: var(--gray-100);
+        border: 2px solid var(--gray-200);
+        border-right: none;
+        border-radius: 10px 0 0 10px;
+        color: var(--gray-500);
+        font-size: 14px;
+        white-space: nowrap;
+    }
+
+    .social-input .form-control {
+        border-radius: 0 10px 10px 0;
+    }
+
+    /* Toggle */
+    .toggle-group {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 16px 0;
+        border-bottom: 1px solid var(--gray-100);
+    }
+
+    .toggle-group:last-child {
+        border-bottom: none;
+        padding-bottom: 0;
+    }
+
+    .toggle-info h4 {
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--gray-800);
+        margin: 0 0 4px 0;
+    }
+
+    .toggle-info p {
+        font-size: 13px;
+        color: var(--gray-500);
+        margin: 0;
+    }
+
+    .toggle-switch {
+        width: 52px;
+        height: 28px;
+        background: var(--gray-300);
+        border-radius: 100px;
+        position: relative;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        flex-shrink: 0;
+    }
+
+    .toggle-switch.active {
+        background: var(--primary);
+    }
+
+    .toggle-switch::after {
+        content: '';
+        position: absolute;
+        width: 22px;
+        height: 22px;
+        background: white;
+        border-radius: 100%;
+        top: 3px;
+        left: 3px;
+        transition: all 0.2s ease;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .toggle-switch.active::after {
+        left: calc(100% - 25px);
+    }
+
+    /* Buttons */
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 12px 24px;
+        border-radius: 10px;
+        font-size: 14px;
+        font-weight: 600;
+        text-decoration: none;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        border: none;
+    }
+
+    .btn-primary,
+    .btn-primary:link,
+    .btn-primary:visited,
+    a.btn-primary {
+        background: var(--gradient-primary);
+        color: #ffffff !important;
+    }
+
+    .btn-primary:hover,
+    a.btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(124, 58, 237, 0.4);
+        color: #ffffff !important;
+    }
+
+    .btn-primary i {
+        color: #ffffff !important;
+    }
+
+    .btn-outline {
+        background: white;
+        color: var(--gray-700);
+        border: 2px solid var(--gray-200);
+    }
+
+    .btn-outline:hover {
+        border-color: var(--primary);
+        color: var(--primary);
+    }
+
+    .settings-actions {
+        display: flex;
+        gap: 12px;
+        margin-top: 24px;
+        padding-top: 24px;
+        border-top: 1px solid var(--gray-100);
+    }
+
+    /* Store Preview */
+    .store-preview {
+        background: var(--gray-50);
+        border-radius: 12px;
+        padding: 20px;
+        margin-top: 24px;
+    }
+
+    .store-preview-header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 16px;
+    }
+
+    .store-preview-header i {
+        font-size: 20px;
+        color: var(--gray-500);
+    }
+
+    .store-preview-header span {
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--gray-600);
+    }
+
+    .store-url {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        background: white;
+        padding: 12px 16px;
+        border-radius: 10px;
+        border: 1px solid var(--gray-200);
+    }
+
+    .store-url span {
+        font-size: 14px;
+        color: var(--gray-700);
+        word-break: break-all;
+    }
+
+    .store-url .slug {
+        font-weight: 600;
+        color: var(--primary);
+    }
+
+    .copy-btn {
+        margin-left: auto;
+        padding: 6px 12px;
+        background: var(--gray-100);
+        border-radius: 6px;
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--gray-600);
+        cursor: pointer;
+        border: none;
+        transition: all 0.2s ease;
+        white-space: nowrap;
+    }
+
+    .copy-btn:hover {
+        background: var(--gray-200);
+    }
+
+    /* Danger Zone */
+    .danger-zone {
+        border: 2px solid rgba(239, 68, 68, 0.3);
+    }
+
+    .danger-zone .settings-header {
+        background: rgba(239, 68, 68, 0.05);
+    }
+
+    .danger-zone .settings-header h3 {
+        color: var(--danger);
+    }
+
+    .danger-zone .settings-header h3 i {
+        color: var(--danger);
+    }
+
+    .btn-danger {
+        background: transparent;
+        color: var(--danger);
+        border: 2px solid var(--danger);
+    }
+
+    .btn-danger:hover {
+        background: var(--danger);
+        color: white;
+    }
+
+    .btn-success {
+        background: var(--success);
+        color: white;
+        border: none;
+    }
+
+    .btn-success:hover {
+        background: #059669;
+    }
+
+    .btn-warning {
+        background: var(--warning);
+        color: white;
+        border: none;
+    }
+
+    .btn-warning:hover {
+        background: #d97706;
+    }
+
+    /* Toggle container for checkboxes */
+    .toggle-container {
+        display: block;
+        cursor: pointer;
+    }
+    
+    .toggle-container input {
+        display: none;
+    }
+    
+    .toggle-container input:checked + .toggle-switch {
+        background: var(--primary);
+    }
+    
+    .toggle-container input:checked + .toggle-switch::after {
+        left: calc(100% - 25px);
+    }
+
+    /* Success Message */
+    .success-message {
+        background: rgba(16, 185, 129, 0.1);
+        border: 1px solid rgba(16, 185, 129, 0.3);
+        color: var(--success);
+        padding: 12px 16px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 14px;
+        font-weight: 500;
+    }
+
+    /* Modal Styles */
+    .modal-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.5);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+    }
+    
+    .modal-content {
+        background: white;
+        border-radius: 20px;
+        width: 90%;
+        max-width: 450px;
+        overflow: hidden;
+        animation: modalIn 0.2s ease;
+    }
+    
+    @keyframes modalIn {
+        from { opacity: 0; transform: scale(0.95); }
+        to { opacity: 1; transform: scale(1); }
+    }
+    
+    .modal-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 20px 24px;
+        border-bottom: 1px solid var(--gray-100);
+    }
+    
+    .modal-header h3 {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 18px;
+        font-weight: 700;
+        margin: 0;
+    }
+    
+    .modal-close {
+        width: 32px;
+        height: 32px;
+        border: none;
+        background: var(--gray-100);
+        border-radius: 8px;
+        font-size: 20px;
+        cursor: pointer;
+        color: var(--gray-500);
+    }
+    
+    .modal-close:hover {
+        background: var(--gray-200);
+    }
+    
+    .modal-body {
+        padding: 24px;
+    }
+</style>
+{% endblock %}
+
+{% block breadcrumbs %}
+<a href="{% url 'seller_admin:index' %}">Dashboard</a>
+<span>/</span>
+<span>Store Settings</span>
+{% endblock %}
+
+{% block content %}
+<div class="profile-container">
+    <div class="page-header">
+        <h1>
+            <i class="ri-store-2-line"></i>
+            Store Settings
+        </h1>
+    </div>
+
+    {% if messages %}
+    {% for message in messages %}
+    <div class="success-message">
+        <i class="ri-checkbox-circle-fill"></i>
+        {{ message }}
+    </div>
+    {% endfor %}
+    {% endif %}
+
+    <div class="profile-layout">
+        <!-- Profile Sidebar -->
+        <div class="profile-sidebar">
+            <div class="profile-card">
+                <div class="profile-cover"></div>
+                <div class="profile-avatar-wrapper">
+                    <div class="profile-avatar">
+                        {% if original.logo %}
+                        <img src="{{ original.logo.url }}" alt="{{ original.display_name }}">
+                        {% else %}
+                        {{ original.display_name|slice:":2"|upper }}
+                        {% endif %}
+                    </div>
+                    <label class="edit-avatar" for="logo-upload" title="Change Logo">
+                        <i class="ri-camera-line"></i>
+                    </label>
+                </div>
+                <div class="profile-info">
+                    <h2 class="profile-name">{{ original.display_name }}</h2>
+                    <p class="profile-store">@{{ original.slug|default:"store-slug" }}</p>
+                    <div class="profile-badges">
+                        {% if original.is_verified %}
+                        <span class="badge verified">
+                            <i class="ri-checkbox-circle-fill"></i>
+                            Verified
+                        </span>
+                        {% endif %}
+                        {% if original.vacation_mode %}
+                        <span class="badge vacation">
+                            <i class="ri-pause-circle-fill"></i>
+                            On Vacation
+                        </span>
+                        {% else %}
+                        <span class="badge top-seller">
+                            <i class="ri-star-fill"></i>
+                            {{ original.get_seller_type_display }}
+                        </span>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="profile-stats">
+                    <div class="profile-stat">
+                        <h4>{{ original.total_sales|default:"0" }}</h4>
+                        <p>Sales</p>
+                    </div>
+                    <div class="profile-stat">
+                        <h4>{{ original.total_reviews|default:"0" }}</h4>
+                        <p>Reviews</p>
+                    </div>
+                    <div class="profile-stat">
+                        <h4>{{ original.average_rating|default:"0.0" }}</h4>
+                        <p>Rating</p>
+                    </div>
+                </div>
+                <div class="quick-links">
+                    <a href="{{ FRONTEND_URL|default:'https://thecssknust.com' }}/el-mercado/store/{{ original.slug }}" target="_blank" class="quick-link">
+                        <i class="ri-external-link-line"></i>
+                        View Public Store
+                    </a>
+                    <a href="{% url 'seller_admin:el_mercado_listing_changelist' %}" class="quick-link">
+                        <i class="ri-shopping-bag-line"></i>
+                        Manage Listings
+                    </a>
+                    <a href="{% url 'seller_admin:el_mercado_marketplaceorder_changelist' %}" class="quick-link">
+                        <i class="ri-file-list-3-line"></i>
+                        View Orders
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Settings Sections -->
+        <div class="settings-sections">
+            <!-- Store Information -->
+            <form method="post" class="settings-card" enctype="multipart/form-data">
+                {% csrf_token %}
+                <input type="hidden" name="form_type" value="store_info">
+                <div class="settings-header">
+                    <h3>
+                        <i class="ri-store-2-line"></i>
+                        Store Information
+                    </h3>
+                </div>
+                <div class="settings-body">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label">Store Name</label>
+                            <input type="text" name="display_name" class="form-control" value="{{ original.display_name }}" placeholder="Your store name" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Store Slug</label>
+                            <input type="text" class="form-control" value="{{ original.slug }}" readonly>
+                            <p class="form-help">Store slug cannot be changed</p>
+                        </div>
+                        <div class="form-group full">
+                            <label class="form-label">Store Description</label>
+                            <textarea name="description" class="form-control" placeholder="Tell customers about your store...">{{ original.description }}</textarea>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Contact Email</label>
+                            <input type="email" name="email" class="form-control" value="{{ original.email }}" placeholder="store@example.com" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Phone Number</label>
+                            <input type="tel" name="phone" class="form-control" value="{{ original.phone }}" placeholder="+233 XX XXX XXXX" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Store Logo</label>
+                            <input type="file" name="logo" id="logo-upload" class="form-control" accept="image/*">
+                            <p class="form-help">Recommended: 200x200px, max 2MB</p>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Banner Image</label>
+                            <input type="file" name="banner" class="form-control" accept="image/*">
+                            <p class="form-help">Recommended: 1200x300px, max 5MB</p>
+                        </div>
+                    </div>
+
+                    <div class="store-preview">
+                        <div class="store-preview-header">
+                            <i class="ri-link"></i>
+                            <span>Your Store URL</span>
+                        </div>
+                        <div class="store-url">
+                            <span>{{ FRONTEND_URL|default:"https://thecssknust.com" }}/el-mercado/store/<span class="slug">{{ original.slug|default:"your-store" }}</span></span>
+                            <button type="button" class="copy-btn" onclick="copyStoreUrl()">
+                                <i class="ri-file-copy-line"></i>
+                                Copy
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="settings-actions">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="ri-save-line"></i>
+                            Save Store Info
+                        </button>
+                    </div>
+                </div>
+            </form>
+
+            <!-- Store Policies -->
+            <form method="post" class="settings-card">
+                {% csrf_token %}
+                <input type="hidden" name="form_type" value="policies">
+                <div class="settings-header">
+                    <h3>
+                        <i class="ri-file-shield-2-line"></i>
+                        Store Policies
+                    </h3>
+                </div>
+                <div class="settings-body">
+                    <div class="form-grid">
+                        <div class="form-group full">
+                            <label class="form-label">Shipping Policy</label>
+                            <textarea name="shipping_policy" class="form-control" placeholder="Describe your shipping options, estimated delivery times, and shipping costs...">{{ original.shipping_policy }}</textarea>
+                            <p class="form-help">This will be displayed on your product pages</p>
+                        </div>
+                        <div class="form-group full">
+                            <label class="form-label">Return & Refund Policy</label>
+                            <textarea name="return_policy" class="form-control" placeholder="Describe your return and refund conditions, timeframes, and process...">{{ original.return_policy }}</textarea>
+                            <p class="form-help">Be clear about what customers can expect when returning items</p>
+                        </div>
+                    </div>
+                    <div class="settings-actions">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="ri-save-line"></i>
+                            Save Policies
+                        </button>
+                    </div>
+                </div>
+            </form>
+
+            <!-- Social Links -->
+            <form method="post" class="settings-card">
+                {% csrf_token %}
+                <input type="hidden" name="form_type" value="social_links">
+                <div class="settings-header">
+                    <h3>
+                        <i class="ri-links-line"></i>
+                        Social Links
+                    </h3>
+                </div>
+                <div class="settings-body">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label">Instagram</label>
+                            <div class="social-input">
+                                <span class="social-prefix">instagram.com/</span>
+                                <input type="text" name="instagram" class="form-control" value="{{ original.instagram }}" placeholder="username">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Twitter / X</label>
+                            <div class="social-input">
+                                <span class="social-prefix">x.com/</span>
+                                <input type="text" name="twitter" class="form-control" value="{{ original.twitter }}" placeholder="username">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Facebook</label>
+                            <div class="social-input">
+                                <span class="social-prefix">facebook.com/</span>
+                                <input type="text" name="facebook" class="form-control" value="{{ original.facebook }}" placeholder="page-name">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Website</label>
+                            <input type="url" name="website" class="form-control" value="{{ original.website|default:'' }}" placeholder="https://your-website.com">
+                        </div>
+                    </div>
+                    <div class="settings-actions">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="ri-save-line"></i>
+                            Save Social Links
+                        </button>
+                    </div>
+                </div>
+            </form>
+
+            <!-- Order Settings -->
+            <form method="post" class="settings-card">
+                {% csrf_token %}
+                <input type="hidden" name="form_type" value="order_settings">
+                <div class="settings-header">
+                    <h3>
+                        <i class="ri-settings-3-line"></i>
+                        Order Settings
+                    </h3>
+                </div>
+                <div class="settings-body">
+                    <div class="toggle-group">
+                        <div class="toggle-info">
+                            <h4>Auto-Accept Orders</h4>
+                            <p>Automatically accept incoming orders without manual approval</p>
+                        </div>
+                        <label class="toggle-container">
+                            <input type="checkbox" name="auto_accept_orders" {% if original.auto_accept_orders %}checked{% endif %}>
+                            <div class="toggle-switch {% if original.auto_accept_orders %}active{% endif %}"></div>
+                        </label>
+                    </div>
+                    <div class="settings-actions">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="ri-save-line"></i>
+                            Save Order Settings
+                        </button>
+                    </div>
+                </div>
+            </form>
+
+            <!-- Notifications -->
+            <form method="post" class="settings-card" id="notificationForm">
+                {% csrf_token %}
+                <input type="hidden" name="form_type" value="notifications">
+                <div class="settings-header">
+                    <h3>
+                        <i class="ri-notification-3-line"></i>
+                        Notifications
+                    </h3>
+                </div>
+                <div class="settings-body">
+                    <div class="toggle-group">
+                        <div class="toggle-info">
+                            <h4>New Order Alerts</h4>
+                            <p>Get notified when you receive a new order</p>
+                        </div>
+                        <label class="toggle-container">
+                            <input type="checkbox" name="notify_new_orders" {% if original.notify_new_orders %}checked{% endif %}>
+                            <div class="toggle-switch {% if original.notify_new_orders %}active{% endif %}"></div>
+                        </label>
+                    </div>
+                    <div class="toggle-group">
+                        <div class="toggle-info">
+                            <h4>Message Notifications</h4>
+                            <p>Get notified when customers message you</p>
+                        </div>
+                        <label class="toggle-container">
+                            <input type="checkbox" name="notify_messages" {% if original.notify_messages %}checked{% endif %}>
+                            <div class="toggle-switch {% if original.notify_messages %}active{% endif %}"></div>
+                        </label>
+                    </div>
+                    <div class="toggle-group">
+                        <div class="toggle-info">
+                            <h4>Review Alerts</h4>
+                            <p>Get notified when you receive a new review</p>
+                        </div>
+                        <label class="toggle-container">
+                            <input type="checkbox" name="notify_reviews" {% if original.notify_reviews %}checked{% endif %}>
+                            <div class="toggle-switch {% if original.notify_reviews %}active{% endif %}"></div>
+                        </label>
+                    </div>
+                    <div class="toggle-group">
+                        <div class="toggle-info">
+                            <h4>Low Stock Alerts</h4>
+                            <p>Get notified when products are running low</p>
+                        </div>
+                        <label class="toggle-container">
+                            <input type="checkbox" name="notify_low_stock" {% if original.notify_low_stock %}checked{% endif %}>
+                            <div class="toggle-switch {% if original.notify_low_stock %}active{% endif %}"></div>
+                        </label>
+                    </div>
+                    <div class="toggle-group">
+                        <div class="toggle-info">
+                            <h4>Payout Updates</h4>
+                            <p>Get notified about your payout status</p>
+                        </div>
+                        <label class="toggle-container">
+                            <input type="checkbox" name="notify_payouts" {% if original.notify_payouts %}checked{% endif %}>
+                            <div class="toggle-switch {% if original.notify_payouts %}active{% endif %}"></div>
+                        </label>
+                    </div>
+                    <div class="settings-actions">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="ri-save-line"></i>
+                            Save Notification Settings
+                        </button>
+                    </div>
+                </div>
+            </form>
+
+            <!-- Danger Zone -->
+            <div class="settings-card danger-zone">
+                <div class="settings-header">
+                    <h3>
+                        <i class="ri-error-warning-line"></i>
+                        Danger Zone
+                    </h3>
+                </div>
+                <div class="settings-body">
+                    <div class="toggle-group">
+                        <div class="toggle-info">
+                            <h4>{% if original.vacation_mode %}Resume Store{% else %}Vacation Mode{% endif %}</h4>
+                            <p>{% if original.vacation_mode %}Your store is currently paused. Resume to show listings again.{% else %}Temporarily hide your store and listings from customers{% endif %}</p>
+                        </div>
+                        <form method="post" action="{% url 'seller_admin:pause_store' %}" style="margin: 0;">
+                            {% csrf_token %}
+                            <input type="hidden" name="vacation_message" value="Store is temporarily unavailable">
+                            {% if original.vacation_mode %}
+                            <button type="submit" class="btn btn-success">
+                                <i class="ri-play-line"></i>
+                                Resume Store
+                            </button>
+                            {% else %}
+                            <button type="submit" class="btn btn-warning">
+                                <i class="ri-pause-line"></i>
+                                Enable Vacation Mode
+                            </button>
+                            {% endif %}
+                        </form>
+                    </div>
+                    <div class="toggle-group">
+                        <div class="toggle-info">
+                            <h4>Delete Store</h4>
+                            <p>Permanently delete your store and all data. This cannot be undone.</p>
+                        </div>
+                        <button type="button" class="btn btn-danger" onclick="showDeleteModal()">
+                            <i class="ri-delete-bin-line"></i>
+                            Delete Store
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Store Modal -->
+<div id="deleteModal" class="modal-overlay" style="display: none;">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3><i class="ri-error-warning-fill" style="color: var(--danger);"></i> Delete Store</h3>
+            <button type="button" class="modal-close" onclick="hideDeleteModal()">&times;</button>
+        </div>
+        <div class="modal-body">
+            <p style="color: var(--gray-600); margin-bottom: 20px;">
+                This action is <strong>permanent</strong> and cannot be undone. All your listings, orders, 
+                reviews, and earnings data will be archived.
+            </p>
+            <form method="post" action="{% url 'seller_admin:delete_store' %}" id="deleteForm">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label class="form-label">Type "<strong>{{ original.display_name }}</strong>" to confirm:</label>
+                    <input type="text" class="form-control" name="confirmation" placeholder="Enter store name" required autocomplete="off">
+                </div>
+                <div style="display: flex; gap: 12px; margin-top: 20px;">
+                    <button type="button" class="btn btn-outline" onclick="hideDeleteModal()" style="flex: 1;">Cancel</button>
+                    <button type="submit" class="btn btn-danger" style="flex: 1;">
+                        <i class="ri-delete-bin-line"></i>
+                        Delete Store
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+function copyStoreUrl() {
+    const url = '{{ FRONTEND_URL|default:"https://thecssknust.com" }}/el-mercado/store/{{ original.slug|default:"your-store" }}';
+    navigator.clipboard.writeText(url).then(() => {
+        const btn = document.querySelector('.copy-btn');
+        btn.innerHTML = '<i class="ri-check-line"></i> Copied!';
+        setTimeout(() => {
+            btn.innerHTML = '<i class="ri-file-copy-line"></i> Copy';
+        }, 2000);
+    });
+}
+
+function showDeleteModal() {
+    document.getElementById('deleteModal').style.display = 'flex';
+}
+
+function hideDeleteModal() {
+    document.getElementById('deleteModal').style.display = 'none';
+}
+
+// Toggle switch functionality
+document.querySelectorAll('.toggle-container').forEach(container => {
+    const toggle = container.querySelector('.toggle-switch');
+    
+    container.addEventListener('click', function(e) {
+        if (e.target.type !== 'submit') {
+            toggle.classList.toggle('active');
+        }
+    });
+});
+
+// Close modal on escape key
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        hideDeleteModal();
+    }
+});
+
+// Close modal on backdrop click
+document.getElementById('deleteModal').addEventListener('click', function(e) {
+    if (e.target === this) {
+        hideDeleteModal();
+    }
+});
+</script>
+{% endblock %}

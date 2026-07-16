@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>El Mercado - Seller Portal Login</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #4c1d95 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        /* Background decorations */
+        body::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -25%;
+            width: 80%;
+            height: 150%;
+            background: radial-gradient(ellipse, rgba(124, 58, 237, 0.3) 0%, transparent 70%);
+            animation: float 15s ease-in-out infinite;
+        }
+        
+        body::after {
+            content: '';
+            position: absolute;
+            bottom: -50%;
+            right: -25%;
+            width: 80%;
+            height: 150%;
+            background: radial-gradient(ellipse, rgba(236, 72, 153, 0.2) 0%, transparent 70%);
+            animation: float 20s ease-in-out infinite reverse;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(30px, -30px); }
+        }
+        
+        .login-container {
+            background: rgba(255, 255, 255, 0.98);
+            border-radius: 24px;
+            box-shadow: 0 25px 80px rgba(0, 0, 0, 0.4);
+            width: 100%;
+            max-width: 440px;
+            overflow: hidden;
+            position: relative;
+            z-index: 10;
+            backdrop-filter: blur(10px);
+        }
+        
+        .login-header {
+            background: linear-gradient(135deg, #7c3aed 0%, #ec4899 100%);
+            padding: 48px 40px;
+            text-align: center;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .login-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -30%;
+            width: 200px;
+            height: 200px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+        }
+        
+        .login-header::after {
+            content: '';
+            position: absolute;
+            bottom: -30%;
+            left: -20%;
+            width: 150px;
+            height: 150px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 50%;
+        }
+        
+        .login-header .logo {
+            font-size: 56px;
+            margin-bottom: 16px;
+            position: relative;
+            z-index: 1;
+            filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
+        }
+        
+        .login-header h1 {
+            font-size: 28px;
+            font-weight: 800;
+            margin-bottom: 8px;
+            position: relative;
+            z-index: 1;
+            letter-spacing: -0.5px;
+        }
+        
+        .login-header p {
+            font-size: 15px;
+            opacity: 0.9;
+            position: relative;
+            z-index: 1;
+            font-weight: 500;
+        }
+        
+        .login-body {
+            padding: 40px;
+        }
+        
+        .form-group {
+            margin-bottom: 24px;
+        }
+        
+        .form-group label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 10px;
+        }
+        
+        .input-wrapper {
+            position: relative;
+        }
+        
+        .input-wrapper i {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #94a3b8;
+            font-size: 18px;
+            transition: color 0.2s ease;
+        }
+        
+        .input-wrapper input {
+            width: 100%;
+            padding: 16px 16px 16px 48px;
+            font-size: 15px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            outline: none;
+            transition: all 0.2s ease;
+            background: #f8fafc;
+            font-family: inherit;
+        }
+        
+        .input-wrapper input:focus {
+            border-color: #7c3aed;
+            background: white;
+            box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.1);
+        }
+        
+        .input-wrapper input:focus + i,
+        .input-wrapper input:focus ~ i {
+            color: #7c3aed;
+        }
+        
+        .password-toggle {
+            position: absolute;
+            right: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: #94a3b8;
+            cursor: pointer;
+            font-size: 18px;
+            padding: 4px;
+            transition: color 0.2s ease;
+        }
+        
+        .password-toggle:hover {
+            color: #64748b;
+        }
+        
+        .btn-login {
+            width: 100%;
+            padding: 16px;
+            font-size: 16px;
+            font-weight: 600;
+            color: white;
+            background: linear-gradient(135deg, #7c3aed 0%, #ec4899 100%);
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: inherit;
+            letter-spacing: 0.3px;
+            box-shadow: 0 4px 15px rgba(124, 58, 237, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn-login::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+        
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(124, 58, 237, 0.4);
+        }
+        
+        .btn-login:hover::before {
+            left: 100%;
+        }
+        
+        .btn-login:active {
+            transform: translateY(0);
+        }
+        
+        .forgot-password {
+            text-align: center;
+            margin-top: 20px;
+        }
+        
+        .forgot-password a {
+            color: #7c3aed;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: color 0.2s ease;
+        }
+        
+        .forgot-password a:hover {
+            color: #6d28d9;
+            text-decoration: underline;
+        }
+        
+        /* Alert messages */
+        .alert {
+            padding: 14px 18px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .alert i {
+            font-size: 18px;
+        }
+        
+        .alert-success {
+            background: #d1fae5;
+            color: #065f46;
+            border: 1px solid #a7f3d0;
+        }
+        
+        .alert-error {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+        }
+        
+        .alert-info {
+            background: #dbeafe;
+            color: #1e40af;
+            border: 1px solid #bfdbfe;
+        }
+        
+        .login-footer {
+            padding: 20px 40px 32px;
+            text-align: center;
+            border-top: 1px solid #e2e8f0;
+        }
+        
+        .login-footer p {
+            color: #64748b;
+            font-size: 14px;
+        }
+        
+        .login-footer a {
+            color: #7c3aed;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .login-footer a:hover {
+            text-decoration: underline;
+        }
+        
+        /* Help text */
+        .help-text {
+            margin-top: 20px;
+            padding: 16px;
+            background: #f1f5f9;
+            border-radius: 10px;
+            text-align: center;
+        }
+        
+        .help-text p {
+            color: #64748b;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+        
+        .help-text strong {
+            color: #475569;
+        }
+        
+        @media (max-width: 480px) {
+            .login-header {
+                padding: 36px 24px;
+            }
+            
+            .login-body {
+                padding: 28px 24px;
+            }
+            
+            .login-header .logo {
+                font-size: 42px;
+            }
+            
+            .login-header h1 {
+                font-size: 22px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-header">
+            <div class="logo">🛍️</div>
+            <h1>Seller Portal</h1>
+            <p>Log in to manage your store</p>
+        </div>
+        
+        <div class="login-body">
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }}">
+                        {% if message.tags == 'success' %}
+                            <i class="ri-checkbox-circle-fill"></i>
+                        {% elif message.tags == 'error' %}
+                            <i class="ri-error-warning-fill"></i>
+                        {% else %}
+                            <i class="ri-information-fill"></i>
+                        {% endif %}
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+            
+            <form method="post">
+                {% csrf_token %}
+                
+                <div class="form-group">
+                    <label for="email_or_phone">Email or Phone Number</label>
+                    <div class="input-wrapper">
+                        <input 
+                            type="text" 
+                            id="email_or_phone" 
+                            name="email_or_phone" 
+                            placeholder="Enter your email or phone"
+                            required
+                            autocomplete="username"
+                        >
+                        <i class="ri-user-3-line"></i>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <div class="input-wrapper">
+                        <input 
+                            type="password" 
+                            id="password" 
+                            name="password" 
+                            placeholder="Enter your password"
+                            required
+                            autocomplete="current-password"
+                        >
+                        <i class="ri-lock-2-line"></i>
+                        <button type="button" class="password-toggle" onclick="togglePassword()">
+                            <i class="ri-eye-line" id="toggleIcon"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <button type="submit" class="btn-login">
+                    <i class="ri-login-box-line"></i> Log In
+                </button>
+                
+                <div class="forgot-password">
+                    <a href="{% url 'el_mercado:seller_forgot_password' %}">Forgot your password?</a>
+                </div>
+            </form>
+            
+            <div class="help-text">
+                <p>
+                    <strong>First time logging in?</strong><br>
+                    Use the email and temporary password sent to you when your application was approved.
+                </p>
+            </div>
+        </div>
+        
+        <div class="login-footer">
+            <p>Want to become a seller? <a href="/el-mercado/seller-applications/">Apply Now</a></p>
+        </div>
+    </div>
+    
+    <script>
+        function togglePassword() {
+            const passwordInput = document.getElementById('password');
+            const toggleIcon = document.getElementById('toggleIcon');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggleIcon.classList.remove('ri-eye-line');
+                toggleIcon.classList.add('ri-eye-off-line');
+            } else {
+                passwordInput.type = 'password';
+                toggleIcon.classList.remove('ri-eye-off-line');
+                toggleIcon.classList.add('ri-eye-line');
+            }
+        }
+    </script>
+</body>
+</html>

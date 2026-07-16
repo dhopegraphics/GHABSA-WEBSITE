@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Status Update - CSS KNUST</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 650px;
+            margin: 20px auto;
+            background-color: #ffffff;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+        .header {
+            background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%);
+            color: #333;
+            padding: 30px;
+            text-align: center;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 28px;
+        }
+        .content {
+            padding: 30px;
+        }
+        .greeting {
+            font-size: 18px;
+            margin-bottom: 20px;
+            color: #555;
+        }
+        
+        /* Status Badge */
+        .status-banner {
+            background-color: {{ status_color }};
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            margin: 20px 0;
+        }
+        .status-icon {
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+        .status-label {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .status-message {
+            font-size: 16px;
+            opacity: 0.95;
+        }
+        
+        /* Order Info */
+        .order-header {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 4px solid #ffc107;
+        }
+        .order-number {
+            font-size: 20px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        .order-meta {
+            font-size: 14px;
+            color: #666;
+            margin: 5px 0;
+        }
+        
+        /* Timeline (if showing multiple status changes) */
+        .timeline {
+            margin: 25px 0;
+            padding: 20px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+        }
+        .timeline-item {
+            padding: 10px 0;
+            border-left: 3px solid #ddd;
+            padding-left: 20px;
+            margin-left: 10px;
+        }
+        .timeline-item.active {
+            border-left-color: #ffc107;
+        }
+        
+        /* Order Items */
+        .items-section {
+            margin: 25px 0;
+        }
+        .section-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #333;
+            border-bottom: 2px solid #ffc107;
+            padding-bottom: 8px;
+        }
+        .order-item {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+        }
+        .order-item:last-child {
+            border-bottom: none;
+        }
+        .item-details {
+            flex: 1;
+        }
+        .item-name {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 5px;
+        }
+        .item-variant {
+            font-size: 14px;
+            color: #666;
+        }
+        .item-price {
+            text-align: right;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        /* Order Summary */
+        .order-summary {
+            background-color: #e7f3ff;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            font-size: 15px;
+        }
+        .summary-row.total {
+            border-top: 2px solid #007bff;
+            padding-top: 12px;
+            margin-top: 10px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        
+        /* Shipping Info */
+        .info-card {
+            background-color: #fff9e6;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        .info-card strong {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+        }
+        
+        /* Action Button */
+        .action-button {
+            display: inline-block;
+            background-color: #ffc107;
+            color: #333;
+            padding: 12px 30px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+            margin: 15px 0;
+        }
+        
+        /* Footer */
+        .footer {
+            background-color: #f8f9fa;
+            padding: 25px 30px;
+            text-align: center;
+            font-size: 14px;
+            color: #666;
+            border-top: 1px solid #dee2e6;
+        }
+        .footer a {
+            color: #ffc107;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>🛍️ Order Status Update</h1>
+        </div>
+
+        <!-- Content -->
+        <div class="content">
+            <div class="greeting">
+                Hello {{ buyer_name }},
+            </div>
+
+            <!-- Status Banner -->
+            <div class="status-banner" style="background-color: {{ status_color }};">
+                <div class="status-icon">{{ status_icon }}</div>
+                <div class="status-label">{{ status_label }}</div>
+                <div class="status-message">{{ status_message }}</div>
+            </div>
+
+            <!-- Order Information -->
+            <div class="order-header">
+                <div class="order-number">Order #{{ order_number }}</div>
+                <div class="order-meta">
+                    <strong>Seller:</strong> {{ seller_name }}
+                </div>
+                <div class="order-meta">
+                    <strong>Order Date:</strong> {{ order_date|date:"F j, Y, g:i a" }}
+                </div>
+                {% if tracking_number %}
+                <div class="order-meta">
+                    <strong>Tracking Number:</strong> {{ tracking_number }}
+                </div>
+                {% endif %}
+                {% if estimated_delivery %}
+                <div class="order-meta">
+                    <strong>Estimated Delivery:</strong> {{ estimated_delivery|date:"F j, Y" }}
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Shipping Address -->
+            {% if shipping_address %}
+            <div class="info-card">
+                <strong>📦 Shipping Address:</strong>
+                {{ shipping_address }}
+            </div>
+            {% endif %}
+
+            <!-- Order Items -->
+            <div class="items-section">
+                <div class="section-title">Order Items</div>
+                {% for item in order_items %}
+                    <div class="order-item">
+                        <div class="item-details">
+                            <div class="item-name">{{ item.product_name }}</div>
+                            {% if item.variant_name %}
+                                <div class="item-variant">{{ item.variant_name }}</div>
+                            {% endif %}
+                            <div class="item-variant">Quantity: {{ item.quantity }}</div>
+                        </div>
+                        <div class="item-price">
+                            GHS {{ item.total_price }}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+
+            <!-- Order Summary -->
+            <div class="order-summary">
+                <div class="summary-row">
+                    <span>Subtotal:</span>
+                    <span>GHS {{ subtotal }}</span>
+                </div>
+                <div class="summary-row">
+                    <span>Shipping Fee:</span>
+                    <span>GHS {{ shipping_fee }}</span>
+                </div>
+                <div class="summary-row total">
+                    <span>Total Amount:</span>
+                    <span>GHS {{ total_amount }}</span>
+                </div>
+            </div>
+
+            <!-- Next Steps / Additional Info -->
+            {% if status == 'pending' %}
+            <div class="info-card">
+                <strong>📋 What's Next?</strong>
+                The seller will review your order and confirm it shortly. You'll receive another email when the status changes.
+            </div>
+            {% elif status == 'confirmed' %}
+            <div class="info-card">
+                <strong>✅ Order Confirmed!</strong>
+                Your order is being prepared for shipment. The seller may contact you for any clarifications.
+            </div>
+            {% elif status == 'processing' %}
+            <div class="info-card">
+                <strong>⚙️ Order Processing</strong>
+                Your items are being carefully prepared and packaged for shipment.
+            </div>
+            {% elif status == 'shipped' %}
+            <div class="info-card">
+                <strong>🚚 Order Shipped!</strong>
+                Your order is on the way! {% if tracking_number %}Track your shipment using the tracking number above.{% else %}The seller will contact you with delivery details.{% endif %}
+            </div>
+            {% elif status == 'delivered' %}
+            <div class="info-card">
+                <strong>🎉 Delivered!</strong>
+                We hope you enjoy your purchase! If you have any issues, please contact the seller through your account dashboard.
+            </div>
+            {% elif status == 'cancelled' %}
+            <div class="info-card">
+                <strong>❌ Order Cancelled</strong>
+                This order has been cancelled. If you didn't request this cancellation or have questions, please contact the seller immediately.
+            </div>
+            {% elif status == 'refunded' %}
+            <div class="info-card">
+                <strong>💰 Refund Initiated</strong>
+                A refund of GHS {{ total_amount }} has been processed. Funds should appear in your account within 3-5 business days.
+            </div>
+            {% endif %}
+
+            <!-- CTA Button -->
+            <div style="text-align: center; margin: 30px 0;">
+                <a href="#" class="action-button">View Order Details</a>
+            </div>
+
+            <!-- Contact Info -->
+            <div class="info-card">
+                <strong>💬 Need Help?</strong>
+                <ul style="margin: 10px 0 0 0; padding-left: 20px;">
+                    <li>Contact the seller through your order dashboard</li>
+                    <li>Email: support@cssknust.com</li>
+                    <li>Visit the CSS Office for assistance</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <strong>Computer Science Society - KNUST</strong><br>
+            <p style="margin: 10px 0;">
+                <a href="#">Track Orders</a> | 
+                <a href="#">Support</a> | 
+                <a href="#">Contact Seller</a>
+            </p>
+            <p style="margin: 10px 0 0 0; font-size: 12px; color: #999;">
+                © {{ order_date|date:"Y" }} CSS KNUST El Mercado. All rights reserved.
+            </p>
+        </div>
+    </div>
+</body>
+</html>

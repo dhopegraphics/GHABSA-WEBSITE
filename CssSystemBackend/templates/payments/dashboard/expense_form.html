@@ -1,0 +1,186 @@
+{% extends "payments/dashboard_base.html" %}
+{% load static %}
+
+{% block title %}{% if expense %}Edit{% else %}Add{% endif %} Expense{% endblock %}
+
+{% block content %}
+<!-- Header -->
+<header class="header">
+    <div class="header-left">
+        <a href="{% url 'payments:dashboard-expense-list' %}" class="btn btn-secondary" style="margin-right: 12px;">
+            <i class="ri-arrow-left-line"></i>
+        </a>
+        <div>
+            <h1>{% if expense %}✏️ Edit{% else %}➕ Add{% endif %} Expense</h1>
+            <p>{% if expense %}Update expense details{% else %}Record a new organizational expense{% endif %}</p>
+        </div>
+    </div>
+</header>
+
+<div class="grid-2" style="grid-template-columns: 2fr 1fr;">
+    <!-- Main Form -->
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">Expense Details</h3>
+        </div>
+        <form method="POST" enctype="multipart/form-data" style="padding: 24px;">
+            {% csrf_token %}
+            
+            <div class="form-grid">
+                <div class="form-group" style="grid-column: span 2;">
+                    <label class="form-label">Title *</label>
+                    <input type="text" name="title" class="form-input" required value="{{ expense.title|default:'' }}" placeholder="e.g., Office Supplies Purchase">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Category *</label>
+                    <select name="category" class="form-input" required>
+                        <option value="">Select Category</option>
+                        {% for cat in categories %}
+                        <option value="{{ cat.id }}" {% if expense.category_id == cat.id %}selected{% endif %}>{{ cat.icon }} {{ cat.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Amount (GH₵) *</label>
+                    <input type="number" name="amount" class="form-input" required value="{{ expense.amount|default:'' }}" placeholder="0.00" step="0.01" min="0.01">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Recipient</label>
+                    <select name="recipient" class="form-input">
+                        <option value="">Select Recipient (Optional)</option>
+                        {% for rec in recipients %}
+                        <option value="{{ rec.id }}" {% if expense.recipient_id == rec.id %}selected{% endif %}>{{ rec.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Or Enter Recipient Name</label>
+                    <input type="text" name="recipient_name" class="form-input" value="{{ expense.recipient_name|default:'' }}" placeholder="If not in list">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Expense Date *</label>
+                    <input type="date" name="expense_date" class="form-input" required value="{{ expense.expense_date|date:'Y-m-d'|default:today }}">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Status *</label>
+                    <select name="status" class="form-input" required>
+                        <option value="pending" {% if expense.status == 'pending' %}selected{% endif %}>⏳ Pending</option>
+                        <option value="approved" {% if expense.status == 'approved' %}selected{% endif %}>✅ Approved</option>
+                        <option value="paid" {% if expense.status == 'paid' %}selected{% endif %}>💰 Paid</option>
+                        <option value="rejected" {% if expense.status == 'rejected' %}selected{% endif %}>❌ Rejected</option>
+                    </select>
+                </div>
+
+                <div class="form-group" style="grid-column: span 2;">
+                    <label class="form-label">Description</label>
+                    <textarea name="description" class="form-input" rows="4" placeholder="Detailed description of the expense...">{{ expense.description|default:'' }}</textarea>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Receipt/Attachment</label>
+                    <input type="file" name="receipt" class="form-input" accept="image/*,.pdf" style="padding: 12px;">
+                    {% if expense.receipt %}
+                    <div style="margin-top: 8px; font-size: 13px; color: var(--gray-500);">
+                        <i class="ri-attachment-line"></i> Current: <a href="{{ expense.receipt.url }}" target="_blank">View Receipt</a>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Reference Number</label>
+                    <input type="text" name="reference" class="form-input" value="{{ expense.reference|default:'' }}" placeholder="Auto-generated if empty" readonly>
+                </div>
+            </div>
+
+            <div class="form-group" style="margin-top: 20px;">
+                <label class="checkbox-label">
+                    <input type="checkbox" name="send_sms" {% if not expense %}checked{% endif %}>
+                    <span>Send SMS notification to executives</span>
+                </label>
+            </div>
+
+            <div class="modal-footer" style="padding: 24px 0 0; border-top: 1px solid var(--gray-200); margin-top: 24px;">
+                <a href="{% url 'payments:dashboard-expense-list' %}" class="btn btn-secondary">Cancel</a>
+                <button type="submit" class="btn btn-primary">
+                    <i class="ri-save-line"></i> {% if expense %}Update{% else %}Save{% endif %} Expense
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Sidebar Info -->
+    <div>
+        {% if expense %}
+        <!-- Expense Info Card -->
+        <div class="card" style="margin-bottom: 24px;">
+            <div class="card-header">
+                <h3 class="card-title">Expense Info</h3>
+            </div>
+            <div style="padding: 20px;">
+                <div style="margin-bottom: 16px;">
+                    <span style="font-size: 13px; color: var(--gray-500);">Reference</span>
+                    <div style="font-weight: 600; font-family: monospace;">{{ expense.reference }}</div>
+                </div>
+                <div style="margin-bottom: 16px;">
+                    <span style="font-size: 13px; color: var(--gray-500);">Created</span>
+                    <div style="font-weight: 500;">{{ expense.created_at|date:"M d, Y h:i A" }}</div>
+                </div>
+                <div style="margin-bottom: 16px;">
+                    <span style="font-size: 13px; color: var(--gray-500);">Last Updated</span>
+                    <div style="font-weight: 500;">{{ expense.updated_at|date:"M d, Y h:i A" }}</div>
+                </div>
+                {% if expense.approved_by %}
+                <div style="margin-bottom: 16px;">
+                    <span style="font-size: 13px; color: var(--gray-500);">Approved By</span>
+                    <div style="font-weight: 500;">{{ expense.approved_by.get_full_name }}</div>
+                </div>
+                {% endif %}
+                {% if expense.paid_at %}
+                <div>
+                    <span style="font-size: 13px; color: var(--gray-500);">Paid On</span>
+                    <div style="font-weight: 500;">{{ expense.paid_at|date:"M d, Y h:i A" }}</div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Quick Tips Card -->
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">💡 Tips</h3>
+            </div>
+            <div style="padding: 20px;">
+                <ul style="list-style: none; padding: 0; margin: 0;">
+                    <li style="display: flex; align-items: flex-start; gap: 12px; margin-bottom: 16px;">
+                        <span style="width: 24px; height: 24px; background: var(--success); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 12px; flex-shrink: 0;">✓</span>
+                        <span style="font-size: 14px; color: var(--gray-600);">Always attach receipts for documentation</span>
+                    </li>
+                    <li style="display: flex; align-items: flex-start; gap: 12px; margin-bottom: 16px;">
+                        <span style="width: 24px; height: 24px; background: var(--warning); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 12px; flex-shrink: 0;">!</span>
+                        <span style="font-size: 14px; color: var(--gray-600);">Select correct category for accurate reporting</span>
+                    </li>
+                    <li style="display: flex; align-items: flex-start; gap: 12px;">
+                        <span style="width: 24px; height: 24px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 12px; flex-shrink: 0;">i</span>
+                        <span style="font-size: 14px; color: var(--gray-600);">SMS notifications are sent when status changes to "Paid"</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Current Balance Card -->
+        <div class="card" style="margin-top: 24px; background: linear-gradient(135deg, #6366f1, #8b5cf6); color: white;">
+            <div style="padding: 20px; text-align: center;">
+                <div style="font-size: 13px; opacity: 0.9;">Available Balance</div>
+                <div style="font-size: 28px; font-weight: 700; margin-top: 4px;">GH₵ {{ current_balance|floatformat:2|default:"0.00" }}</div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

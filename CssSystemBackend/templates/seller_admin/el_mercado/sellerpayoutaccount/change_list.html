@@ -1,0 +1,555 @@
+{% extends "seller_admin/seller_base_site.html" %}
+{% load i18n static %}
+
+{% block extrastyle %}
+{{ block.super }}
+<style>
+    .bank-accounts-container {
+        max-width: 1200px;
+    }
+
+    .page-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 32px;
+        flex-wrap: wrap;
+        gap: 20px;
+    }
+
+    .page-header h1 {
+        font-size: 28px;
+        font-weight: 800;
+        color: var(--gray-900);
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .page-header h1 i {
+        color: var(--primary);
+    }
+
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 12px 24px;
+        border-radius: 10px;
+        font-size: 14px;
+        font-weight: 600;
+        text-decoration: none;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        border: none;
+    }
+
+    .btn-primary,
+    .btn-primary:link,
+    .btn-primary:visited,
+    a.btn-primary {
+        background: var(--gradient-primary);
+        color: #ffffff !important;
+    }
+
+    .btn-primary:hover,
+    a.btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(124, 58, 237, 0.4);
+        color: #ffffff !important;
+    }
+
+    .btn-primary i {
+        color: #ffffff !important;
+    }
+
+    .btn-outline {
+        background: white;
+        color: var(--gray-700);
+        border: 2px solid var(--gray-200);
+    }
+
+    .btn-outline:hover {
+        border-color: var(--primary);
+        color: var(--primary);
+    }
+
+    .btn-danger {
+        background: transparent;
+        color: var(--danger);
+        border: 2px solid var(--danger);
+    }
+
+    .btn-danger:hover {
+        background: var(--danger);
+        color: white;
+    }
+
+    /* Info Card */
+    .info-card {
+        background: linear-gradient(135deg, rgba(124, 58, 237, 0.08), rgba(236, 72, 153, 0.08));
+        border-radius: 16px;
+        padding: 20px 24px;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        margin-bottom: 32px;
+        border-left: 4px solid var(--primary);
+    }
+
+    .info-card i {
+        font-size: 24px;
+        color: var(--primary);
+    }
+
+    .info-card p {
+        font-size: 14px;
+        color: var(--gray-700);
+        margin: 0;
+        line-height: 1.6;
+    }
+
+    /* Accounts Grid */
+    .accounts-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+        gap: 24px;
+        margin-bottom: 32px;
+    }
+
+    /* Account Card */
+    .account-card {
+        background: white;
+        border-radius: 20px;
+        border: 1px solid var(--gray-200);
+        overflow: hidden;
+        transition: all 0.2s ease;
+        position: relative;
+    }
+
+    .account-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08);
+    }
+
+    .account-card.primary {
+        border: 2px solid var(--primary);
+    }
+
+    .account-card.primary::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: var(--gradient-primary);
+    }
+
+    .primary-badge {
+        position: absolute;
+        top: 16px;
+        right: 16px;
+        background: var(--gradient-primary);
+        color: white;
+        padding: 4px 12px;
+        border-radius: 100px;
+        font-size: 11px;
+        font-weight: 600;
+        text-transform: uppercase;
+    }
+
+    .account-header {
+        padding: 24px 24px 0 24px;
+        display: flex;
+        align-items: flex-start;
+        gap: 16px;
+    }
+
+    .account-icon {
+        width: 56px;
+        height: 56px;
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 26px;
+    }
+
+    .account-icon.bank {
+        background: linear-gradient(135deg, #3B82F6, #1D4ED8);
+        color: white;
+    }
+
+    .account-icon.momo {
+        background: linear-gradient(135deg, #FCD34D, #F59E0B);
+        color: white;
+    }
+
+    .account-type-label {
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--gray-500);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-bottom: 4px;
+    }
+
+    .account-name {
+        font-size: 18px;
+        font-weight: 700;
+        color: var(--gray-900);
+    }
+
+    .account-body {
+        padding: 24px;
+    }
+
+    .account-detail {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 12px 0;
+        border-bottom: 1px solid var(--gray-100);
+    }
+
+    .account-detail:last-child {
+        border-bottom: none;
+        padding-bottom: 0;
+    }
+
+    .account-detail-label {
+        font-size: 13px;
+        color: var(--gray-500);
+    }
+
+    .account-detail-value {
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--gray-900);
+        font-family: 'SF Mono', 'Monaco', monospace;
+    }
+
+    .account-detail-value.masked {
+        letter-spacing: 2px;
+    }
+
+    .account-footer {
+        padding: 16px 24px;
+        background: var(--gray-50);
+        display: flex;
+        gap: 12px;
+        justify-content: flex-end;
+    }
+
+    .account-action {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 8px 14px;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 600;
+        text-decoration: none;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        border: none;
+        background: white;
+        color: var(--gray-600);
+    }
+
+    .account-action:hover {
+        background: var(--gray-100);
+        color: var(--gray-900);
+    }
+
+    .account-action.primary {
+        background: var(--primary);
+        color: white;
+    }
+
+    .account-action.primary:hover {
+        background: #6D28D9;
+    }
+
+    .account-action.danger {
+        color: var(--danger);
+    }
+
+    .account-action.danger:hover {
+        background: rgba(239, 68, 68, 0.1);
+    }
+
+    /* Add Account Card */
+    .add-account-card {
+        background: white;
+        border-radius: 20px;
+        border: 2px dashed var(--gray-300);
+        min-height: 280px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 16px;
+        text-decoration: none;
+        transition: all 0.2s ease;
+        cursor: pointer;
+    }
+
+    .add-account-card:hover {
+        border-color: var(--primary);
+        background: linear-gradient(135deg, rgba(124, 58, 237, 0.03), rgba(236, 72, 153, 0.03));
+    }
+
+    .add-account-icon {
+        width: 64px;
+        height: 64px;
+        border-radius: 100%;
+        background: var(--gray-100);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 28px;
+        color: var(--gray-400);
+        transition: all 0.2s ease;
+    }
+
+    .add-account-card:hover .add-account-icon {
+        background: linear-gradient(135deg, rgba(124, 58, 237, 0.15), rgba(236, 72, 153, 0.15));
+        color: var(--primary);
+    }
+
+    .add-account-card h3 {
+        font-size: 16px;
+        font-weight: 600;
+        color: var(--gray-700);
+        margin: 0;
+    }
+
+    .add-account-card p {
+        font-size: 13px;
+        color: var(--gray-500);
+        margin: 0;
+    }
+
+    /* Account Type Selection */
+    .account-types {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 16px;
+        margin-bottom: 24px;
+    }
+
+    .account-type-option {
+        background: white;
+        border: 2px solid var(--gray-200);
+        border-radius: 16px;
+        padding: 24px;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .account-type-option:hover {
+        border-color: var(--primary);
+    }
+
+    .account-type-option.selected {
+        border-color: var(--primary);
+        background: linear-gradient(135deg, rgba(124, 58, 237, 0.05), rgba(236, 72, 153, 0.05));
+    }
+
+    .account-type-option i {
+        font-size: 36px;
+        color: var(--gray-400);
+        margin-bottom: 12px;
+    }
+
+    .account-type-option.selected i {
+        color: var(--primary);
+    }
+
+    .account-type-option h4 {
+        font-size: 15px;
+        font-weight: 600;
+        color: var(--gray-700);
+        margin: 0;
+    }
+
+    /* Empty State */
+    .empty-state {
+        background: white;
+        border-radius: 20px;
+        border: 1px solid var(--gray-200);
+        padding: 80px 40px;
+        text-align: center;
+    }
+
+    .empty-state i {
+        font-size: 64px;
+        color: var(--gray-300);
+        margin-bottom: 24px;
+    }
+
+    .empty-state h3 {
+        font-size: 20px;
+        font-weight: 700;
+        color: var(--gray-700);
+        margin: 0 0 8px 0;
+    }
+
+    .empty-state p {
+        font-size: 14px;
+        color: var(--gray-500);
+        margin: 0 0 24px 0;
+    }
+
+    /* Hide Django admin stuff */
+    #changelist-filter, #toolbar, .paginator, #changelist table {
+        display: none !important;
+    }
+</style>
+{% endblock %}
+
+{% block breadcrumbs %}
+<a href="{% url 'seller_admin:index' %}">Dashboard</a>
+<span>/</span>
+<a href="{% url 'seller_admin:el_mercado_payoutrequest_changelist' %}">Payouts</a>
+<span>/</span>
+<span>Bank Accounts</span>
+{% endblock %}
+
+{% block content %}
+<div class="bank-accounts-container">
+    <div class="page-header">
+        <h1>
+            <i class="ri-bank-card-line"></i>
+            Bank Accounts
+        </h1>
+        <a href="{% url 'seller_admin:el_mercado_sellerpayoutaccount_add' %}" class="btn btn-primary">
+            <i class="ri-add-line"></i>
+            Add Account
+        </a>
+    </div>
+
+    <!-- Info Card -->
+    <div class="info-card">
+        <i class="ri-information-line"></i>
+        <p>Add your bank account or mobile money details to receive payouts. Your primary account will be used for automatic payouts.</p>
+    </div>
+
+    <!-- Accounts Grid -->
+    {% if cl.result_list %}
+    <div class="accounts-grid">
+        {% for account in cl.result_list %}
+        <div class="account-card {% if account.is_default %}primary{% endif %}">
+            {% if account.is_default %}
+            <span class="primary-badge">Primary</span>
+            {% endif %}
+            
+            <div class="account-header">
+                <div class="account-icon {% if account.account_type == 'BANK' %}bank{% else %}momo{% endif %}">
+                    {% if account.account_type == 'BANK' %}
+                    <i class="ri-bank-line"></i>
+                    {% else %}
+                    <i class="ri-smartphone-line"></i>
+                    {% endif %}
+                </div>
+                <div>
+                    <div class="account-type-label">
+                        {% if account.account_type == 'BANK' %}Bank Account{% else %}Mobile Money{% endif %}
+                    </div>
+                    <div class="account-name">{{ account.bank_name|default:account.mobile_money_provider }}</div>
+                </div>
+            </div>
+
+            <div class="account-body">
+                <div class="account-detail">
+                    <span class="account-detail-label">Account Name</span>
+                    <span class="account-detail-value">{{ account.account_name|default:account.mobile_money_name }}</span>
+                </div>
+                <div class="account-detail">
+                    <span class="account-detail-label">{% if account.account_type == 'BANK' %}Account Number{% else %}Phone Number{% endif %}</span>
+                    <span class="account-detail-value masked">****{% if account.account_type == 'BANK' %}{{ account.account_number|slice:"-4:" }}{% else %}{{ account.mobile_money_number|slice:"-4:" }}{% endif %}</span>
+                </div>
+                {% if account.account_type == 'BANK' and account.bank_code %}
+                <div class="account-detail">
+                    <span class="account-detail-label">Bank Code</span>
+                    <span class="account-detail-value">{{ account.bank_code }}</span>
+                </div>
+                {% endif %}
+                <div class="account-detail">
+                    <span class="account-detail-label">Added</span>
+                    <span class="account-detail-value" style="font-family: inherit;">{{ account.created_at|date:"M d, Y" }}</span>
+                </div>
+            </div>
+
+            <div class="account-footer">
+                {% if not account.is_default %}
+                <form method="post" action="{% url 'seller_admin:set_primary_payout_account' account.pk %}" style="display: inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="account-action primary" title="Set as Primary">
+                        <i class="ri-star-line"></i>
+                        Set Primary
+                    </button>
+                </form>
+                {% endif %}
+                <a href="{% url 'seller_admin:el_mercado_sellerpayoutaccount_change' account.pk %}" class="account-action">
+                    <i class="ri-pencil-line"></i>
+                    Edit
+                </a>
+                <a href="{% url 'seller_admin:el_mercado_sellerpayoutaccount_delete' account.pk %}" class="account-action danger">
+                    <i class="ri-delete-bin-line"></i>
+                    Remove
+                </a>
+            </div>
+        </div>
+        {% endfor %}
+
+        <!-- Add Account Card -->
+        <a href="{% url 'seller_admin:el_mercado_sellerpayoutaccount_add' %}" class="add-account-card">
+            <div class="add-account-icon">
+                <i class="ri-add-line"></i>
+            </div>
+            <h3>Add New Account</h3>
+            <p>Bank or Mobile Money</p>
+        </a>
+    </div>
+    {% else %}
+    <!-- Empty State -->
+    <div class="empty-state">
+        <i class="ri-bank-card-line"></i>
+        <h3>No payout accounts yet</h3>
+        <p>Add a bank account or mobile money to receive your earnings</p>
+        <a href="{% url 'seller_admin:el_mercado_sellerpayoutaccount_add' %}" class="btn btn-primary">
+            <i class="ri-add-line"></i>
+            Add Your First Account
+        </a>
+    </div>
+    {% endif %}
+
+    <!-- Account Types Info -->
+    <div style="margin-top: 40px;">
+        <h3 style="font-size: 18px; font-weight: 700; color: var(--gray-900); margin-bottom: 20px;">Supported Payout Methods</h3>
+        <div class="account-types">
+            <div class="account-type-option">
+                <i class="ri-bank-line"></i>
+                <h4>Bank Transfer</h4>
+            </div>
+            <div class="account-type-option">
+                <i class="ri-smartphone-line"></i>
+                <h4>MTN Mobile Money</h4>
+            </div>
+            <div class="account-type-option">
+                <i class="ri-smartphone-line"></i>
+                <h4>Vodafone Cash</h4>
+            </div>
+            <div class="account-type-option">
+                <i class="ri-smartphone-line"></i>
+                <h4>AirtelTigo Money</h4>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

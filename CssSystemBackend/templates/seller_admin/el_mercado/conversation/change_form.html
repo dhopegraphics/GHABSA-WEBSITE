@@ -1,0 +1,572 @@
+{% extends "seller_admin/seller_base_site.html" %}
+{% load i18n static %}
+
+{% block extrastyle %}
+{{ block.super }}
+<style>
+    .conversation-detail {
+        max-width: 1000px;
+        margin: 0 auto;
+    }
+
+    .page-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 24px;
+    }
+
+    .page-header h1 {
+        font-size: 24px;
+        font-weight: 800;
+        color: var(--gray-900);
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .back-btn {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 16px;
+        background: var(--gray-100);
+        color: var(--gray-700);
+        border-radius: 10px;
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: 500;
+        transition: all 0.2s ease;
+    }
+
+    .back-btn:hover {
+        background: var(--gray-200);
+        color: var(--gray-900);
+    }
+
+    /* Conversation Card */
+    .conversation-card {
+        background: white;
+        border-radius: 20px;
+        border: 1px solid var(--gray-200);
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        height: calc(100vh - 240px);
+        min-height: 500px;
+    }
+
+    /* Chat Header */
+    .chat-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 20px 24px;
+        border-bottom: 1px solid var(--gray-200);
+        background: white;
+    }
+
+    .chat-user {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+    }
+
+    .chat-user-avatar {
+        width: 48px;
+        height: 48px;
+        border-radius: 100px;
+        background: var(--gradient-primary);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: 700;
+        font-size: 16px;
+    }
+
+    .chat-user-info h4 {
+        font-size: 16px;
+        font-weight: 600;
+        color: var(--gray-900);
+        margin: 0 0 4px 0;
+    }
+
+    .chat-user-info p {
+        font-size: 13px;
+        color: var(--gray-500);
+        margin: 0;
+    }
+
+    .listing-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 4px 10px;
+        background: rgba(124, 58, 237, 0.1);
+        color: var(--primary);
+        border-radius: 6px;
+        font-size: 12px;
+        font-weight: 500;
+        margin-left: 8px;
+    }
+
+    /* Product Reference Card */
+    .product-reference-card {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        padding: 14px 24px;
+        background: var(--gray-50);
+        border-bottom: 1px solid var(--gray-200);
+    }
+
+    .product-reference-card img {
+        width: 56px;
+        height: 56px;
+        border-radius: 10px;
+        object-fit: cover;
+        border: 1px solid var(--gray-200);
+    }
+
+    .product-reference-info {
+        flex: 1;
+    }
+
+    .product-reference-info h5 {
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--gray-900);
+        margin: 0 0 4px 0;
+    }
+
+    .product-reference-info p {
+        font-size: 13px;
+        color: var(--gray-500);
+        margin: 0;
+    }
+
+    .product-price {
+        font-size: 15px;
+        font-weight: 700;
+        color: var(--primary);
+    }
+
+    /* Chat Messages */
+    .chat-messages {
+        flex: 1;
+        padding: 24px;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        background: var(--gray-50);
+    }
+
+    .message {
+        max-width: 70%;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    .message.sent {
+        align-self: flex-end;
+    }
+
+    .message.received {
+        align-self: flex-start;
+    }
+
+    .message.system {
+        align-self: center;
+        max-width: 90%;
+    }
+
+    .message-bubble {
+        padding: 14px 18px;
+        border-radius: 18px;
+        font-size: 14px;
+        line-height: 1.5;
+    }
+
+    .message.sent .message-bubble {
+        background: var(--gradient-primary);
+        color: white;
+        border-bottom-right-radius: 4px;
+    }
+
+    .message.received .message-bubble {
+        background: white;
+        color: var(--gray-800);
+        border: 1px solid var(--gray-200);
+        border-bottom-left-radius: 4px;
+    }
+
+    .message.system .message-bubble {
+        background: rgba(99, 102, 241, 0.1);
+        color: var(--gray-600);
+        font-size: 13px;
+        text-align: center;
+        padding: 10px 16px;
+    }
+
+    .message-time {
+        font-size: 11px;
+        color: var(--gray-500);
+        padding: 0 4px;
+    }
+
+    .message.sent .message-time {
+        text-align: right;
+    }
+
+    /* Date Divider */
+    .date-divider {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        color: var(--gray-400);
+        font-size: 12px;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .date-divider::before,
+    .date-divider::after {
+        content: '';
+        flex: 1;
+        height: 1px;
+        background: var(--gray-200);
+    }
+
+    /* Chat Input */
+    .chat-input-wrapper {
+        padding: 20px 24px;
+        border-top: 1px solid var(--gray-200);
+        background: white;
+    }
+
+    .chat-form {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .chat-input {
+        display: flex;
+        align-items: flex-end;
+        gap: 12px;
+    }
+
+    .chat-input-actions {
+        display: flex;
+        gap: 4px;
+    }
+
+    .input-action-btn {
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
+        background: var(--gray-100);
+        color: var(--gray-500);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        border: none;
+    }
+
+    .input-action-btn:hover {
+        background: var(--gray-200);
+        color: var(--gray-700);
+    }
+
+    .chat-input textarea {
+        flex: 1;
+        padding: 12px 16px;
+        border: 2px solid var(--gray-200);
+        border-radius: 12px;
+        font-size: 14px;
+        font-family: inherit;
+        resize: none;
+        min-height: 44px;
+        max-height: 120px;
+    }
+
+    .chat-input textarea:focus {
+        outline: none;
+        border-color: var(--primary);
+    }
+
+    .send-btn {
+        width: 44px;
+        height: 44px;
+        border-radius: 12px;
+        background: var(--gradient-primary);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        border: none;
+    }
+
+    .send-btn:hover {
+        transform: scale(1.05);
+        box-shadow: 0 4px 12px rgba(124, 58, 237, 0.4);
+    }
+
+    .send-btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        transform: none;
+        box-shadow: none;
+    }
+
+    /* Quick Replies */
+    .quick-replies {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .quick-reply {
+        padding: 6px 12px;
+        background: var(--gray-100);
+        border: 1px solid var(--gray-200);
+        border-radius: 20px;
+        font-size: 12px;
+        color: var(--gray-600);
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .quick-reply:hover {
+        background: var(--primary);
+        border-color: var(--primary);
+        color: white;
+    }
+
+    /* Empty State */
+    .no-messages {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 60px 40px;
+        text-align: center;
+        color: var(--gray-500);
+    }
+
+    .no-messages i {
+        font-size: 48px;
+        color: var(--gray-300);
+        margin-bottom: 16px;
+    }
+
+    .no-messages h4 {
+        font-size: 16px;
+        font-weight: 600;
+        color: var(--gray-700);
+        margin: 0 0 8px 0;
+    }
+
+    .no-messages p {
+        margin: 0;
+        font-size: 14px;
+    }
+
+    /* Success/Error Messages */
+    .alert {
+        padding: 12px 16px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 14px;
+    }
+
+    .alert-success {
+        background: rgba(16, 185, 129, 0.1);
+        color: var(--success);
+        border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+
+    .alert-error {
+        background: rgba(239, 68, 68, 0.1);
+        color: var(--danger);
+        border: 1px solid rgba(239, 68, 68, 0.3);
+    }
+
+    /* Hide Django admin default stuff */
+    form#conversation_form,
+    .inline-group,
+    .submit-row,
+    fieldset {
+        display: none !important;
+    }
+</style>
+{% endblock %}
+
+{% block breadcrumbs %}
+<a href="{% url 'seller_admin:index' %}">Dashboard</a>
+<span>/</span>
+<a href="{% url 'seller_admin:el_mercado_conversation_changelist' %}">Messages</a>
+<span>/</span>
+<span>Conversation</span>
+{% endblock %}
+
+{% block content %}
+<div class="conversation-detail">
+    <div class="page-header">
+        <a href="{% url 'seller_admin:el_mercado_conversation_changelist' %}" class="back-btn">
+            <i class="ri-arrow-left-line"></i>
+            Back to Messages
+        </a>
+    </div>
+
+    {% if messages %}
+    {% for message in messages %}
+    <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">
+        <i class="{% if message.tags == 'success' %}ri-checkbox-circle-line{% else %}ri-error-warning-line{% endif %}"></i>
+        {{ message }}
+    </div>
+    {% endfor %}
+    {% endif %}
+
+    <div class="conversation-card">
+        <!-- Chat Header -->
+        <div class="chat-header">
+            <div class="chat-user">
+                <div class="chat-user-avatar">
+                    {{ original.buyer.first_name|slice:":1"|upper }}{{ original.buyer.last_name|slice:":1"|upper }}
+                </div>
+                <div class="chat-user-info">
+                    <h4>{{ original.buyer.get_full_name|default:original.buyer.phone }}</h4>
+                    <p>
+                        {{ original.buyer.personal_email|default:original.buyer.student_email|default:original.buyer.phone }}
+                        {% if original.listing %}
+                        <span class="listing-badge">
+                            <i class="ri-shopping-bag-line"></i>
+                            {{ original.listing.title|truncatewords:3 }}
+                        </span>
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        {% if original.listing %}
+        <!-- Product Reference -->
+        <div class="product-reference-card">
+            {% if original.listing.primary_image %}
+            <img src="{{ original.listing.primary_image.image.url }}" alt="{{ original.listing.title }}">
+            {% else %}
+            <div style="width: 56px; height: 56px; border-radius: 10px; background: var(--gray-200); display: flex; align-items: center; justify-content: center;">
+                <i class="ri-image-line" style="color: var(--gray-400); font-size: 20px;"></i>
+            </div>
+            {% endif %}
+            <div class="product-reference-info">
+                <h5>{{ original.listing.title }}</h5>
+                <p>{{ original.listing.category.name|default:"Uncategorized" }}</p>
+            </div>
+            <div class="product-price">GH₵ {{ original.listing.price }}</div>
+        </div>
+        {% endif %}
+
+        <!-- Chat Messages -->
+        <div class="chat-messages" id="messagesContainer">
+            {% with conversation_messages=original.messages.all %}
+            {% if conversation_messages %}
+                {% regroup conversation_messages by created_at|date:"F j, Y" as messages_by_date %}
+                {% for date_group in messages_by_date %}
+                <div class="date-divider">{{ date_group.grouper }}</div>
+                {% for msg in date_group.list %}
+                <div class="message {% if msg.sender_type == 'SELLER' %}sent{% elif msg.sender_type == 'SYSTEM' %}system{% else %}received{% endif %}">
+                    <div class="message-bubble">{{ msg.content }}</div>
+                    <span class="message-time">{{ msg.created_at|time:"g:i A" }}</span>
+                </div>
+                {% endfor %}
+                {% endfor %}
+            {% else %}
+            <div class="no-messages">
+                <i class="ri-chat-smile-3-line"></i>
+                <h4>No messages yet</h4>
+                <p>Send a message to start the conversation</p>
+            </div>
+            {% endif %}
+            {% endwith %}
+        </div>
+
+        <!-- Chat Input -->
+        <div class="chat-input-wrapper">
+            <form method="post" action="{% url 'seller_admin:send_message' original.pk %}" class="chat-form">
+                {% csrf_token %}
+                <div class="quick-replies">
+                    <span class="quick-reply" data-message="Hello! Thank you for your interest.">👋 Thank you for your interest</span>
+                    <span class="quick-reply" data-message="Yes, this item is still available!">✅ Yes, it's available</span>
+                    <span class="quick-reply" data-message="Sure, I can offer a discount. Let me know what you have in mind.">💰 I can offer a discount</span>
+                    <span class="quick-reply" data-message="It will be delivered within 2-3 business days.">🚚 2-3 days delivery</span>
+                    <span class="quick-reply" data-message="Thank you for your purchase! 🙏">🎉 Thank you!</span>
+                </div>
+                <div class="chat-input">
+                    <div class="chat-input-actions">
+                        <button type="button" class="input-action-btn" title="Attach file">
+                            <i class="ri-attachment-2"></i>
+                        </button>
+                    </div>
+                    <textarea name="message" id="messageInput" placeholder="Type your reply..." rows="1" required></textarea>
+                    <button type="submit" class="send-btn" id="sendBtn">
+                        <i class="ri-send-plane-fill"></i>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Auto-scroll to bottom of messages
+    const messagesContainer = document.getElementById('messagesContainer');
+    if (messagesContainer) {
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    }
+
+    // Quick replies
+    document.querySelectorAll('.quick-reply').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const message = this.dataset.message;
+            const input = document.getElementById('messageInput');
+            input.value = message;
+            input.focus();
+        });
+    });
+
+    // Auto-resize textarea
+    const textarea = document.getElementById('messageInput');
+    if (textarea) {
+        textarea.addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = Math.min(this.scrollHeight, 120) + 'px';
+        });
+
+        // Submit on Enter (but Shift+Enter for new line)
+        textarea.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                if (this.value.trim()) {
+                    this.closest('form').submit();
+                }
+            }
+        });
+    }
+});
+</script>
+{% endblock %}

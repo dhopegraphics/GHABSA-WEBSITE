@@ -1,0 +1,449 @@
+{% extends "seller_admin/seller_base_site.html" %}
+{% load i18n static %}
+
+{% block extrastyle %}
+{{ block.super }}
+<style>
+    .delete-container {
+        max-width: 800px;
+        margin: 0 auto;
+    }
+
+    .delete-header {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        margin-bottom: 32px;
+    }
+
+    .back-btn {
+        width: 44px;
+        height: 44px;
+        border-radius: 12px;
+        background: white;
+        border: 1px solid var(--gray-200);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--gray-600);
+        text-decoration: none;
+        transition: all 0.2s ease;
+    }
+
+    .back-btn:hover {
+        background: var(--gray-50);
+        color: var(--primary);
+        border-color: var(--primary);
+    }
+
+    .delete-header h1 {
+        font-size: 26px;
+        font-weight: 800;
+        color: var(--gray-900);
+        margin: 0;
+    }
+
+    /* Warning Card */
+    .warning-card {
+        background: white;
+        border-radius: 20px;
+        border: 1px solid var(--gray-200);
+        overflow: hidden;
+        margin-bottom: 24px;
+    }
+
+    .warning-banner {
+        background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(239, 68, 68, 0.05));
+        padding: 24px;
+        display: flex;
+        align-items: flex-start;
+        gap: 16px;
+        border-bottom: 1px solid rgba(239, 68, 68, 0.2);
+    }
+
+    .warning-icon {
+        width: 56px;
+        height: 56px;
+        border-radius: 14px;
+        background: var(--danger);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        flex-shrink: 0;
+    }
+
+    .warning-content h2 {
+        font-size: 18px;
+        font-weight: 700;
+        color: var(--danger);
+        margin: 0 0 8px 0;
+    }
+
+    .warning-content p {
+        color: var(--gray-600);
+        margin: 0;
+        font-size: 14px;
+        line-height: 1.6;
+    }
+
+    /* Objects List */
+    .objects-section {
+        padding: 24px;
+    }
+
+    .objects-section h3 {
+        font-size: 15px;
+        font-weight: 700;
+        color: var(--gray-900);
+        margin: 0 0 16px 0;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .objects-section h3 i {
+        color: var(--primary);
+    }
+
+    .objects-list {
+        background: var(--gray-50);
+        border-radius: 12px;
+        padding: 16px;
+        margin-bottom: 20px;
+    }
+
+    .object-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px;
+        background: white;
+        border-radius: 10px;
+        margin-bottom: 8px;
+        border: 1px solid var(--gray-200);
+    }
+
+    .object-item:last-child {
+        margin-bottom: 0;
+    }
+
+    .object-item.related-item {
+        background: linear-gradient(135deg, rgba(59, 130, 246, 0.05), rgba(59, 130, 246, 0.02));
+        border-color: rgba(59, 130, 246, 0.2);
+        margin-left: 24px;
+        position: relative;
+    }
+
+    .object-item.related-item::before {
+        content: '';
+        position: absolute;
+        left: -16px;
+        top: 50%;
+        width: 12px;
+        height: 2px;
+        background: var(--gray-300);
+    }
+
+    .object-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
+        background: rgba(124, 58, 237, 0.1);
+        color: var(--primary);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+        flex-shrink: 0;
+    }
+
+    .object-icon.image {
+        background: rgba(59, 130, 246, 0.1);
+        color: #3b82f6;
+    }
+
+    .object-info {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .object-title {
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--gray-900);
+        margin: 0;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .object-meta {
+        font-size: 12px;
+        color: var(--gray-500);
+        margin: 2px 0 0 0;
+    }
+
+    /* Summary */
+    .summary-section {
+        padding: 0 24px 24px;
+    }
+
+    .summary-section h3 {
+        font-size: 15px;
+        font-weight: 700;
+        color: var(--gray-900);
+        margin: 0 0 16px 0;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .summary-section h3 i {
+        color: var(--warning);
+    }
+
+    .summary-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 12px;
+    }
+
+    .summary-item {
+        background: var(--gray-50);
+        border-radius: 10px;
+        padding: 16px;
+        text-align: center;
+    }
+
+    .summary-item .count {
+        font-size: 28px;
+        font-weight: 800;
+        color: var(--danger);
+        display: block;
+    }
+
+    .summary-item .label {
+        font-size: 13px;
+        color: var(--gray-600);
+        margin-top: 4px;
+    }
+
+    /* Actions */
+    .actions-section {
+        padding: 24px;
+        background: var(--gray-50);
+        border-top: 1px solid var(--gray-200);
+        display: flex;
+        justify-content: flex-end;
+        gap: 12px;
+    }
+
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 14px 28px;
+        border-radius: 12px;
+        font-size: 14px;
+        font-weight: 600;
+        text-decoration: none;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        border: none;
+        font-family: inherit;
+    }
+
+    .btn-secondary {
+        background: white;
+        color: var(--gray-700);
+        border: 2px solid var(--gray-200);
+    }
+
+    .btn-secondary:hover {
+        background: var(--gray-50);
+        border-color: var(--gray-300);
+    }
+
+    .btn-danger {
+        background: var(--danger);
+        color: white;
+    }
+
+    .btn-danger:hover {
+        background: #dc2626;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(239, 68, 68, 0.3);
+    }
+
+    /* Nested items */
+    .nested-items {
+        margin-left: 52px;
+        padding-left: 16px;
+        border-left: 2px dashed var(--gray-300);
+    }
+
+    .nested-items .object-item {
+        background: var(--gray-50);
+    }
+
+    /* Empty state */
+    .no-related {
+        color: var(--gray-500);
+        font-size: 14px;
+        font-style: italic;
+        padding: 12px;
+    }
+</style>
+{% endblock %}
+
+{% block breadcrumbs %}
+<a href="{% url 'seller_admin:index' %}">Dashboard</a>
+<span>/</span>
+<a href="{% url 'seller_admin:el_mercado_listing_changelist' %}">Listings</a>
+<span>/</span>
+<span>Delete</span>
+{% endblock %}
+
+{% block content %}
+<div class="delete-container">
+    <div class="delete-header">
+        <a href="{% url 'seller_admin:el_mercado_listing_changelist' %}" class="back-btn" title="Back to Listings">
+            <i class="fas fa-arrow-left"></i>
+        </a>
+        <h1>Delete Listing{{ objects_name|pluralize }}</h1>
+    </div>
+
+    <div class="warning-card">
+        <div class="warning-banner">
+            <div class="warning-icon">
+                <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            <div class="warning-content">
+                <h2>Are you sure you want to delete {{ objects_name }}?</h2>
+                <p>
+                    This action cannot be undone. All of the following objects and their related items will be permanently deleted from your store.
+                </p>
+            </div>
+        </div>
+
+        <div class="objects-section">
+            <h3><i class="fas fa-box-open"></i> Items to be deleted</h3>
+            <div class="objects-list">
+                {% for deletable_object in deletable_objects %}
+                    {% if deletable_object.0 %}
+                        {# This is a nested list (related objects) #}
+                        {% for related_obj in deletable_object %}
+                            <div class="object-item related-item">
+                                <div class="object-icon image">
+                                    <i class="fas fa-image"></i>
+                                </div>
+                                <div class="object-info">
+                                    <p class="object-title">{{ related_obj }}</p>
+                                    <p class="object-meta">Related Item</p>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        {# This is a main object (Listing) #}
+                        <div class="object-item">
+                            <div class="object-icon">
+                                <i class="fas fa-box"></i>
+                            </div>
+                            <div class="object-info">
+                                <p class="object-title">{{ deletable_object }}</p>
+                                <p class="object-meta">Listing</p>
+                            </div>
+                        </div>
+                    {% endif %}
+                {% empty %}
+                    <p class="no-related">No objects found.</p>
+                {% endfor %}
+            </div>
+        </div>
+
+        {% if perms_lacking %}
+        <div class="objects-section">
+            <h3><i class="fas fa-lock"></i> Permission Denied</h3>
+            <p style="color: var(--danger); font-size: 14px;">
+                You don't have permission to delete the following related items:
+            </p>
+            <div class="objects-list">
+                {% for obj in perms_lacking %}
+                <div class="object-item">
+                    <div class="object-icon">
+                        <i class="fas fa-lock"></i>
+                    </div>
+                    <div class="object-info">
+                        <p class="object-title">{{ obj }}</p>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        {% if protected %}
+        <div class="objects-section">
+            <h3><i class="fas fa-shield-alt"></i> Protected Items</h3>
+            <p style="color: var(--warning); font-size: 14px;">
+                The following items are protected and cannot be deleted:
+            </p>
+            <div class="objects-list">
+                {% for obj in protected %}
+                <div class="object-item">
+                    <div class="object-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <div class="object-info">
+                        <p class="object-title">{{ obj }}</p>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        {% if model_count %}
+        <div class="summary-section">
+            <h3><i class="fas fa-chart-pie"></i> Summary</h3>
+            <div class="summary-grid">
+                {% for model, count in model_count.items %}
+                <div class="summary-item">
+                    <span class="count">{{ count }}</span>
+                    <span class="label">{{ model }}</span>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        <form method="post">
+            {% csrf_token %}
+            <input type="hidden" name="post" value="yes">
+            {% for obj in queryset %}
+            <input type="hidden" name="{{ action_checkbox_name }}" value="{{ obj.pk }}">
+            {% endfor %}
+            
+            <div class="actions-section">
+                <a href="{% url 'seller_admin:el_mercado_listing_changelist' %}" class="btn btn-secondary">
+                    <i class="fas fa-times"></i>
+                    Cancel
+                </a>
+                {% if perms_lacking or protected %}
+                <button type="button" class="btn btn-danger" disabled style="opacity: 0.5; cursor: not-allowed;">
+                    <i class="fas fa-trash-alt"></i>
+                    Cannot Delete
+                </button>
+                {% else %}
+                <button type="submit" class="btn btn-danger">
+                    <i class="fas fa-trash-alt"></i>
+                    Yes, Delete {{ objects_name }}
+                </button>
+                {% endif %}
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

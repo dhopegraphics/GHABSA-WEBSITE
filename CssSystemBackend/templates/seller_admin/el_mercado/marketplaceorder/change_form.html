@@ -1,0 +1,925 @@
+{% extends "seller_admin/seller_base_site.html" %}
+{% load i18n static %}
+
+{% block extrastyle %}
+{{ block.super }}
+<style>
+    .order-detail-container {
+        max-width: 1200px;
+    }
+
+    .page-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 32px;
+        flex-wrap: wrap;
+        gap: 20px;
+    }
+
+    .page-header h1 {
+        font-size: 28px;
+        font-weight: 800;
+        color: var(--gray-900);
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .order-number {
+        font-family: 'SF Mono', 'Monaco', monospace;
+        color: var(--primary);
+    }
+
+    .order-status-large {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 20px;
+        border-radius: 100px;
+        font-size: 14px;
+        font-weight: 600;
+    }
+
+    .order-status-large.pending {
+        background: rgba(245, 158, 11, 0.15);
+        color: var(--warning);
+    }
+
+    .order-status-large.processing {
+        background: rgba(99, 102, 241, 0.15);
+        color: var(--info);
+    }
+
+    .order-status-large.shipped {
+        background: rgba(124, 58, 237, 0.15);
+        color: var(--primary);
+    }
+
+    .order-status-large.delivered {
+        background: rgba(16, 185, 129, 0.15);
+        color: var(--success);
+    }
+
+    .order-status-large.cancelled {
+        background: rgba(239, 68, 68, 0.15);
+        color: var(--danger);
+    }
+
+    /* Layout */
+    .order-grid {
+        display: grid;
+        grid-template-columns: 1fr 400px;
+        gap: 32px;
+    }
+
+    @media (max-width: 1000px) {
+        .order-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    /* Cards */
+    .card {
+        background: white;
+        border-radius: 20px;
+        border: 1px solid var(--gray-200);
+        overflow: hidden;
+        margin-bottom: 24px;
+    }
+
+    .card-header {
+        padding: 20px 24px;
+        border-bottom: 1px solid var(--gray-100);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .card-header h3 {
+        font-size: 16px;
+        font-weight: 700;
+        color: var(--gray-900);
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .card-header h3 i {
+        color: var(--primary);
+    }
+
+    .card-body {
+        padding: 24px;
+    }
+
+    /* Order Items */
+    .order-items {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .order-item {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        padding-bottom: 20px;
+        border-bottom: 1px solid var(--gray-100);
+    }
+
+    .order-item:last-child {
+        padding-bottom: 0;
+        border-bottom: none;
+    }
+
+    .item-image {
+        width: 80px;
+        height: 80px;
+        border-radius: 12px;
+        object-fit: cover;
+        background: var(--gray-100);
+    }
+
+    .item-info {
+        flex: 1;
+    }
+
+    .item-title {
+        font-size: 16px;
+        font-weight: 600;
+        color: var(--gray-900);
+        margin: 0 0 6px 0;
+    }
+
+    .item-description {
+        font-size: 13px;
+        color: var(--gray-600);
+        margin: 0 0 8px 0;
+        line-height: 1.5;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .item-meta {
+        font-size: 13px;
+        color: var(--gray-500);
+        margin: 0 0 8px 0;
+    }
+
+    .item-variant {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 4px 10px;
+        background: var(--gray-100);
+        border-radius: 6px;
+        font-size: 12px;
+        color: var(--gray-600);
+    }
+
+    .item-pricing {
+        text-align: right;
+    }
+
+    .item-price {
+        font-size: 16px;
+        font-weight: 700;
+        color: var(--gray-900);
+    }
+
+    .item-quantity {
+        font-size: 13px;
+        color: var(--gray-500);
+    }
+
+    /* Order Summary */
+    .order-summary {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        padding-top: 20px;
+        border-top: 1px solid var(--gray-200);
+        margin-top: 20px;
+    }
+
+    .summary-row {
+        display: flex;
+        justify-content: space-between;
+        font-size: 14px;
+    }
+
+    .summary-row .label {
+        color: var(--gray-500);
+    }
+
+    .summary-row .value {
+        color: var(--gray-700);
+        font-weight: 500;
+    }
+
+    .summary-row.total {
+        padding-top: 12px;
+        border-top: 2px solid var(--gray-200);
+        margin-top: 8px;
+    }
+
+    .summary-row.total .label {
+        font-size: 16px;
+        font-weight: 600;
+        color: var(--gray-900);
+    }
+
+    .summary-row.total .value {
+        font-size: 20px;
+        font-weight: 800;
+        color: var(--gray-900);
+    }
+
+    /* Customer Info */
+    .customer-header {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        margin-bottom: 20px;
+    }
+
+    .customer-avatar {
+        width: 56px;
+        height: 56px;
+        border-radius: 100px;
+        background: var(--gradient-primary);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: 700;
+        font-size: 18px;
+    }
+
+    .customer-details h4 {
+        font-size: 16px;
+        font-weight: 600;
+        color: var(--gray-900);
+        margin: 0 0 4px 0;
+    }
+
+    .customer-details p {
+        font-size: 13px;
+        color: var(--gray-500);
+        margin: 0;
+    }
+
+    .info-list {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .info-row {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+    }
+
+    .info-icon {
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+        background: var(--gray-100);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--gray-500);
+        flex-shrink: 0;
+    }
+
+    .info-content {
+        flex: 1;
+    }
+
+    .info-label {
+        font-size: 12px;
+        color: var(--gray-500);
+        margin-bottom: 2px;
+    }
+
+    .info-value {
+        font-size: 14px;
+        color: var(--gray-800);
+        font-weight: 500;
+    }
+
+    /* Timeline */
+    .timeline {
+        position: relative;
+        padding-left: 28px;
+    }
+
+    .timeline::before {
+        content: '';
+        position: absolute;
+        left: 9px;
+        top: 0;
+        bottom: 0;
+        width: 2px;
+        background: var(--gray-200);
+    }
+
+    .timeline-item {
+        position: relative;
+        padding-bottom: 24px;
+    }
+
+    .timeline-item:last-child {
+        padding-bottom: 0;
+    }
+
+    .timeline-dot {
+        position: absolute;
+        left: -28px;
+        top: 0;
+        width: 20px;
+        height: 20px;
+        border-radius: 100%;
+        background: white;
+        border: 3px solid var(--gray-300);
+    }
+
+    .timeline-item.active .timeline-dot {
+        background: var(--success);
+        border-color: var(--success);
+    }
+
+    .timeline-item.current .timeline-dot {
+        background: var(--primary);
+        border-color: var(--primary);
+        box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.2);
+    }
+
+    .timeline-content h4 {
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--gray-900);
+        margin: 0 0 4px 0;
+    }
+
+    .timeline-content p {
+        font-size: 13px;
+        color: var(--gray-500);
+        margin: 0;
+    }
+
+    /* Actions */
+    .action-buttons {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        padding: 14px 24px;
+        border-radius: 12px;
+        font-size: 14px;
+        font-weight: 600;
+        text-decoration: none;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        border: none;
+        width: 100%;
+    }
+
+    .btn-primary,
+    .btn-primary:link,
+    .btn-primary:visited,
+    a.btn-primary {
+        background: var(--gradient-primary);
+        color: #ffffff !important;
+    }
+
+    .btn-primary:hover,
+    a.btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(124, 58, 237, 0.4);
+        color: #ffffff !important;
+    }
+
+    .btn-primary i {
+        color: #ffffff !important;
+    }
+
+    .btn-success {
+        background: var(--success);
+        color: white;
+    }
+
+    .btn-success:hover {
+        background: #059669;
+    }
+
+    .btn-outline {
+        background: white;
+        color: var(--gray-700);
+        border: 2px solid var(--gray-200);
+    }
+
+    .btn-outline:hover {
+        border-color: var(--primary);
+        color: var(--primary);
+    }
+
+    .btn-danger {
+        background: transparent;
+        color: var(--danger);
+        border: 2px solid var(--danger);
+    }
+
+    .btn-danger:hover {
+        background: var(--danger);
+        color: white;
+    }
+
+    /* Notes */
+    .order-notes {
+        background: var(--gray-50);
+        border-radius: 12px;
+        padding: 16px;
+    }
+
+    .order-notes textarea {
+        width: 100%;
+        border: none;
+        background: transparent;
+        font-size: 14px;
+        font-family: inherit;
+        resize: vertical;
+        min-height: 80px;
+    }
+
+    .order-notes textarea:focus {
+        outline: none;
+    }
+
+    /* Shipping Form */
+    .shipping-form {
+        display: none;
+    }
+
+    .shipping-form.active {
+        display: block;
+    }
+
+    .form-group {
+        margin-bottom: 16px;
+    }
+
+    .form-label {
+        display: block;
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--gray-700);
+        margin-bottom: 8px;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 12px 16px;
+        border: 2px solid var(--gray-200);
+        border-radius: 10px;
+        font-size: 14px;
+        font-family: inherit;
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: var(--primary);
+    }
+
+    /* Override Django */
+    fieldset, .form-row, .submit-row {
+        display: none;
+    }
+</style>
+{% endblock %}
+
+{% block breadcrumbs %}
+<a href="{% url 'seller_admin:index' %}">Dashboard</a>
+<span>/</span>
+<a href="{% url 'seller_admin:el_mercado_marketplaceorder_changelist' %}">Orders</a>
+<span>/</span>
+<span>Order #{{ original.order_number|default:original.pk }}</span>
+{% endblock %}
+
+{% block content %}
+<div class="order-detail-container">
+    <div class="page-header">
+        <h1>
+            <i class="ri-shopping-cart-2-line"></i>
+            Order <span class="order-number">#{{ original.order_number|default:original.pk }}</span>
+        </h1>
+        <span class="order-status-large {% if original.status == 'PENDING' %}pending{% elif original.status == 'PROCESSING' %}processing{% elif original.status == 'SHIPPED' %}shipped{% elif original.status == 'DELIVERED' or original.status == 'COMPLETED' %}delivered{% else %}cancelled{% endif %}">
+            {% if original.status == 'PENDING' %}<i class="ri-time-line"></i>{% elif original.status == 'PROCESSING' %}<i class="ri-loader-4-line"></i>{% elif original.status == 'SHIPPED' %}<i class="ri-truck-line"></i>{% elif original.status == 'DELIVERED' or original.status == 'COMPLETED' %}<i class="ri-checkbox-circle-line"></i>{% else %}<i class="ri-close-circle-line"></i>{% endif %}
+            {{ original.get_status_display }}
+        </span>
+    </div>
+
+    <div class="order-grid">
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Order Items -->
+            <div class="card">
+                <div class="card-header">
+                    <h3>
+                        <i class="ri-shopping-bag-3-line"></i>
+                        Order Items
+                    </h3>
+                    <span style="font-size: 14px; color: var(--gray-500);">{{ original.items.count }} item{{ original.items.count|pluralize }}</span>
+                </div>
+                <div class="card-body">
+                    <div class="order-items">
+                        {% for item in original.items.all %}
+                        <div class="order-item">
+                            {% if item.listing.primary_image %}
+                            <img src="{{ item.listing.primary_image.url }}" alt="" class="item-image">
+                            {% else %}
+                            <div class="item-image" style="display: flex; align-items: center; justify-content: center;">
+                                <i class="ri-image-line" style="font-size: 24px; color: var(--gray-400);"></i>
+                            </div>
+                            {% endif %}
+                            <div class="item-info">
+                                <h4 class="item-title">{{ item.listing.title }}</h4>
+                                {% if item.listing.description %}
+                                <p class="item-description">{{ item.listing.description|truncatewords:30 }}</p>
+                                {% endif %}
+                                <p class="item-meta">SKU: {{ item.listing.sku|default:"-" }}</p>
+                                {% if item.variant %}
+                                <span class="item-variant">
+                                    <i class="ri-checkbox-blank-circle-fill" style="font-size: 8px;"></i>
+                                    {{ item.variant }}
+                                </span>
+                                {% endif %}
+                            </div>
+                            <div class="item-pricing">
+                                <div class="item-price">GH₵{{ item.total_price }}</div>
+                                <div class="item-quantity">{{ item.quantity }} × GH₵{{ item.unit_price }}</div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="order-summary">
+                        <div class="summary-row">
+                            <span class="label">Subtotal</span>
+                            <span class="value">GH₵{{ original.subtotal|default:original.total_amount }}</span>
+                        </div>
+                        <div class="summary-row">
+                            <span class="label">Shipping</span>
+                            <span class="value">GH₵{{ original.shipping_cost|default:"0.00" }}</span>
+                        </div>
+                        {% if original.discount_amount %}
+                        <div class="summary-row">
+                            <span class="label">Discount</span>
+                            <span class="value" style="color: var(--success);">-GH₵{{ original.discount_amount }}</span>
+                        </div>
+                        {% endif %}
+                        <div class="summary-row total">
+                            <span class="label">Total</span>
+                            <span class="value">GH₵{{ original.total_amount }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Shipping Address -->
+            <div class="card">
+                <div class="card-header">
+                    <h3>
+                        <i class="ri-map-pin-line"></i>
+                        Shipping Address
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <div class="info-list">
+                        <div class="info-row">
+                            <div class="info-icon">
+                                <i class="ri-user-line"></i>
+                            </div>
+                            <div class="info-content">
+                                <div class="info-label">Recipient</div>
+                                <div class="info-value">{{ original.shipping_name|default:original.buyer.get_full_name }}</div>
+                            </div>
+                        </div>
+                        <div class="info-row">
+                            <div class="info-icon">
+                                <i class="ri-home-4-line"></i>
+                            </div>
+                            <div class="info-content">
+                                <div class="info-label">Address</div>
+                                <div class="info-value">{{ original.shipping_address|default:"Not provided" }}</div>
+                            </div>
+                        </div>
+                        <div class="info-row">
+                            <div class="info-icon">
+                                <i class="ri-phone-line"></i>
+                            </div>
+                            <div class="info-content">
+                                <div class="info-label">Phone</div>
+                                <div class="info-value">{{ original.shipping_phone|default:original.buyer.phone }}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Order Timeline -->
+            <div class="card">
+                <div class="card-header">
+                    <h3>
+                        <i class="ri-time-line"></i>
+                        Order Timeline
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <div class="timeline">
+                        <div class="timeline-item {% if original.status %}active{% endif %}">
+                            <div class="timeline-dot"></div>
+                            <div class="timeline-content">
+                                <h4>Order Placed</h4>
+                                <p>{{ original.created_at|date:"M d, Y • H:i" }}</p>
+                            </div>
+                        </div>
+                        <div class="timeline-item {% if original.status == 'PROCESSING' or original.status == 'SHIPPED' or original.status == 'DELIVERED' or original.status == 'COMPLETED' %}active{% endif %} {% if original.status == 'PROCESSING' %}current{% endif %}">
+                            <div class="timeline-dot"></div>
+                            <div class="timeline-content">
+                                <h4>Processing</h4>
+                                <p>Order is being prepared</p>
+                            </div>
+                        </div>
+                        <div class="timeline-item {% if original.status == 'SHIPPED' or original.status == 'DELIVERED' or original.status == 'COMPLETED' %}active{% endif %} {% if original.status == 'SHIPPED' %}current{% endif %}">
+                            <div class="timeline-dot"></div>
+                            <div class="timeline-content">
+                                <h4>Shipped</h4>
+                                <p>{% if original.shipped_at %}{{ original.shipped_at|date:"M d, Y • H:i" }}{% else %}Package on the way{% endif %}</p>
+                            </div>
+                        </div>
+                        <div class="timeline-item {% if original.status == 'DELIVERED' or original.status == 'COMPLETED' %}active{% endif %} {% if original.status == 'DELIVERED' %}current{% endif %}">
+                            <div class="timeline-dot"></div>
+                            <div class="timeline-content">
+                                <h4>Delivered</h4>
+                                <p>{% if original.delivered_at %}{{ original.delivered_at|date:"M d, Y • H:i" }}{% else %}Order delivered{% endif %}</p>
+                            </div>
+                        </div>
+                        <div class="timeline-item {% if original.status == 'COMPLETED' %}active current{% endif %}">
+                            <div class="timeline-dot"></div>
+                            <div class="timeline-content">
+                                <h4>Completed</h4>
+                                <p>{% if original.completed_at %}{{ original.completed_at|date:"M d, Y • H:i" }}{% else %}Funds released to seller{% endif %}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <!-- Customer Info -->
+            <div class="card">
+                <div class="card-header">
+                    <h3>
+                        <i class="ri-user-3-line"></i>
+                        Customer
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <div class="customer-header">
+                        <div class="customer-avatar">
+                            {{ original.buyer.first_name|slice:":1"|upper }}{{ original.buyer.last_name|slice:":1"|upper }}
+                        </div>
+                        <div class="customer-details">
+                            <h4>{{ original.buyer.get_full_name|default:original.buyer.username }}</h4>
+                            <p>Customer since {{ original.buyer.date_joined|date:"M Y" }}</p>
+                        </div>
+                    </div>
+                    <div class="info-list">
+                        <div class="info-row">
+                            <div class="info-icon">
+                                <i class="ri-mail-line"></i>
+                            </div>
+                            <div class="info-content">
+                                <div class="info-label">Email</div>
+                                <div class="info-value">{{ original.buyer.personal_email|default:original.buyer.student_email|default:"Not provided" }}</div>
+                            </div>
+                        </div>
+                        <div class="info-row">
+                            <div class="info-icon">
+                                <i class="ri-phone-line"></i>
+                            </div>
+                            <div class="info-content">
+                                <div class="info-label">Phone</div>
+                                <div class="info-value">{{ original.buyer.phone|default:original.shipping_phone|default:"Not provided" }}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="card">
+                <div class="card-header">
+                    <h3>
+                        <i class="ri-settings-4-line"></i>
+                        Actions
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <div class="action-buttons">
+                        {% if original.status == 'PENDING' or original.status == 'PAID' %}
+                        <!-- Accept Order Form -->
+                        <form method="post" action="{% url 'seller_admin:accept_order' original.pk %}" style="margin: 0;">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-primary">
+                                <i class="ri-check-line"></i>
+                                Accept Order
+                            </button>
+                        </form>
+                        <!-- Decline Order Form -->
+                        <form method="post" action="{% url 'seller_admin:decline_order' original.pk %}" style="margin: 0;" onsubmit="return confirm('Are you sure you want to decline this order?');">
+                            {% csrf_token %}
+                            <input type="hidden" name="decline_reason" value="Declined by seller">
+                            <button type="submit" class="btn btn-danger">
+                                <i class="ri-close-line"></i>
+                                Decline Order
+                            </button>
+                        </form>
+                        {% elif original.status == 'PROCESSING' %}
+                        <button type="button" class="btn btn-success" onclick="toggleShippingForm()">
+                            <i class="ri-truck-line"></i>
+                            Mark as Shipped
+                        </button>
+                        {% elif original.status == 'SHIPPED' %}
+                        <!-- Delivery Code Info -->
+                        {% if original.delivery_code %}
+                        <div style="background: rgba(124, 58, 237, 0.1); border-radius: 12px; padding: 16px; margin-bottom: 16px;">
+                            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                                <i class="ri-key-2-line" style="color: var(--primary);"></i>
+                                <span style="font-weight: 600; color: var(--gray-800);">Delivery Verification</span>
+                            </div>
+                            <p style="font-size: 13px; color: var(--gray-600); margin: 0 0 12px 0;">
+                                Ask the buyer for their 6-digit delivery code to confirm delivery.
+                            </p>
+                            <!-- Verify Delivery Form -->
+                            <form method="post" action="{% url 'seller_admin:verify_delivery' original.pk %}" style="margin: 0;">
+                                {% csrf_token %}
+                                <div class="form-group" style="margin-bottom: 12px;">
+                                    <input type="text" name="delivery_code" class="form-control" 
+                                           placeholder="Enter 6-digit code" 
+                                           maxlength="6" 
+                                           pattern="[0-9]{6}"
+                                           style="text-align: center; font-size: 18px; letter-spacing: 8px; font-weight: 700;"
+                                           required>
+                                </div>
+                                <button type="submit" class="btn btn-success" style="width: 100%;">
+                                    <i class="ri-checkbox-circle-line"></i>
+                                    Verify & Complete Delivery
+                                </button>
+                            </form>
+                        </div>
+                        {% else %}
+                        <div style="background: rgba(245, 158, 11, 0.1); border-radius: 12px; padding: 16px; margin-bottom: 16px;">
+                            <p style="font-size: 13px; color: var(--warning); margin: 0;">
+                                <i class="ri-error-warning-line"></i> No delivery code was generated for this order.
+                            </p>
+                        </div>
+                        {% endif %}
+                        {% elif original.status == 'DELIVERED' %}
+                        <div style="text-align: center; padding: 16px; background: rgba(16, 185, 129, 0.1); border-radius: 12px; color: var(--success); margin-bottom: 16px;">
+                            <i class="ri-checkbox-circle-line" style="font-size: 24px;"></i>
+                            <p style="margin: 8px 0 0 0; font-weight: 600;">Order Delivered!</p>
+                            {% if original.delivery_verified %}
+                            <p style="margin: 4px 0 0 0; font-size: 12px; opacity: 0.8;">✅ Delivery verified with code at {{ original.delivery_verified_at|date:"M d, Y H:i" }}</p>
+                            {% else %}
+                            <p style="margin: 4px 0 0 0; font-size: 12px; opacity: 0.8;">Order has been delivered to customer.</p>
+                            {% endif %}
+                        </div>
+                        
+                        {% if not original.funds_released %}
+                        <!-- Mark as Completed Button -->
+                        <form method="post" action="{% url 'seller_admin:complete_order' original.pk %}" style="margin-bottom: 16px;">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-success" style="width: 100%;" onclick="return confirm('Mark this order as completed? This will release funds to your wallet.');">
+                                <i class="ri-trophy-line"></i>
+                                Mark as Completed
+                            </button>
+                        </form>
+                        <div style="background: rgba(59, 130, 246, 0.1); border-radius: 12px; padding: 12px; margin-bottom: 16px;">
+                            <p style="font-size: 12px; color: rgba(59, 130, 246, 1); margin: 0;">
+                                <i class="ri-information-line"></i> Mark as completed to release GH₵{{ original.seller_earnings }} to your wallet.
+                            </p>
+                        </div>
+                        {% else %}
+                        <div style="background: rgba(245, 158, 11, 0.1); border-radius: 12px; padding: 12px; margin-bottom: 16px;">
+                            <p style="font-size: 12px; color: var(--warning); margin: 0;">
+                                <i class="ri-error-warning-line"></i> Funds have already been released for this order.
+                            </p>
+                        </div>
+                        {% endif %}
+                        {% elif original.status == 'COMPLETED' %}
+                        <div style="text-align: center; padding: 16px; background: rgba(16, 185, 129, 0.1); border-radius: 12px; color: var(--success);">
+                            <i class="ri-trophy-line" style="font-size: 24px;"></i>
+                            <p style="margin: 8px 0 0 0; font-weight: 600;">Order Completed!</p>
+                            <p style="margin: 4px 0 0 0; font-size: 12px; opacity: 0.8;">Funds have been released to your wallet.</p>
+                        </div>
+                        {% elif original.status == 'CANCELLED' %}
+                        <div style="text-align: center; padding: 16px; background: rgba(239, 68, 68, 0.1); border-radius: 12px; color: var(--danger);">
+                            <i class="ri-close-circle-line" style="font-size: 24px;"></i>
+                            <p style="margin: 8px 0 0 0; font-weight: 600;">Order Cancelled</p>
+                        </div>
+                        {% endif %}
+                        <a href="{% url 'seller_admin:start_conversation_with_customer' original.pk %}" class="btn btn-outline" style="text-decoration: none;">
+                            <i class="ri-chat-3-line"></i>
+                            Message Customer
+                        </a>
+                        <button class="btn btn-outline" onclick="window.print();">
+                            <i class="ri-printer-line"></i>
+                            Print Invoice
+                        </button>
+                    </div>
+
+                    <!-- Shipping Form -->
+                    <div class="shipping-form" id="shippingForm">
+                        <form method="post" action="{% url 'seller_admin:ship_order' original.pk %}">
+                            {% csrf_token %}
+                            <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--gray-200);">
+                                <h4 style="font-size: 14px; font-weight: 600; margin-bottom: 16px;">Shipping Details</h4>
+                                <div class="form-group">
+                                    <label class="form-label">Tracking Number (Optional)</label>
+                                    <input type="text" name="tracking_number" class="form-control" placeholder="Enter tracking number" value="{{ original.tracking_number|default:'' }}">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Tracking URL (Optional)</label>
+                                    <input type="url" name="tracking_url" class="form-control" placeholder="https://..." value="{{ original.tracking_url|default:'' }}">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Shipping Carrier</label>
+                                    <select name="shipping_carrier" class="form-control">
+                                        <option value="">Select carrier...</option>
+                                        <option value="GIG Logistics">GIG Logistics</option>
+                                        <option value="DHL">DHL</option>
+                                        <option value="FedEx">FedEx</option>
+                                        <option value="UPS">UPS</option>
+                                        <option value="Ghana Post">Ghana Post</option>
+                                        <option value="Pickup">Customer Pickup</option>
+                                        <option value="Other">Other</option>
+                                    </select>
+                                </div>
+                                <button type="submit" class="btn btn-success">
+                                    <i class="ri-check-line"></i>
+                                    Confirm Shipment
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Notes -->
+            <div class="card">
+                <div class="card-header">
+                    <h3>
+                        <i class="ri-sticky-note-line"></i>
+                        Notes
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <form method="post" action="{% url 'seller_admin:save_order_notes' original.pk %}">
+                        {% csrf_token %}
+                        <div class="order-notes">
+                            <textarea name="seller_notes" placeholder="Add private notes about this order...">{{ original.seller_notes|default:'' }}</textarea>
+                        </div>
+                        <button type="submit" class="btn btn-outline" style="margin-top: 12px; width: 100%;">
+                            <i class="ri-save-line"></i>
+                            Save Notes
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function toggleShippingForm() {
+    const form = document.getElementById('shippingForm');
+    form.classList.toggle('active');
+}
+</script>
+{% endblock %}

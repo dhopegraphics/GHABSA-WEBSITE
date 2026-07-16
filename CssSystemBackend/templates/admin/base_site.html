@@ -1,0 +1,29 @@
+{% extends "admin/base.html" %}
+
+{% block extrahead %}
+{{ block.super }}
+<!-- Google Maps API (optional) -->
+<script>
+    // Suppress Google Maps errors if API key is missing or invalid
+    window.gm_authFailure = function () {
+        console.warn('Google Maps authentication failed. Map features will be disabled.');
+        // Hide Google Maps error messages
+        var mapErrors = document.querySelectorAll('.gm-err-container, .gm-err-message');
+        mapErrors.forEach(function (el) { el.style.display = 'none'; });
+    };
+</script>
+{% if GOOGLE_MAPS_API_KEY %}
+<script
+    src="https://maps.googleapis.com/maps/api/js?key={{ GOOGLE_MAPS_API_KEY }}&libraries=places&callback=Function.prototype"></script>
+{% else %}
+<!-- Google Maps API key not configured - map features disabled -->
+<style>
+    /* Hide Google Maps widgets when API key is missing */
+    .google-maps-widget,
+    .gm-err-container,
+    .gm-err-message {
+        display: none !important;
+    }
+</style>
+{% endif %}
+{% endblock %}

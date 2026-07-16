@@ -1,0 +1,867 @@
+{% extends "seller_admin/seller_base_site.html" %}
+{% load i18n static %}
+
+{% block extrastyle %}
+{{ block.super }}
+<style>
+    .payout-form-container {
+        max-width: 800px;
+    }
+
+    .page-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 32px;
+    }
+
+    .page-header h1 {
+        font-size: 28px;
+        font-weight: 800;
+        color: var(--gray-900);
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .page-header h1 i {
+        color: var(--primary);
+    }
+
+    /* Balance Card */
+    .balance-card {
+        background: var(--gradient-primary);
+        border-radius: 20px;
+        padding: 32px;
+        color: white;
+        margin-bottom: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 24px;
+    }
+
+    .balance-info h2 {
+        font-size: 14px;
+        font-weight: 600;
+        opacity: 0.9;
+        margin: 0 0 8px 0;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    .balance-amount {
+        font-size: 40px;
+        font-weight: 800;
+    }
+
+    .balance-note {
+        font-size: 14px;
+        opacity: 0.8;
+        margin-top: 8px;
+    }
+
+    .min-payout {
+        background: rgba(255, 255, 255, 0.2);
+        padding: 16px 24px;
+        border-radius: 12px;
+        text-align: center;
+    }
+
+    .min-payout-label {
+        font-size: 12px;
+        opacity: 0.9;
+        margin-bottom: 4px;
+    }
+
+    .min-payout-value {
+        font-size: 20px;
+        font-weight: 700;
+    }
+
+    /* Form Card */
+    .form-card {
+        background: white;
+        border-radius: 20px;
+        border: 1px solid var(--gray-200);
+        overflow: hidden;
+    }
+
+    .form-card-header {
+        padding: 24px;
+        border-bottom: 1px solid var(--gray-100);
+    }
+
+    .form-card-header h3 {
+        font-size: 18px;
+        font-weight: 700;
+        color: var(--gray-900);
+        margin: 0 0 4px 0;
+    }
+
+    .form-card-header p {
+        font-size: 14px;
+        color: var(--gray-500);
+        margin: 0;
+    }
+
+    .form-card-body {
+        padding: 24px;
+    }
+
+    /* Form Elements */
+    .form-group {
+        margin-bottom: 24px;
+    }
+
+    .form-group:last-child {
+        margin-bottom: 0;
+    }
+
+    .form-label {
+        display: block;
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--gray-700);
+        margin-bottom: 10px;
+    }
+
+    .form-label .required {
+        color: var(--danger);
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 14px 18px;
+        border: 2px solid var(--gray-200);
+        border-radius: 12px;
+        font-size: 15px;
+        font-family: inherit;
+        transition: all 0.2s ease;
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1);
+    }
+
+    /* Amount Input */
+    .amount-input-wrapper {
+        position: relative;
+    }
+
+    .amount-input-wrapper .currency {
+        position: absolute;
+        left: 18px;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 16px;
+        font-weight: 600;
+        color: var(--gray-500);
+    }
+
+    .amount-input-wrapper input {
+        padding-left: 70px;
+        font-size: 24px;
+        font-weight: 700;
+    }
+
+    .quick-amounts {
+        display: flex;
+        gap: 10px;
+        margin-top: 12px;
+        flex-wrap: wrap;
+    }
+
+    .quick-amount {
+        padding: 10px 18px;
+        background: var(--gray-100);
+        border-radius: 100px;
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--gray-700);
+        cursor: pointer;
+        transition: all 0.2s ease;
+        border: 2px solid transparent;
+    }
+
+    .quick-amount:hover {
+        background: linear-gradient(135deg, rgba(124, 58, 237, 0.1), rgba(236, 72, 153, 0.1));
+        color: var(--primary);
+    }
+
+    .quick-amount.active {
+        background: var(--primary);
+        color: white;
+    }
+
+    /* Account Selection */
+    .account-options {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .account-option {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        padding: 18px;
+        background: var(--gray-50);
+        border: 2px solid var(--gray-200);
+        border-radius: 14px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .account-option:hover {
+        border-color: var(--primary);
+    }
+
+    .account-option.selected {
+        border-color: var(--primary);
+        background: linear-gradient(135deg, rgba(124, 58, 237, 0.05), rgba(236, 72, 153, 0.05));
+    }
+
+    .account-option input {
+        display: none;
+    }
+
+    .account-radio {
+        width: 22px;
+        height: 22px;
+        border: 2px solid var(--gray-300);
+        border-radius: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s ease;
+    }
+
+    .account-option.selected .account-radio {
+        border-color: var(--primary);
+        background: var(--primary);
+    }
+
+    .account-radio::after {
+        content: '';
+        width: 8px;
+        height: 8px;
+        background: white;
+        border-radius: 100%;
+        opacity: 0;
+        transition: all 0.2s ease;
+    }
+
+    .account-option.selected .account-radio::after {
+        opacity: 1;
+    }
+
+    .account-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 22px;
+    }
+
+    .account-icon.bank {
+        background: linear-gradient(135deg, #3B82F6, #1D4ED8);
+        color: white;
+    }
+
+    .account-icon.momo {
+        background: linear-gradient(135deg, #FCD34D, #F59E0B);
+        color: white;
+    }
+
+    .account-details {
+        flex: 1;
+    }
+
+    .account-name {
+        font-size: 15px;
+        font-weight: 600;
+        color: var(--gray-900);
+        margin-bottom: 2px;
+    }
+
+    .account-number {
+        font-size: 13px;
+        color: var(--gray-500);
+    }
+
+    .primary-tag {
+        background: var(--gradient-primary);
+        color: white;
+        padding: 4px 10px;
+        border-radius: 100px;
+        font-size: 11px;
+        font-weight: 600;
+    }
+
+    .add-account-link {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        padding: 16px;
+        border: 2px dashed var(--gray-300);
+        border-radius: 14px;
+        color: var(--gray-500);
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: 600;
+        transition: all 0.2s ease;
+    }
+
+    .add-account-link:hover {
+        border-color: var(--primary);
+        color: var(--primary);
+    }
+
+    /* No Accounts Message */
+    .no-accounts-message {
+        text-align: center;
+        padding: 32px;
+        color: var(--gray-500);
+    }
+
+    .no-accounts-message i {
+        font-size: 48px;
+        margin-bottom: 12px;
+        opacity: 0.5;
+    }
+
+    .no-accounts-message p {
+        margin: 0;
+        font-size: 14px;
+    }
+
+    /* Summary */
+    .payout-summary {
+        background: var(--gray-50);
+        border-radius: 14px;
+        padding: 20px;
+        margin-top: 24px;
+    }
+
+    .summary-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 10px 0;
+        font-size: 14px;
+    }
+
+    .summary-row .label {
+        color: var(--gray-500);
+    }
+
+    .summary-row .value {
+        font-weight: 600;
+        color: var(--gray-700);
+    }
+
+    .summary-row.total {
+        border-top: 2px solid var(--gray-200);
+        margin-top: 10px;
+        padding-top: 14px;
+    }
+
+    .summary-row.total .label {
+        font-weight: 600;
+        color: var(--gray-900);
+    }
+
+    .summary-row.total .value {
+        font-size: 18px;
+        font-weight: 700;
+        color: var(--gray-900);
+    }
+
+    /* Buttons */
+    .form-actions {
+        padding: 24px;
+        border-top: 1px solid var(--gray-100);
+        display: flex;
+        gap: 12px;
+    }
+
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        padding: 14px 28px;
+        border-radius: 12px;
+        font-size: 15px;
+        font-weight: 600;
+        text-decoration: none;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        border: none;
+    }
+
+    .btn-primary,
+    .btn-primary:link,
+    .btn-primary:visited,
+    a.btn-primary {
+        background: var(--gradient-primary);
+        color: #ffffff !important;
+        flex: 1;
+    }
+
+    .btn-primary:hover,
+    a.btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(124, 58, 237, 0.4);
+        color: #ffffff !important;
+    }
+
+    .btn-primary i {
+        color: #ffffff !important;
+    }
+
+    .btn-outline {
+        background: white;
+        color: var(--gray-700);
+        border: 2px solid var(--gray-200);
+    }
+
+    .btn-outline:hover {
+        border-color: var(--primary);
+        color: var(--primary);
+    }
+
+    .btn-danger {
+        background: transparent;
+        color: var(--danger);
+        border: 2px solid var(--danger);
+    }
+
+    .btn-danger:hover {
+        background: var(--danger);
+        color: white;
+    }
+
+    /* Info Alert */
+    .info-alert {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        padding: 16px;
+        background: rgba(99, 102, 241, 0.1);
+        border-radius: 12px;
+        margin-bottom: 24px;
+    }
+
+    .info-alert i {
+        font-size: 20px;
+        color: var(--info);
+    }
+
+    .info-alert p {
+        font-size: 13px;
+        color: var(--gray-700);
+        margin: 0;
+        line-height: 1.6;
+    }
+
+    /* Hide Django */
+    fieldset, .form-row, .submit-row, #id_amount, #id_payout_account {
+        display: none !important;
+    }
+</style>
+{% endblock %}
+
+{% block breadcrumbs %}
+<a href="{% url 'seller_admin:index' %}">Dashboard</a>
+<span>/</span>
+<a href="{% url 'seller_admin:el_mercado_payoutrequest_changelist' %}">Payouts</a>
+<span>/</span>
+<span>{% if add %}Request Payout{% else %}Payout #{{ original.pk }}{% endif %}</span>
+{% endblock %}
+
+{% block content %}
+<div class="payout-form-container">
+    <div class="page-header">
+        <h1>
+            <i class="ri-wallet-3-line"></i>
+            {% if add %}Request Payout{% else %}Payout Details{% endif %}
+        </h1>
+    </div>
+
+    {% if add %}
+    <!-- Balance Card -->
+    <div class="balance-card">
+        <div class="balance-info">
+            <h2>Available Balance</h2>
+            <div class="balance-amount">GH₵ {{ available_balance|floatformat:2|default:"0.00" }}</div>
+            <div class="balance-note">
+                <i class="ri-information-line"></i>
+                Pending: GH₵{{ pending_balance|floatformat:2|default:"0.00" }}
+            </div>
+        </div>
+        <div class="min-payout">
+            <div class="min-payout-label">Minimum Payout</div>
+            <div class="min-payout-value">GH₵ {{ min_payout|floatformat:2|default:"50.00" }}</div>
+        </div>
+    </div>
+
+    <!-- Payout Form -->
+    <form method="post" action="{% url 'seller_admin:request_payout' %}" class="form-card">
+        {% csrf_token %}
+
+        <div class="form-card-header">
+            <h3>Payout Request</h3>
+            <p>Enter the amount and select your payout account</p>
+        </div>
+
+        <div class="form-card-body">
+            <div class="info-alert">
+                <i class="ri-information-line"></i>
+                <p>Payouts are processed within 1-3 business days. A processing fee of {{ processing_fee_percentage|default:"1.7" }}% will be deducted from your payout amount.</p>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Amount <span class="required">*</span></label>
+                <div class="amount-input-wrapper">
+                    <span class="currency">GH₵</span>
+                    <input type="number" class="form-control" id="payoutAmount" name="amount" placeholder="0.00" min="{{ min_payout|default:50 }}" max="{{ available_balance|default:0 }}" step="0.01" required>
+                </div>
+                <div id="amountError" style="display: none; color: var(--danger); font-size: 13px; margin-top: 8px; font-weight: 500;">
+                    <i class="ri-error-warning-line"></i> <span id="amountErrorText"></span>
+                </div>
+                <div class="quick-amounts">
+                    <button type="button" class="quick-amount" onclick="setAmount(50)">GH₵50</button>
+                    <button type="button" class="quick-amount" onclick="setAmount(100)">GH₵100</button>
+                    <button type="button" class="quick-amount" onclick="setAmount(200)">GH₵200</button>
+                    <button type="button" class="quick-amount" onclick="setAmount(500)">GH₵500</button>
+                    <button type="button" class="quick-amount" onclick="setAmount({{ available_balance|default:0 }})">All Funds</button>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Payout Account <span class="required">*</span></label>
+                <div class="account-options">
+                    {% if payout_accounts %}
+                        {% for account in payout_accounts %}
+                        <label class="account-option{% if account.is_default %} selected{% endif %}">
+                            <input type="radio" name="payout_account" value="{{ account.id }}"{% if account.is_default %} checked{% endif %} required>
+                            <span class="account-radio"></span>
+                            <div class="account-icon {% if account.account_type == 'BANK' %}bank{% else %}momo{% endif %}">
+                                <i class="ri-{% if account.account_type == 'BANK' %}bank{% else %}smartphone{% endif %}-line"></i>
+                            </div>
+                            <div class="account-details">
+                                <div class="account-name">
+                                    {% if account.account_type == 'BANK' %}
+                                        {{ account.bank_name }}
+                                    {% else %}
+                                        {{ account.mobile_money_provider }}
+                                    {% endif %}
+                                </div>
+                                <div class="account-number">
+                                    {% if account.account_type == 'BANK' %}
+                                        ****{{ account.account_number|slice:"-4:" }}
+                                    {% else %}
+                                        ****{{ account.mobile_money_number|slice:"-4:" }}
+                                    {% endif %}
+                                </div>
+                            </div>
+                            {% if account.is_default %}
+                            <span class="primary-tag">Primary</span>
+                            {% endif %}
+                        </label>
+                        {% endfor %}
+                    {% else %}
+                        <div class="no-accounts-message">
+                            <i class="ri-bank-card-line"></i>
+                            <p>No payout accounts found. Please add one first.</p>
+                        </div>
+                    {% endif %}
+                    <a href="{% url 'seller_admin:el_mercado_sellerpayoutaccount_add' %}" class="add-account-link">
+                        <i class="ri-add-line"></i>
+                        Add New Account
+                    </a>
+                </div>
+            </div>
+
+            <div class="payout-summary">
+                <div class="summary-row">
+                    <span class="label">Payout Amount</span>
+                    <span class="value" id="summaryAmount">GH₵ 0.00</span>
+                </div>
+                <div class="summary-row">
+                    <span class="label">Processing Fee ({{ processing_fee_percentage|default:"1.7" }}%)</span>
+                    <span class="value" id="summaryFee">- GH₵ 0.00</span>
+                </div>
+                <div class="summary-row total">
+                    <span class="label">You'll Receive</span>
+                    <span class="value" id="summaryTotal">GH₵ 0.00</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <a href="{% url 'seller_admin:el_mercado_payoutrequest_changelist' %}" class="btn btn-outline">
+                Cancel
+            </a>
+            <button type="submit" class="btn btn-primary"{% if not payout_accounts %} disabled{% endif %}>
+                <i class="ri-send-plane-line"></i>
+                Request Payout
+            </button>
+        </div>
+    </form>
+    {% else %}
+    <!-- View existing payout details -->
+    {% with payout=original %}
+    <div class="form-card" style="margin-bottom: 24px;">
+        <div class="form-card-header" style="background: {% if payout.status == 'PENDING' %}linear-gradient(135deg, #f39c12, #e67e22){% elif payout.status == 'PROCESSING' %}linear-gradient(135deg, #3498db, #2980b9){% elif payout.status == 'COMPLETED' %}linear-gradient(135deg, #27ae60, #2ecc71){% elif payout.status == 'FAILED' %}linear-gradient(135deg, #e74c3c, #c0392b){% else %}linear-gradient(135deg, #95a5a6, #7f8c8d){% endif %}; color: white; padding: 28px 32px;">
+            <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px;">
+                <div>
+                    <h3 style="font-size: 24px; margin: 0 0 4px 0;">{{ payout.reference }}</h3>
+                    <p style="margin: 0; opacity: 0.9;">Requested on {{ payout.created_at|date:"F d, Y • h:i A" }}</p>
+                </div>
+                <div style="padding: 10px 20px; background: rgba(255,255,255,0.2); border-radius: 100px; font-weight: 600; font-size: 14px;">
+                    <i class="ri-{% if payout.status == 'PENDING' %}time{% elif payout.status == 'PROCESSING' %}loader-4{% elif payout.status == 'COMPLETED' %}check{% elif payout.status == 'FAILED' %}close-circle{% else %}close{% endif %}-line" style="margin-right: 6px;"></i>
+                    {{ payout.get_status_display }}
+                </div>
+            </div>
+        </div>
+        
+        <div class="form-card-body" style="padding: 32px;">
+            <!-- Amount Summary -->
+            <div style="background: linear-gradient(135deg, rgba(124, 58, 237, 0.05), rgba(236, 72, 153, 0.05)); border-radius: 16px; padding: 24px; margin-bottom: 28px;">
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; text-align: center;">
+                    <div>
+                        <div style="font-size: 13px; color: var(--gray-500); margin-bottom: 6px;">Request Amount</div>
+                        <div style="font-size: 28px; font-weight: 800; color: var(--gray-900);">GH₵{{ payout.amount|floatformat:2 }}</div>
+                    </div>
+                    <div>
+                        <div style="font-size: 13px; color: var(--gray-500); margin-bottom: 6px;">Processing Fee ({{ processing_fee_percentage|default:"1.7" }}%)</div>
+                        <div style="font-size: 28px; font-weight: 800; color: var(--danger);">- GH₵{{ payout.processing_fee|floatformat:2 }}</div>
+                    </div>
+                    <div>
+                        <div style="font-size: 13px; color: var(--gray-500); margin-bottom: 6px;">You'll Receive</div>
+                        <div style="font-size: 28px; font-weight: 800; color: var(--success);">GH₵{{ payout.net_amount|floatformat:2 }}</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Payout Account Details -->
+            <div style="margin-bottom: 28px;">
+                <h4 style="font-size: 16px; font-weight: 700; color: var(--gray-800); margin: 0 0 16px 0; display: flex; align-items: center; gap: 10px;">
+                    <i class="ri-{% if payout.payout_method == 'BANK_TRANSFER' or payout.payout_method == 'BANK' %}bank{% else %}smartphone{% endif %}-line" style="color: var(--primary);"></i>
+                    Payout Account
+                </h4>
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px;">
+                    {% if payout.payout_method == 'BANK_TRANSFER' or payout.payout_method == 'BANK' %}
+                    <div style="padding: 16px; background: var(--gray-50); border-radius: 12px;">
+                        <div style="font-size: 12px; color: var(--gray-500); margin-bottom: 4px;">Bank Name</div>
+                        <div style="font-weight: 600; color: var(--gray-800);">{{ payout.bank_name|default:"-" }}</div>
+                    </div>
+                    <div style="padding: 16px; background: var(--gray-50); border-radius: 12px;">
+                        <div style="font-size: 12px; color: var(--gray-500); margin-bottom: 4px;">Account Number</div>
+                        <div style="font-weight: 600; color: var(--gray-800);">****{{ payout.account_number|slice:"-4:" }}</div>
+                    </div>
+                    <div style="padding: 16px; background: var(--gray-50); border-radius: 12px; grid-column: span 2;">
+                        <div style="font-size: 12px; color: var(--gray-500); margin-bottom: 4px;">Account Name</div>
+                        <div style="font-weight: 600; color: var(--gray-800);">{{ payout.account_name|default:"-" }}</div>
+                    </div>
+                    {% else %}
+                    <div style="padding: 16px; background: var(--gray-50); border-radius: 12px;">
+                        <div style="font-size: 12px; color: var(--gray-500); margin-bottom: 4px;">Provider</div>
+                        <div style="font-weight: 600; color: var(--gray-800);">{{ payout.mobile_money_provider|default:"-" }}</div>
+                    </div>
+                    <div style="padding: 16px; background: var(--gray-50); border-radius: 12px;">
+                        <div style="font-size: 12px; color: var(--gray-500); margin-bottom: 4px;">Mobile Number</div>
+                        <div style="font-weight: 600; color: var(--gray-800);">****{{ payout.mobile_money_number|slice:"-4:" }}</div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Status Timeline -->
+            <div style="margin-bottom: 28px;">
+                <h4 style="font-size: 16px; font-weight: 700; color: var(--gray-800); margin: 0 0 16px 0; display: flex; align-items: center; gap: 10px;">
+                    <i class="ri-time-line" style="color: var(--primary);"></i>
+                    Status Timeline
+                </h4>
+                <div style="display: flex; flex-direction: column; gap: 16px;">
+                    <div style="display: flex; align-items: center; gap: 16px;">
+                        <div style="width: 40px; height: 40px; border-radius: 50%; background: var(--success); color: white; display: flex; align-items: center; justify-content: center;">
+                            <i class="ri-check-line"></i>
+                        </div>
+                        <div>
+                            <div style="font-weight: 600; color: var(--gray-800);">Request Created</div>
+                            <div style="font-size: 13px; color: var(--gray-500);">{{ payout.created_at|date:"F d, Y • h:i A" }}</div>
+                        </div>
+                    </div>
+                    {% if payout.processed_at %}
+                    <div style="display: flex; align-items: center; gap: 16px;">
+                        <div style="width: 40px; height: 40px; border-radius: 50%; background: var(--info); color: white; display: flex; align-items: center; justify-content: center;">
+                            <i class="ri-loader-4-line"></i>
+                        </div>
+                        <div>
+                            <div style="font-weight: 600; color: var(--gray-800);">Processing Started</div>
+                            <div style="font-size: 13px; color: var(--gray-500);">{{ payout.processed_at|date:"F d, Y • h:i A" }}</div>
+                        </div>
+                    </div>
+                    {% endif %}
+                    {% if payout.completed_at %}
+                    <div style="display: flex; align-items: center; gap: 16px;">
+                        <div style="width: 40px; height: 40px; border-radius: 50%; background: var(--success); color: white; display: flex; align-items: center; justify-content: center;">
+                            <i class="ri-check-double-line"></i>
+                        </div>
+                        <div>
+                            <div style="font-weight: 600; color: var(--gray-800);">Payout Completed</div>
+                            <div style="font-size: 13px; color: var(--gray-500);">{{ payout.completed_at|date:"F d, Y • h:i A" }}</div>
+                        </div>
+                    </div>
+                    {% endif %}
+                    {% if payout.status == 'FAILED' or payout.status == 'CANCELLED' %}
+                    <div style="display: flex; align-items: center; gap: 16px;">
+                        <div style="width: 40px; height: 40px; border-radius: 50%; background: {% if payout.status == 'FAILED' %}var(--danger){% else %}var(--gray-400){% endif %}; color: white; display: flex; align-items: center; justify-content: center;">
+                            <i class="ri-{% if payout.status == 'FAILED' %}close-circle{% else %}close{% endif %}-line"></i>
+                        </div>
+                        <div>
+                            <div style="font-weight: 600; color: var(--gray-800);">{{ payout.get_status_display }}</div>
+                            <div style="font-size: 13px; color: var(--gray-500);">{{ payout.updated_at|date:"F d, Y • h:i A" }}</div>
+                            {% if payout.status_message %}
+                            <div style="font-size: 13px; color: var(--danger); margin-top: 4px;">{{ payout.status_message }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            {% if payout.gateway_reference %}
+            <!-- Gateway Reference -->
+            <div style="padding: 16px; background: var(--gray-50); border-radius: 12px; margin-bottom: 28px;">
+                <div style="font-size: 12px; color: var(--gray-500); margin-bottom: 4px;">Gateway Reference</div>
+                <div style="font-weight: 600; color: var(--gray-800); font-family: monospace;">{{ payout.gateway_reference }}</div>
+            </div>
+            {% endif %}
+            
+            {% if payout.status_message and payout.status != 'FAILED' and payout.status != 'CANCELLED' %}
+            <div style="padding: 16px; background: rgba(59, 130, 246, 0.1); border-radius: 12px; display: flex; align-items: start; gap: 12px; margin-bottom: 28px;">
+                <i class="ri-information-line" style="color: var(--info); font-size: 20px;"></i>
+                <div style="font-size: 14px; color: var(--gray-700);">{{ payout.status_message }}</div>
+            </div>
+            {% endif %}
+        </div>
+        
+        <!-- Actions -->
+        <div style="padding: 24px 32px; border-top: 1px solid var(--gray-100); display: flex; gap: 12px; justify-content: space-between; align-items: center;">
+            <a href="{% url 'seller_admin:el_mercado_payoutrequest_changelist' %}" class="btn btn-outline">
+                <i class="ri-arrow-left-line"></i>
+                Back to Payouts
+            </a>
+            {% if payout.status == 'PENDING' %}
+            <form method="post" action="{% url 'seller_admin:cancel_payout_request' payout.id %}" style="margin: 0;" onsubmit="return confirm('Are you sure you want to cancel this payout request? The amount will be returned to your available balance.');">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger">
+                    <i class="ri-close-circle-line"></i>
+                    Cancel Payout Request
+                </button>
+            </form>
+            {% endif %}
+        </div>
+    </div>
+    {% endwith %}
+    {% endif %}
+</div>
+
+<script>
+const availableBalance = {{ available_balance|default:0 }};
+const minPayout = {{ min_payout|default:50 }};
+const feePercentage = {{ processing_fee_percentage|default:1.7 }};
+
+function setAmount(amount) {
+    const input = document.getElementById('payoutAmount');
+    // Cap amount at available balance
+    const cappedAmount = Math.min(amount, availableBalance);
+    input.value = cappedAmount.toFixed(2);
+    validateAmount();
+    updateSummary();
+    
+    document.querySelectorAll('.quick-amount').forEach(btn => btn.classList.remove('active'));
+    event.target.classList.add('active');
+}
+
+function validateAmount() {
+    const input = document.getElementById('payoutAmount');
+    const amount = parseFloat(input.value) || 0;
+    const errorDiv = document.getElementById('amountError');
+    const errorText = document.getElementById('amountErrorText');
+    const submitBtn = document.querySelector('button[type="submit"]');
+    
+    if (amount > availableBalance) {
+        errorDiv.style.display = 'block';
+        errorText.textContent = `Amount cannot exceed your available balance of GH₵${availableBalance.toFixed(2)}`;
+        input.style.borderColor = 'var(--danger)';
+        submitBtn.disabled = true;
+        return false;
+    } else if (amount < minPayout && amount > 0) {
+        errorDiv.style.display = 'block';
+        errorText.textContent = `Minimum payout amount is GH₵${minPayout.toFixed(2)}`;
+        input.style.borderColor = 'var(--danger)';
+        submitBtn.disabled = true;
+        return false;
+    } else {
+        errorDiv.style.display = 'none';
+        input.style.borderColor = '';
+        {% if payout_accounts %}
+        submitBtn.disabled = false;
+        {% endif %}
+        return true;
+    }
+}
+
+function updateSummary() {
+    const amount = parseFloat(document.getElementById('payoutAmount').value) || 0;
+    const fee = amount * (feePercentage / 100);
+    const total = amount - fee;
+    
+    document.getElementById('summaryAmount').textContent = 'GH₵ ' + amount.toFixed(2);
+    document.getElementById('summaryFee').textContent = '- GH₵ ' + fee.toFixed(2);
+    document.getElementById('summaryTotal').textContent = 'GH₵ ' + total.toFixed(2);
+}
+
+// Validate on input
+document.getElementById('payoutAmount').addEventListener('input', function() {
+    validateAmount();
+    updateSummary();
+});
+
+// Prevent form submission if validation fails
+document.querySelector('form').addEventListener('submit', function(e) {
+    if (!validateAmount()) {
+        e.preventDefault();
+        return false;
+    }
+    
+    const amount = parseFloat(document.getElementById('payoutAmount').value) || 0;
+    if (amount <= 0 || amount < minPayout || amount > availableBalance) {
+        e.preventDefault();
+        alert('Please enter a valid payout amount between GH₵' + minPayout.toFixed(2) + ' and GH₵' + availableBalance.toFixed(2));
+        return false;
+    }
+});
+
+// Account selection
+document.querySelectorAll('.account-option').forEach(option => {
+    option.addEventListener('click', function() {
+        document.querySelectorAll('.account-option').forEach(o => o.classList.remove('selected'));
+        this.classList.add('selected');
+        this.querySelector('input').checked = true;
+    });
+});
+</script>
+{% endblock %}
