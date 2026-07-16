@@ -66,11 +66,11 @@ export function ContactPage() {
           name="keywords"
           content="Contact BIO-CHEM KNUST, biochemknust, biochemknust"
         />
-        <meta name="robots" content="index, nofollow" />
+        <meta name="robots" content="index, follow" />
         <meta property="og:title" content="BIO-CHEM KNUST - Contact Us" />
         <meta
           property="og:description"
-          content="Connect with the tech minds of KNUST!"
+          content="Connect with the Biochemistry Society at KNUST."
         />
         <meta
           property="og:image"

@@ -2,7 +2,6 @@ import { useState, useEffect, useCallback, useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
-  GraduationCap,
   BookOpen,
   Info,
   Calendar,
@@ -15,6 +14,8 @@ import {
   Lock,
 } from "lucide-react";
 import { getData, postData } from "../utils/apiHandler";
+import Navbar from "../Components/Navbar";
+import { Footer } from "../Components/Footer/Footer";
 
 // Valid tab IDs for URL validation
 const VALID_TABS = ["checker", "guides", "faqs", "dates", "helpdesk"];
@@ -369,28 +370,30 @@ const AdmissionPage = () => {
   const currentCriteria = criteria.find((c) => c.program === formData.program);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-12 px-4">
-      <div className="max-w-7xl mx-auto">
+    <div className="min-h-screen bg-[#f5f7fa] pt-[60px] sm:pt-[65px] md:pt-[70px] lg:pt-[75px]">
+      <Navbar />
+      <header className="relative overflow-hidden bg-[#07162f] px-5 py-16 text-white sm:px-8 sm:py-20 lg:px-10">
+        <div className="absolute -right-24 -top-44 h-[420px] w-[420px] rounded-full border-[70px] border-blue-400/10" />
+        <div className="relative mx-auto max-w-7xl">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="text-center mb-12"
+          className="max-w-4xl"
         >
-          <div className="flex items-center justify-center gap-3 mb-4">
-            <GraduationCap className="w-12 h-12 text-red-600" />
-            <h1 className="text-4xl font-bold text-gray-900">
-              KNUST Admission Portal
-            </h1>
-          </div>
-          <p className="text-lg text-gray-600">
-            Check your eligibility for Computer Science & IT programs
+          <h1 className="text-5xl font-semibold leading-[1.02] tracking-[-0.05em] text-white sm:text-6xl lg:text-7xl">Your KNUST journey, <span className="text-blue-400">made clearer.</span></h1>
+          <p className="mt-6 max-w-2xl text-base leading-8 text-slate-300 sm:text-lg">
+            Explore admission guidance, important dates and direct help for prospective Biochemistry students.
           </p>
         </motion.div>
+        </div>
+      </header>
+
+      <main className="mx-auto max-w-7xl px-5 py-12 sm:px-8 sm:py-16 lg:px-10">
 
         {/* Tabs */}
-        <div className="bg-white rounded-lg shadow-lg mb-8 overflow-hidden">
-          <div className="flex border-b">
+        <div className="mb-8 overflow-hidden rounded-[28px] border border-slate-200 bg-white shadow-[0_18px_55px_rgba(15,23,42,0.07)]">
+          <div className="flex overflow-x-auto border-b border-slate-200 p-2">
             {[
               {
                 id: "checker",
@@ -421,12 +424,12 @@ const AdmissionPage = () => {
                   onClick={() => handleTabChange(tab.id)}
                   disabled={isDisabled}
                   title={isDisabled ? `Closed: ${disabledReason}` : tab.label}
-                  className={`flex-1 flex items-center justify-center gap-2 py-4 px-6 font-medium transition-colors ${
+                  className={`flex min-w-max flex-1 items-center justify-center gap-2 rounded-full px-5 py-3 text-sm font-semibold transition-colors ${
                     isDisabled
-                      ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                      ? "cursor-not-allowed text-slate-300"
                       : activeTab === tab.id
-                      ? "bg-red-600 text-white"
-                      : "text-gray-600 hover:bg-gray-50"
+                      ? "bg-blue-600 text-white"
+                      : "text-slate-600 hover:bg-slate-100 hover:text-slate-950"
                   }`}
                 >
                   {isDisabled ? <Lock className="w-5 h-5" /> : <tab.icon className="w-5 h-5" />}
@@ -437,7 +440,7 @@ const AdmissionPage = () => {
             })}
           </div>
 
-          <div className="p-6">
+          <div className="p-5 sm:p-8 lg:p-10">
             {/* Eligibility Checker Tab */}
             {activeTab === "checker" && (
               <div>
@@ -1228,21 +1231,21 @@ const AdmissionPage = () => {
 
             {/* WhatsApp Helpdesk Tab */}
             {activeTab === "helpdesk" && (
-              <div className="max-w-2xl mx-auto">
-                <div className="text-center mb-8">
-                  <MessageCircle className="w-16 h-16 text-green-600 mx-auto mb-4" />
-                  <h2 className="text-2xl font-bold text-gray-900 mb-2">
+              <div className="mx-auto max-w-3xl">
+                <div className="mb-10 grid gap-6 sm:grid-cols-[auto_1fr] sm:items-center">
+                  <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-700"><MessageCircle className="h-8 w-8" /></div>
+                  <div><h2 className="text-3xl font-semibold tracking-[-0.03em] text-slate-950">
                     WhatsApp Helpdesk
                   </h2>
-                  <p className="text-gray-600">
+                  <p className="mt-2 text-base leading-7 text-slate-600">
                     Enter your Application ID to get access to our WhatsApp
                     support group
-                  </p>
+                  </p></div>
                 </div>
 
-                <form onSubmit={getWhatsAppLink} className="space-y-6">
+                <form onSubmit={getWhatsAppLink} className="rounded-[24px] border border-slate-200 bg-slate-50 p-5 sm:p-7">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="mb-2 block text-sm font-semibold text-slate-700">
                       Application ID
                     </label>
                     <input
@@ -1254,7 +1257,7 @@ const AdmissionPage = () => {
                       }}
                       placeholder="Enter your Application ID"
                       required
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                      className="w-full rounded-2xl border border-slate-300 bg-white px-4 py-4 outline-none focus:border-emerald-600 focus:ring-2 focus:ring-emerald-500/15"
                     />
                     <p className="text-sm text-gray-500 mt-2">
                       Enter your Application ID as provided by KNUST
@@ -1264,7 +1267,7 @@ const AdmissionPage = () => {
                   <button
                     type="submit"
                     disabled={helpdeskLoading}
-                    className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                    className="mt-6 flex w-full items-center justify-center gap-2 rounded-full bg-emerald-600 px-6 py-4 font-semibold text-white transition-colors hover:bg-emerald-700 disabled:cursor-not-allowed disabled:bg-slate-400"
                   >
                     {helpdeskLoading ? (
                       <>
@@ -1288,7 +1291,7 @@ const AdmissionPage = () => {
                     className="mt-6"
                   >
                     {helpdeskResult.success ? (
-                      <div className="bg-green-50 border border-green-200 rounded-lg p-6">
+                      <div className="rounded-[24px] border border-emerald-200 bg-emerald-50 p-6">
                         <div className="flex items-start gap-3 mb-4">
                           <CheckCircle className="w-6 h-6 text-green-600 flex-shrink-0" />
                           <div className="flex-1">
@@ -1301,7 +1304,7 @@ const AdmissionPage = () => {
                           </div>
                         </div>
 
-                        <div className="bg-white border border-green-200 rounded-lg p-4 mb-4">
+                        <div className="mb-4 rounded-2xl border border-emerald-200 bg-white p-5">
                           <p className="text-gray-700 mb-3">
                             {helpdeskResult.message}
                           </p>
@@ -1329,7 +1332,7 @@ const AdmissionPage = () => {
                                 window.location.href = link;
                               }
                             }}
-                            className="w-full inline-flex items-center justify-center gap-2 bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors"
+                            className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-emerald-600 px-6 py-4 font-semibold text-white transition-colors hover:bg-emerald-700"
                           >
                             <MessageCircle className="w-5 h-5" />
                             <span>Join WhatsApp Group</span>
@@ -1351,7 +1354,7 @@ const AdmissionPage = () => {
                         </div>
                       </div>
                     ) : (
-                      <div className="bg-red-50 border border-red-200 rounded-lg p-6">
+                      <div className="rounded-[24px] border border-red-200 bg-red-50 p-6">
                         <div className="flex items-start gap-3">
                           <XCircle className="w-6 h-6 text-red-600 flex-shrink-0" />
                           <div>
@@ -1385,7 +1388,7 @@ const AdmissionPage = () => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.3 }}
-          className="bg-white rounded-lg shadow-lg p-6 mt-8"
+          className="mt-8 rounded-[28px] border border-slate-200 bg-white p-6 shadow-[0_12px_40px_rgba(15,23,42,0.05)]"
         >
           <h3 className="text-lg font-semibold text-gray-900 mb-4">
             Quick Links
@@ -1414,17 +1417,18 @@ const AdmissionPage = () => {
                 href={link.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center justify-between px-4 py-3 bg-gray-50 hover:bg-red-50 border border-gray-200 hover:border-red-300 rounded-lg transition-colors group"
+                className="group flex items-center justify-between rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 transition-colors hover:border-blue-300 hover:bg-blue-50"
               >
-                <span className="font-medium text-gray-700 group-hover:text-red-600">
+                <span className="font-medium text-slate-700 group-hover:text-blue-700">
                   {link.label}
                 </span>
-                <ExternalLink className="w-5 h-5 text-gray-400 group-hover:text-red-600" />
+                <ExternalLink className="h-5 w-5 text-slate-400 group-hover:text-blue-600" />
               </a>
             ))}
           </div>
         </motion.div>
-      </div>
+      </main>
+      <Footer />
     </div>
   );
 };

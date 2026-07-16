@@ -1,7 +1,8 @@
 import { useContext, useEffect, useState } from "react";
 import { FaBars, FaTimes, FaChevronDown } from "react-icons/fa";
+import { ArrowUpRight, LayoutDashboard, LogIn } from "lucide-react";
 import logo from "../assets/logo.png";
-import { Link } from "react-router-dom";
+import { Link, NavLink, useLocation } from "react-router-dom";
 import { UserContext } from "../Context/UserContext";
 import { useAuthModals } from "../Context/AuthModalsContext";
 import { BRAND } from "../config/brand";
@@ -11,6 +12,7 @@ function Navbar() {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [isFloating, setIsFloating] = useState(false);
   const { openLoginModal } = useAuthModals();
+  const location = useLocation();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -64,22 +66,30 @@ function Navbar() {
         <img src={logo} className="object-contain w-full h-auto" alt={`${BRAND.shortName} Logo`} />
       </Link>
 
-      <div className="hidden lg:flex xl:space-x-6 2xl:space-x-8 space-x-4 items-center flex-wrap justify-center">
+      <div className="hidden items-center rounded-full border border-slate-200/80 bg-slate-100/70 p-1 lg:flex">
         {/* Priority items - always visible */}
         {priorityNavItems.map((item, index) => (
           item.to ? (
-            <Link
+            <NavLink
               key={index}
               to={item.to}
-              className="text-gray-700 hover:text-blue-700 font-medium text-sm xl:text-base transition-colors duration-200 whitespace-nowrap"
+              className={({ isActive }) => `relative whitespace-nowrap rounded-full px-4 py-2 text-sm font-semibold transition-all duration-200 ${
+                isActive
+                  ? "bg-white text-blue-700 shadow-[0_4px_14px_rgba(15,23,42,0.09)]"
+                  : "text-slate-600 hover:bg-white/70 hover:text-slate-950"
+              }`}
             >
               {item.label}
-            </Link>
+            </NavLink>
           ) : (
             <a
               key={index}
               href={item.href}
-              className="text-gray-700 hover:text-blue-700 font-medium text-sm xl:text-base transition-colors duration-200 whitespace-nowrap"
+              className={`relative whitespace-nowrap rounded-full px-4 py-2 text-sm font-semibold transition-all duration-200 ${
+                location.pathname === "/" && location.hash === "#resources"
+                  ? "bg-white text-blue-700 shadow-[0_4px_14px_rgba(15,23,42,0.09)]"
+                  : "text-slate-600 hover:bg-white/70 hover:text-slate-950"
+              }`}
             >
               {item.label}
             </a>
@@ -90,22 +100,28 @@ function Navbar() {
         <div className="relative">
           <button
             onClick={toggleDropdown}
-            className="text-gray-700 hover:text-blue-700 font-medium text-sm xl:text-base transition-colors duration-200 whitespace-nowrap flex items-center gap-1"
+            className={`flex items-center gap-1.5 whitespace-nowrap rounded-full px-4 py-2 text-sm font-semibold transition-all duration-200 ${
+              secondaryNavItems.some((item) => item.to === location.pathname)
+                ? "bg-white text-blue-700 shadow-[0_4px_14px_rgba(15,23,42,0.09)]"
+                : "text-slate-600 hover:bg-white/70 hover:text-slate-950"
+            }`}
+            aria-expanded={dropdownOpen}
+            aria-haspopup="menu"
           >
-            View Others
+            More
             <FaChevronDown className={`text-xs transition-transform duration-200 ${dropdownOpen ? 'rotate-180' : ''}`} />
           </button>
           
           {dropdownOpen && (
-            <div className="absolute top-full right-0 mt-2 w-48 bg-white rounded-md shadow-lg border border-gray-200 py-2 z-50">
+            <div className="absolute left-1/2 top-full z-50 mt-3 w-60 -translate-x-1/2 overflow-hidden rounded-2xl border border-slate-200 bg-white p-2 shadow-[0_18px_50px_rgba(15,23,42,0.16)]" role="menu">
               {secondaryNavItems.map((item, index) => (
                 <Link
                   key={index}
                   to={item.to}
-                  className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-blue-700 transition-colors duration-200"
+                  className="group flex items-center justify-between rounded-xl px-4 py-3 text-sm font-medium text-slate-700 transition-colors hover:bg-blue-50 hover:text-blue-700"
                   onClick={() => setDropdownOpen(false)}
                 >
-                  {item.label}
+                  {item.label}<ArrowUpRight className="h-4 w-4 opacity-0 transition-opacity group-hover:opacity-100" />
                 </Link>
               ))}
             </div>
@@ -117,35 +133,35 @@ function Navbar() {
         {!user ? (
           <button
             onClick={openLoginModal}
-            className="px-3 py-1.5 sm:px-4 sm:py-2 lg:px-5 lg:py-2 xl:px-6 xl:py-2.5 rounded bg-blue-700 font-bold hover:bg-blue-800 text-white text-sm xl:text-base transition-all duration-200 whitespace-nowrap"
+            className="group inline-flex items-center gap-2 whitespace-nowrap rounded-full bg-[#07162f] px-5 py-3 text-sm font-semibold text-white shadow-[0_8px_22px_rgba(7,22,47,0.2)] transition-all duration-200 hover:-translate-y-0.5 hover:bg-blue-700 hover:shadow-[0_12px_28px_rgba(37,99,235,0.25)]"
           >
-            Sign in
+            <LogIn className="h-4 w-4" /> Sign in
           </button>
         ) : (
           <Link
             to={"/dashboard/home"}
-            className="px-3 py-1.5 sm:px-4 sm:py-2 lg:px-5 lg:py-2 xl:px-6 xl:py-2.5 rounded bg-blue-700 font-bold hover:bg-blue-800 text-white text-sm xl:text-base transition-all duration-200 whitespace-nowrap"
+            className="group inline-flex items-center gap-2 whitespace-nowrap rounded-full bg-[#07162f] px-5 py-3 text-sm font-semibold text-white shadow-[0_8px_22px_rgba(7,22,47,0.2)] transition-all duration-200 hover:-translate-y-0.5 hover:bg-blue-700"
           >
-            Dashboard
+            <LayoutDashboard className="h-4 w-4" /> Dashboard
           </Link>
         )}
       </div>
 
       <div className="lg:hidden flex-shrink-0">
-        <button onClick={toggleMenu} className="text-gray-700 text-xl sm:text-2xl hover:text-blue-700 transition-colors duration-200 p-1">
+        <button onClick={toggleMenu} className="flex h-10 w-10 items-center justify-center rounded-full bg-slate-100 text-lg text-slate-700 transition-colors hover:bg-blue-50 hover:text-blue-700 sm:text-xl" aria-label={menuOpen ? "Close navigation menu" : "Open navigation menu"} aria-expanded={menuOpen}>
           {menuOpen ? <FaTimes /> : <FaBars />}
         </button>
       </div>
 
       {menuOpen && (
-        <div className="absolute top-[60px] sm:top-[65px] md:top-[70px] lg:top-[75px] left-0 w-full bg-white shadow-lg z-30 flex flex-col items-center space-y-2 sm:space-y-3 md:space-y-4 py-4 sm:py-5 md:py-6 lg:hidden max-h-[calc(100vh-60px)] sm:max-h-[calc(100vh-65px)] md:max-h-[calc(100vh-70px)] overflow-y-auto">
+        <div className={`absolute left-0 top-[calc(100%+0.75rem)] z-30 flex max-h-[calc(100vh-90px)] w-full flex-col overflow-y-auto rounded-[24px] border border-slate-200 bg-white p-3 shadow-[0_20px_55px_rgba(15,23,42,0.18)] lg:hidden ${isFloating ? "" : "rounded-t-none"}`}>
           {/* Priority items */}
           {priorityNavItems.map((item, index) => (
             item.to ? (
               <Link
                 key={index}
                 to={item.to}
-                className="text-gray-700 hover:text-blue-700 font-medium text-sm sm:text-base md:text-lg transition-colors duration-200 py-1 px-4"
+                className="rounded-xl px-4 py-3 text-sm font-semibold text-slate-700 transition-colors hover:bg-blue-50 hover:text-blue-700 sm:text-base"
                 onClick={toggleMenu}
               >
                 {item.label}
@@ -154,7 +170,7 @@ function Navbar() {
               <a
                 key={index}
                 href={item.href}
-                className="text-gray-700 hover:text-blue-700 font-medium text-sm sm:text-base md:text-lg transition-colors duration-200 py-1 px-4"
+                className="rounded-xl px-4 py-3 text-sm font-semibold text-slate-700 transition-colors hover:bg-blue-50 hover:text-blue-700 sm:text-base"
                 onClick={toggleMenu}
               >
                 {item.label}
@@ -167,7 +183,7 @@ function Navbar() {
             <Link
               key={index}
               to={item.to}
-              className="text-gray-700 hover:text-blue-700 font-medium text-sm sm:text-base md:text-lg transition-colors duration-200 py-1 px-4"
+              className="rounded-xl px-4 py-3 text-sm font-semibold text-slate-700 transition-colors hover:bg-blue-50 hover:text-blue-700 sm:text-base"
               onClick={toggleMenu}
             >
               {item.label}
@@ -176,7 +192,7 @@ function Navbar() {
           
           <Link
             to={"/internships"}
-            className="text-gray-700 hover:text-blue-700 font-medium text-sm sm:text-base md:text-lg transition-colors duration-200 py-1 px-4"
+            className="rounded-xl px-4 py-3 text-sm font-semibold text-slate-700 transition-colors hover:bg-blue-50 hover:text-blue-700 sm:text-base"
             onClick={toggleMenu}
           >
             Internships
@@ -187,16 +203,16 @@ function Navbar() {
                 toggleMenu();
                 openLoginModal();
               }}
-              className="px-6 py-2 sm:px-8 sm:py-2.5 md:px-10 md:py-3 rounded bg-blue-700 font-bold hover:bg-blue-800 text-white text-sm sm:text-base md:text-lg transition-all duration-200 mt-2 sm:mt-3"
+              className="mt-3 flex w-full items-center justify-center gap-2 rounded-full bg-[#07162f] px-6 py-3.5 text-sm font-semibold text-white hover:bg-blue-700 sm:text-base"
             >
-              Sign in
+              <LogIn className="h-4 w-4" /> Sign in
             </button>
           ) : (
             <Link
               to={"/dashboard/home"}
-              className="px-6 py-2 sm:px-8 sm:py-2.5 md:px-10 md:py-3 rounded bg-blue-700 font-bold hover:bg-blue-800 text-white text-sm sm:text-base md:text-lg transition-all duration-200 mt-2 sm:mt-3"
+              className="mt-3 flex w-full items-center justify-center gap-2 rounded-full bg-[#07162f] px-6 py-3.5 text-sm font-semibold text-white hover:bg-blue-700 sm:text-base"
             >
-              Dashboard
+              <LayoutDashboard className="h-4 w-4" /> Dashboard
             </Link>
           )}
         </div>

@@ -1,8 +1,6 @@
-import React, { useState, useEffect } from "react";
-import { Clock, MapPin, Phone, Mail } from "lucide-react";
+import { useState, useEffect } from "react";
+import { ArrowUpRight, Clock, MapPin, Phone, Mail, Send } from "lucide-react";
 import { SocialLinks } from "../Footer/SocialLinks";
-import { motion } from "framer-motion";
-import { container, fadeIn, item } from "../../utils/framerVariants";
 import { BACKEND_HOST } from "../../utils/config";
 import { Alert, AlertTitle, Snackbar } from "@mui/material";
 import axios from "axios";
@@ -12,7 +10,7 @@ export default function ContactForm() {
   const [phone, setPhone] = useState("+233");
   const [message, setMessage] = useState("");
   const [isLoading, setIsLoading] = useState("");
-  const [error, setError] = useState({});
+  const [, setError] = useState({});
   const [executives, setExecutives] = useState([]);
 
   useEffect(() => {
@@ -111,7 +109,7 @@ export default function ContactForm() {
   }
 
   return (
-    <section className="md:bg-gray-50  mt-[70px] py-16">
+    <section className="bg-[#f5f7fa] px-5 pb-20 pt-[110px] sm:px-8 sm:pb-28 sm:pt-[130px] lg:px-10">
       <Snackbar
         open={open}
         autoHideDuration={3000}
@@ -123,100 +121,62 @@ export default function ContactForm() {
           {errors}
         </Alert>
       </Snackbar>
-      <div className="container mx-auto px-6 lg:px-20">
-        <h2 className="text-4xl font-bold text-center text-gray-900 mb-6">
-          Get in touch with us
-        </h2>
-        <p className="text-center text-gray-600 mb-12">
-          Whether you have inquiries about our activities, events, or
-          membership, our team is here to help.
-        </p>
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-          {/* Left Section */}
-          <motion.ul
-            variants={container}
-            initial="offscreen"
-            whileInView="onscreen"
-            viewport={{ once: true, amount: 0 }}
-          >
-            <h3 className="text-2xl font-bold text-gray-900 mb-4">
-              Need any help?
-            </h3>
-            <p className="text-gray-600 mb-6">
-              Contact us today, and our team will provide tailored assistance to
-              meet your needs.
-            </p>
-            <motion.li variants={item} className="mb-6">
-              <h4 className="font-semibold text-gray-900 flex items-center gap-2">
-                <Clock className="w-5 h-5 text-blue-600" />
-                Opening Hours
-              </h4>
-              <p className="text-gray-600">
-                Monday to Friday: 9 am to 6 pm <br />
-                Sat-Sun: Closed
-              </p>
-            </motion.li>
-            <motion.li variants={item} className="mb-6">
-              <h4 className="font-semibold text-gray-900 flex items-center gap-2">
-                <MapPin className="w-5 h-5 text-blue-600" />
-                Address
-              </h4>
-              <p className="text-gray-600">
-                Computer Science Department, College of Science, KNUST
-              </p>
-            </motion.li>
-            <motion.li variants={item} className="mb-6">
-              <h4 className="font-semibold text-gray-900 flex items-center gap-2">
-                <Phone className="w-5 h-5 text-blue-600" />
-                Contact
-              </h4>
-              {contactExecs && contactExecs.length > 0 ? (
-                <>
-                  {contactExecs.map((exec, index) => (
-                    <div
-                      key={exec.executive_id}
-                      className={index > 0 ? "mt-3" : ""}
-                    >
-                      <p className="text-gray-600 flex items-center gap-2">
-                        <Phone className="w-4 h-4 text-gray-600" />
-                        <a
-                          href={`tel:${exec.phone}`}
-                          className="hover:text-blue-600"
-                        >
-                          {exec.phone}
-                        </a>
-                      </p>
-                      <p className="text-xs text-gray-500 ml-6">
-                        {exec.position.name} - {exec.executive_name}
-                      </p>
-                    </div>
-                  ))}
-                </>
-              ) : (
-                <p className="text-gray-600 flex items-center gap-2">
-                  <Phone className="w-4 h-4 text-gray-600" />
-                  +233 59 795 9032
-                </p>
-              )}
-              <p className="text-gray-600 flex items-center gap-2 mt-3">
-                <Mail className="w-4 h-4 text-gray-600" />
-                info@biochemknust.com
-              </p>
-            </motion.li>
-            <SocialLinks />
-          </motion.ul>
+      <div className="mx-auto max-w-7xl">
+        <div className="mb-12 max-w-3xl">
+          <h1 className="text-5xl font-semibold leading-[1.04] tracking-[-0.05em] text-slate-950 sm:text-6xl">Let’s start a conversation.</h1>
+          <p className="mt-5 max-w-2xl text-base leading-8 text-slate-600 sm:text-lg">Questions about membership, resources, events or a possible collaboration? Send us a message and the right person from our team will respond.</p>
+        </div>
 
-          {/* Right Section */}
-          <motion.div
-            variants={fadeIn("up", 0.5, 0)}
-            initial="offscreen"
-            whileInView="onscreen"
-            viewport={{ once: true, amount: 0 }}
-          >
-            <div className="bg-white md:p-6 space-y-6">
-              <div className="">
-                <label htmlFor="name" className="block text-gray-700  mb-1">
-                  Name
+        <div className="grid overflow-hidden rounded-[36px] bg-white shadow-[0_24px_70px_rgba(15,23,42,0.1)] lg:grid-cols-[0.8fr_1.2fr]">
+          <aside className="relative overflow-hidden bg-[#07162f] p-7 text-white sm:p-10 lg:p-12">
+            <div className="absolute -bottom-28 -right-28 h-72 w-72 rounded-full border-[48px] border-blue-400/10" />
+            <h2 className="relative text-3xl font-semibold tracking-[-0.03em]">Contact information</h2>
+            <p className="relative mt-4 max-w-sm text-sm leading-7 text-slate-300">Reach the society through the channel that works best for you.</p>
+
+            <div className="relative mt-10 space-y-4">
+              <a href="mailto:info@biochemknust.com" className="group flex items-center gap-4 rounded-2xl border border-white/10 bg-white/5 p-4 hover:bg-white/10">
+                <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-blue-500/20 text-blue-300"><Mail className="h-5 w-5" /></span>
+                <span className="min-w-0"><span className="block text-xs text-slate-400">Email us</span><span className="block truncate text-sm font-medium">info@biochemknust.com</span></span>
+                <ArrowUpRight className="ml-auto h-4 w-4 text-slate-400 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+              </a>
+
+              <div className="flex items-start gap-4 rounded-2xl border border-white/10 bg-white/5 p-4">
+                <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-blue-500/20 text-blue-300"><MapPin className="h-5 w-5" /></span>
+                <span><span className="block text-xs text-slate-400">Find us</span><span className="mt-1 block text-sm font-medium leading-6">Biochemistry Department<br />College of Science, KNUST</span></span>
+              </div>
+
+              <div className="flex items-start gap-4 rounded-2xl border border-white/10 bg-white/5 p-4">
+                <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-blue-500/20 text-blue-300"><Clock className="h-5 w-5" /></span>
+                <span><span className="block text-xs text-slate-400">Response hours</span><span className="mt-1 block text-sm font-medium leading-6">Monday–Friday<br />9:00 am–6:00 pm</span></span>
+              </div>
+            </div>
+
+            <div className="relative mt-8 border-t border-white/10 pt-7">
+              <p className="mb-4 text-xs text-slate-400">Student representatives</p>
+              <div className="space-y-3">
+                {contactExecs.length > 0 ? contactExecs.map((exec) => (
+                  <a key={exec.executive_id} href={`tel:${exec.phone}`} className="flex items-center gap-3 text-sm text-slate-200 hover:text-white">
+                    <Phone className="h-4 w-4 text-blue-300" />
+                    <span>{exec.phone}</span>
+                    <span className="ml-auto text-xs text-slate-500">{exec.position?.name}</span>
+                  </a>
+                )) : (
+                  <a href="tel:+233597959032" className="flex items-center gap-3 text-sm text-slate-200"><Phone className="h-4 w-4 text-blue-300" />+233 59 795 9032</a>
+                )}
+              </div>
+              <div className="mt-7"><SocialLinks /></div>
+            </div>
+          </aside>
+
+          <div className="p-7 sm:p-10 lg:p-12">
+            <div className="mb-8">
+              <h2 className="text-3xl font-semibold tracking-[-0.03em] text-slate-950">Send us a message</h2>
+              <p className="mt-2 text-sm leading-6 text-slate-500">Complete the form and we’ll direct your message to the right team member.</p>
+            </div>
+            <form className="space-y-6" onSubmit={(event) => { event.preventDefault(); handleSubmit(); }}>
+              <div>
+                <label htmlFor="name" className="mb-2 block text-sm font-semibold text-slate-700">
+                  Full name
                 </label>
                 <input
                   type="text"
@@ -224,11 +184,11 @@ export default function ContactForm() {
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder="Enter your name"
-                  className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:border-blue-500"
+                  className="w-full rounded-2xl border border-slate-300 bg-slate-50 px-4 py-3.5 outline-none focus:border-blue-500 focus:bg-white focus:ring-2 focus:ring-blue-500/15"
                 />
               </div>
-              <div className="">
-                <label htmlFor="phone" className="block text-gray-700  mb-1">
+              <div>
+                <label htmlFor="phone" className="mb-2 block text-sm font-semibold text-slate-700">
                   Phone Number
                 </label>
                 <input
@@ -237,13 +197,13 @@ export default function ContactForm() {
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
                   placeholder="Enter your phone number"
-                  className={`w-full px-4 py-2 border rounded focus:outline-none focus:border-blue-500 ${
+                  className={`w-full rounded-2xl border bg-slate-50 px-4 py-3.5 outline-none focus:border-blue-500 focus:bg-white focus:ring-2 focus:ring-blue-500/15 ${
                     errors?.phone ? "border-red-500" : "border-gray-300"
                   }`}
                 />
               </div>
-              <div className="">
-                <label htmlFor="message" className="block text-gray-700  mb-1">
+              <div>
+                <label htmlFor="message" className="mb-2 block text-sm font-semibold text-slate-700">
                   Message
                 </label>
                 <textarea
@@ -252,18 +212,18 @@ export default function ContactForm() {
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
                   placeholder="Enter your message"
-                  className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:border-blue-500"
+                  className="w-full resize-none rounded-2xl border border-slate-300 bg-slate-50 px-4 py-3.5 outline-none focus:border-blue-500 focus:bg-white focus:ring-2 focus:ring-blue-500/15"
                 ></textarea>
               </div>
               <button
-                onClick={handleSubmit}
+                type="submit"
                 disabled={isLoading || !name || !phone || !message}
-                className=" bg-blue-600 hover:bg-blue-700 text-white w-full py-2 font-bold rounded transition"
+                className="flex w-full items-center justify-center gap-2 rounded-full bg-blue-600 py-4 font-semibold text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
               >
-                {isLoading ? "Submitting..." : "Submit"}
+                {isLoading ? "Sending message..." : <><Send className="h-4 w-4" /> Send message</>}
               </button>
-            </div>
-          </motion.div>
+            </form>
+          </div>
         </div>
       </div>
     </section>

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { fadeIn, underlineAnimation } from "../utils/framerVariants";
+import { fadeIn } from "../utils/framerVariants";
 import { Footer } from "../Components/Footer/Footer";
 import Navbar from "../Components/Navbar";
 import { scrollToTop } from "../utils/scrollToTop";
@@ -14,7 +14,7 @@ import { useInternships } from "../Context/InternshipsContext";
 import { InternshipCard } from "../Components/Internships/InternshipCard";
 import { InternshipCardSkeleton } from "../Components/Internships/InternshipCardSkeleton";
 import { Helmet } from "react-helmet-async";
-import { Briefcase, Calendar } from "lucide-react";
+import { ArrowDown, Briefcase, Calendar, CheckCircle2, Search } from "lucide-react";
 
 export function InternshipPage() {
   const { internships, setInternships } = useInternships();
@@ -87,7 +87,7 @@ export function InternshipPage() {
         />
         <meta
           name="keywords"
-          content="BIO-CHEM KNUST internships, KNUST tech internships, computer science internships Ghana"
+          content="BIO-CHEM KNUST internships, biochemistry internships Ghana, KNUST industrial training"
         />
         <meta name="robots" content="index, follow" />
         <meta property="og:title" content="BIO-CHEM KNUST - Internships" />
@@ -113,51 +113,48 @@ export function InternshipPage() {
             description:
               "Curated internship listings and programs for KNUST Biochemistry students.",
             educationalProgramMode: "online",
-            occupationalCategory: "Information Technology",
+            occupationalCategory: "Life, Physical, and Social Science",
           })}
         </script>
       </Helmet>
 
-      <div className="relative mt-[70px]">
+      <div className="relative bg-[#f5f7fa] pt-[60px] sm:pt-[65px] md:pt-[70px] lg:pt-[75px]">
         <Navbar onSignInClick={handleOpenLoginModal} />
-        <div className="max-w-7xl mx-auto px-4 py-16">
-          <motion.h1
+        <header className="relative overflow-hidden bg-[#07162f] px-5 py-20 text-white sm:px-8 sm:py-24 lg:px-10 lg:py-28">
+          <div className="absolute -right-24 -top-40 h-[430px] w-[430px] rounded-full border-[70px] border-emerald-400/10" />
+          <div className="absolute bottom-0 left-[18%] h-56 w-56 rounded-full bg-emerald-500/15 blur-[100px]" />
+          <div className="relative mx-auto max-w-7xl lg:flex lg:items-end lg:justify-between">
+          <motion.div
             variants={fadeIn("up", 0.5, 0)}
             initial="offscreen"
             whileInView="onscreen"
             viewport={{ once: true, amount: 0 }}
-            className="text-4xl md:text-5xl mb-10 font-bold text-gray-900 text-center"
+            className="max-w-4xl"
           >
-            Browse{" "}
-            <span className="relative text-blue-600">
-              {" "}
-              Internships
-              <motion.div
-                variants={underlineAnimation(0.7)}
-                initial="offscreen"
-                whileInView="onscreen"
-                exit="reverse"
-                className="absolute left-0 bottom-0 h-1 bg-blue-600"
-                style={{ width: "0%", height: "3px" }}
-              />
-            </span>
-          </motion.h1>
-          <p className="text-center text-gray-600 mb-12">
-            Explore exciting internship opportunities that empower you to learn,
-            grow, and make an impact. Gain real-world experience and take the
-            first step toward a bright future.
-          </p>
+            <h1 className="text-5xl font-semibold leading-[1.02] tracking-[-0.05em] sm:text-6xl lg:text-7xl">Experience starts <span className="text-emerald-400">before graduation.</span></h1>
+            <p className="mt-6 max-w-2xl text-base leading-8 text-slate-300 sm:text-lg">Discover research placements, industrial training and practical opportunities selected for Biochemistry students.</p>
+            <div className="mt-8 flex flex-wrap gap-6 text-sm text-slate-300"><span className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-lime-300" /> Curated opportunities</span><span className="flex items-center gap-2"><Calendar className="h-4 w-4 text-lime-300" /> Active deadlines only</span></div>
+          </motion.div>
+          <a href="#opportunities" className="mt-9 inline-flex items-center gap-3 rounded-full bg-lime-300 px-6 py-4 font-semibold text-[#07162f] hover:bg-lime-200 lg:mt-0">Browse opportunities <ArrowDown className="h-5 w-5" /></a>
+          </div>
+        </header>
+
+        <section id="opportunities" className="mx-auto max-w-7xl px-5 py-20 sm:px-8 sm:py-28 lg:px-10">
+          <div className="mb-12 flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
+            <div><h2 className="text-4xl font-semibold tracking-[-0.04em] text-slate-950 sm:text-5xl">Open opportunities</h2><p className="mt-4 max-w-xl text-base leading-7 text-slate-600">Find the right next step and apply before the listed deadline.</p></div>
+            {hasInternships && <div className="flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-600"><Search className="h-4 w-4 text-emerald-700" />{internships.length} active listing{internships.length === 1 ? "" : "s"}</div>}
+          </div>
 
           {!internships ? (
             // Loading state
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
               {Array.from({ length: 8 }).map((_, index) => (
                 <InternshipCardSkeleton key={index} />
               ))}
             </div>
           ) : hasInternships ? (
             // Has internships - show grid
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
               {internships.map((internship) => (
                 <InternshipCard
                   key={internship.internship_id}
@@ -172,7 +169,7 @@ export function InternshipPage() {
               initial="offscreen"
               whileInView="onscreen"
               viewport={{ once: true, amount: 0 }}
-              className="text-center py-16 px-4"
+              className="rounded-[32px] border border-slate-200 bg-white px-4 py-20 text-center shadow-[0_18px_55px_rgba(15,23,42,0.06)]"
             >
               <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-blue-50 mb-6">
                 <Briefcase className="w-10 h-10 text-blue-600" />
@@ -192,7 +189,7 @@ export function InternshipPage() {
               </div>
             </motion.div>
           )}
-        </div>
+        </section>
         <Footer />
         {isLoginModalOpen && (
           <Login

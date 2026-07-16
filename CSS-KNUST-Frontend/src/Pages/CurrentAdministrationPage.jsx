@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { fadeIn, underlineAnimation } from "../utils/framerVariants";
+import { fadeIn } from "../utils/framerVariants";
 import Navbar from "../Components/Navbar";
 import { Footer } from "../Components/Footer/Footer";
 import ProfileModal from "../Components/ProfileModal";
@@ -30,8 +30,6 @@ import SignUp from "./SignUp";
 import { useNavigate } from "react-router-dom";
 import ForgotPasswordModal from "./ForgotPasswordModal";
 import ExecutiveLogin from "./ExecutiveLogin";
-
-/* eslint-disable react/prop-types */
 
 const socialIcons = {
   linkedin: Linkedin,
@@ -170,30 +168,30 @@ export default function CurrentAdministrationPage() {
 
   const ExecutiveCard = ({ executive }) => (
     <div
-      className="bg-white rounded-2xl shadow-xl overflow-hidden hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 cursor-pointer"
+      className="group cursor-pointer overflow-hidden rounded-[28px] border border-slate-200 bg-white shadow-[0_14px_45px_rgba(15,23,42,0.07)] transition-all duration-300 hover:-translate-y-1 hover:border-blue-200 hover:shadow-[0_24px_60px_rgba(15,23,42,0.12)]"
       onClick={() => openModal(executive, "executive")}
     >
-      <div className="relative h-64 sm:h-72">
+      <div className="relative h-[370px] sm:h-[410px]">
         <img
           src={getOptimizedImageUrl(
             executive.image || "/images/default-profile.png",
             IMAGE_PRESETS.card
           )}
           alt={executive.executive_name}
-          className="w-full h-full object-cover object-top"
+          className="h-full w-full object-cover object-top transition-transform duration-700 group-hover:scale-105"
           loading="lazy"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent"></div>
-        <div className="absolute bottom-4 left-4 right-4 text-white">
-          <h3 className="text-xl sm:text-2xl font-bold mb-1">
+        <div className="absolute inset-0 bg-gradient-to-t from-[#06142b] via-[#06142b]/15 to-transparent"></div>
+        <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
+          <h3 className="text-xl font-semibold tracking-tight sm:text-2xl">
             {executive.executive_name}
           </h3>
-          <p className="text-base sm:text-lg font-semibold text-yellow-300">
+          <p className="mt-2 text-xs font-semibold uppercase tracking-[0.14em] text-blue-300">
             {executive.position?.name}
           </p>
         </div>
       </div>
-      <div className="p-4 sm:p-6">
+      <div className="p-5 sm:p-6">
         {executive.phone && (
           <a
             href={`tel:${executive.phone}`}
@@ -232,19 +230,19 @@ export default function CurrentAdministrationPage() {
 
     return (
       <div
-        className={`bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 cursor-pointer ${
+      className={`group cursor-pointer overflow-hidden rounded-[24px] border border-slate-200 bg-white shadow-[0_10px_35px_rgba(15,23,42,0.06)] transition-all duration-300 hover:border-blue-200 hover:shadow-[0_18px_45px_rgba(15,23,42,0.1)] ${
           role === "member" ? "" : "transform hover:-translate-y-1"
         }`}
         onClick={() => openModal(appointee, "appointee")}
       >
-        <div className="relative h-48">
+        <div className="relative h-56 overflow-hidden bg-slate-100">
           <img
             src={getOptimizedImageUrl(
               appointee.image || "/images/default-profile.png",
               IMAGE_PRESETS.card
             )}
             alt={appointee.appointee_name}
-            className="w-full h-full object-cover object-top"
+            className="h-full w-full object-cover object-top transition-transform duration-700 group-hover:scale-105"
             loading="lazy"
           />
           <div
@@ -391,35 +389,25 @@ export default function CurrentAdministrationPage() {
         <meta name="revisit-after" content="3 days" />
       </Helmet>
 
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-indigo-50">
+      <div className="min-h-screen bg-[#f5f7fa]">
         <Navbar onSignInClick={handleOpenLoginModal} />
 
         {/* Hero Section */}
-        <section className="relative pt-24 sm:pt-28 md:pt-32 pb-12 sm:pb-16 md:pb-20 px-4 overflow-hidden">
-
-          <div className="max-w-7xl mx-auto text-center relative z-10">
+        <section className="relative overflow-hidden bg-[#07162f] px-5 pb-20 pt-[130px] text-white sm:px-8 sm:pb-24 sm:pt-[150px] lg:px-10 lg:pb-28">
+          <div className="absolute -right-24 -top-32 h-[430px] w-[430px] rounded-full border-[70px] border-blue-400/10" />
+          <div className="absolute bottom-0 left-[15%] h-52 w-52 rounded-full bg-blue-500/20 blur-[100px]" />
+          <div className="relative z-10 mx-auto max-w-7xl">
             <motion.h1
               variants={fadeIn("up", 0.5, 0)}
               initial="offscreen"
               whileInView="onscreen"
               viewport={{ once: true, amount: 0 }}
-              className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl mb-4 sm:mb-6 font-bold text-gray-900 px-4"
+              className="max-w-5xl text-5xl font-semibold leading-[1.02] tracking-[-0.05em] text-white sm:text-6xl lg:text-7xl"
             >
-              Current{" "}
-              <span className="relative text-blue-600">
-                Administration
-                <motion.div
-                  variants={underlineAnimation(0.7)}
-                  initial="offscreen"
-                  whileInView="onscreen"
-                  exit="reverse"
-                  className="absolute left-0 bottom-0 h-1 bg-blue-600"
-                  style={{ width: "0%", height: "3px" }}
-                />
-              </span>
+              Leadership with purpose. <span className="text-blue-400">Service with impact.</span>
             </motion.h1>
-            <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-gray-700 max-w-3xl mx-auto px-4">
-              Meet the dedicated team leading BIO-CHEM KNUST into the future
+            <p className="mt-6 max-w-2xl text-base leading-8 text-slate-300 sm:text-lg">
+              Meet the student leaders coordinating the people, programmes and priorities of the Biochemistry Society, KNUST.
             </p>
           </div>
         </section>
@@ -432,17 +420,17 @@ export default function CurrentAdministrationPage() {
           <>
             {/* Executives Section */}
             {executives.length > 0 && (
-              <section className="py-12 md:py-16 px-4">
-                <div className="max-w-7xl mx-auto">
-                  <div className="text-center mb-8 md:mb-12">
-                    <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold bg-gradient-to-r from-blue-600 to-blue-700 bg-clip-text text-transparent mb-3 md:mb-4">
+              <section className="px-5 py-20 sm:px-8 sm:py-28 lg:px-10">
+                <div className="mx-auto max-w-7xl">
+                  <div className="mb-12 max-w-3xl">
+                    <h2 className="text-4xl font-semibold tracking-[-0.04em] text-slate-950 sm:text-5xl">
                       Executive Board
                     </h2>
-                    <p className="text-lg md:text-xl text-gray-600 px-4">
+                    <p className="mt-4 text-base leading-7 text-slate-600 sm:text-lg">
                       The leadership steering our society towards excellence
                     </p>
                   </div>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+                  <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
                     {executives.map((executive) => (
                       <ExecutiveCard
                         key={executive.executive_id}
@@ -456,27 +444,27 @@ export default function CurrentAdministrationPage() {
 
             {/* Committees Section */}
             {committees.length > 0 && (
-              <section className="py-8 md:py-16 px-4 bg-white/50">
-                <div className="max-w-7xl mx-auto">
-                  <div className="text-center mb-8 md:mb-12">
-                    <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold bg-gradient-to-r from-blue-600 to-blue-700 bg-clip-text text-transparent mb-3 md:mb-4">
+              <section className="border-t border-slate-200 bg-white px-5 py-20 sm:px-8 sm:py-28 lg:px-10">
+                <div className="mx-auto max-w-7xl">
+                  <div className="mb-12 max-w-3xl">
+                    <h2 className="text-4xl font-semibold tracking-[-0.04em] text-slate-950 sm:text-5xl">
                       Committees
                     </h2>
-                    <p className="text-lg md:text-xl text-gray-600 px-4">
+                    <p className="mt-4 text-base leading-7 text-slate-600 sm:text-lg">
                       Specialized teams driving our initiatives forward
                     </p>
                   </div>
 
                   {/* Search Bar & Mobile Toggle */}
                   <div className="mb-6 md:mb-8 space-y-4">
-                    <div className="max-w-md mx-auto relative">
+                    <div className="relative max-w-md">
                       <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
                       <input
                         type="text"
                         placeholder="Search committees..."
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
-                        className="w-full pl-12 pr-4 py-3 rounded-xl border-2 border-gray-200 focus:border-blue-600 focus:outline-none transition-colors duration-300 text-sm md:text-base"
+                        className="w-full rounded-full border border-slate-300 bg-slate-50 py-3.5 pl-12 pr-4 text-sm outline-none transition-colors focus:border-blue-600 focus:bg-white focus:ring-2 focus:ring-blue-500/15 md:text-base"
                       />
                     </div>
                     
@@ -484,7 +472,7 @@ export default function CurrentAdministrationPage() {
                     <div className="lg:hidden flex justify-center">
                       <button
                         onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-                        className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
+                        className="flex items-center gap-2 rounded-full bg-blue-600 px-6 py-3 font-semibold text-white shadow-lg hover:bg-blue-700"
                       >
                         {isSidebarOpen ? (
                           <>
@@ -516,7 +504,7 @@ export default function CurrentAdministrationPage() {
                       <div
                         className={`
                           fixed lg:sticky top-0 lg:top-24 left-0 h-full lg:h-auto w-80 lg:w-auto
-                          bg-white rounded-none lg:rounded-2xl shadow-2xl lg:shadow-xl
+                          bg-white rounded-none lg:rounded-[24px] shadow-2xl lg:shadow-[0_12px_40px_rgba(15,23,42,0.07)] lg:border lg:border-slate-200
                           p-6 lg:p-4 z-50 lg:z-auto
                           transition-transform duration-300 ease-in-out
                           ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
@@ -548,8 +536,8 @@ export default function CurrentAdministrationPage() {
                               }}
                               className={`w-full text-left px-4 py-3 rounded-xl transition-all duration-300 flex items-center justify-between group ${
                                 selectedCommittee === committee.committee_id
-                                  ? "bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-lg"
-                                  : "hover:bg-gray-100 text-gray-700"
+                                  ? "bg-blue-600 text-white shadow-lg"
+                                  : "text-slate-600 hover:bg-slate-100 hover:text-slate-950"
                               }`}
                             >
                               <span className="font-medium text-sm">
@@ -578,13 +566,13 @@ export default function CurrentAdministrationPage() {
                             animate={{ opacity: 1, y: 0 }}
                             exit={{ opacity: 0, y: -20 }}
                             transition={{ duration: 0.3 }}
-                            className="bg-white rounded-2xl lg:rounded-3xl shadow-2xl p-4 sm:p-6 md:p-8"
+                            className="rounded-[28px] border border-slate-200 bg-[#f8fafc] p-5 shadow-[0_18px_55px_rgba(15,23,42,0.07)] sm:p-7 md:p-9"
                           >
                             <div className="mb-6 md:mb-8">
-                              <h3 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2 md:mb-3">
+                              <h3 className="text-2xl font-semibold tracking-[-0.03em] text-slate-950 sm:text-3xl">
                                 {currentCommittee.name}
                               </h3>
-                              <p className="text-base md:text-lg text-gray-600">
+                              <p className="mt-3 text-base leading-7 text-slate-600 md:text-lg">
                                 {currentCommittee.description}
                               </p>
                             </div>
