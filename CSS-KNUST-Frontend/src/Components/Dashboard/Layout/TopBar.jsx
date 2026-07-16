@@ -9,8 +9,9 @@ import Person from "@mui/icons-material/Person";
 import Settings from "@mui/icons-material/Settings";
 import { UserContext } from "../../../Context/UserContext";
 import { Link, useNavigate } from "react-router-dom";
-import logo from "../../../assets/css.png";
+import logo from "../../../assets/logo.png";
 import { SpringModal } from "../../SpringModal";
+import { BRAND } from "../../../config/brand";
 
 export function TopBar({ onMenuClick, sidebarCollapsed }) {
   const navigate = useNavigate();
@@ -43,7 +44,7 @@ export function TopBar({ onMenuClick, sidebarCollapsed }) {
               <Menui className="w-6 h-6 text-gray-700" />
             </button>
             <Link to={"/"} className="w-[60px]">
-              <img src={logo} className="object-contain" alt="CSS Logo" />
+              <img src={logo} className="object-contain" alt={`${BRAND.shortName} Logo`} />
             </Link>
           </div>
 

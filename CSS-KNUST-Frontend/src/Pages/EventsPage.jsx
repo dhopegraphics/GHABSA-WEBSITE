@@ -127,34 +127,34 @@ export function EventsPage() {
   return (
     <>
       <Helmet>
-        <title>Events | CSS KNUST</title>
+        <title>Events | BIO-CHEM KNUST</title>
         <meta
           name="description"
-          content="Stay updated with upcoming tech events, workshops, and conferences by the Computer Science Society of KNUST."
+          content="Stay updated with upcoming tech events, workshops, and conferences by the Biochemistry Society, KNUST."
         />
         <meta
           name="keywords"
-          content="CSS KNUST events, tech events KNUST, thecssknust events"
+          content="BIO-CHEM KNUST events, tech events KNUST, biochemknust events"
         />
         <meta name="robots" content="index, nofollow" />
-        <meta property="og:title" content="CSS KNUST - Events" />
+        <meta property="og:title" content="BIO-CHEM KNUST - Events" />
         <meta
           property="og:description"
-          content="Join exciting tech events, workshops, and activities hosted by CSS KNUST."
+          content="Join exciting tech events, workshops, and activities hosted by BIO-CHEM KNUST."
         />
         <meta
           property="og:image"
-          content="https://thecssknust.com/images/css.png"
+          content="https://biochemknust.com/images/logo.png"
         />
-        <meta property="og:url" content="https://thecssknust.com/events" />
+        <meta property="og:url" content="https://biochemknust.com/events" />
         <script type="application/ld+json">
           {JSON.stringify({
             "@context": "https://schema.org",
             "@type": "Event",
-            name: "CSS KNUST Tech Events",
+            name: "BIO-CHEM KNUST Tech Events",
             description:
-              "Tech-focused events organized by CSS KNUST including workshops, talks, and networking sessions.",
-            image: "https://thecssknust.com/images/css.png",
+              "Tech-focused events organized by BIO-CHEM KNUST including workshops, talks, and networking sessions.",
+            image: "https://biochemknust.com/images/logo.png",
           })}
         </script>
       </Helmet>
@@ -200,7 +200,7 @@ export function EventsPage() {
                 </div>
                 <div className="text-center sm:text-left">
                   <p className="font-semibold text-gray-900">Never miss an event!</p>
-                  <p className="text-sm text-gray-600">Sync all CSS KNUST events to your phone calendar</p>
+                  <p className="text-sm text-gray-600">Sync all BIO-CHEM KNUST events to your phone calendar</p>
                 </div>
               </div>
               <PublicEventsCalendarButton />

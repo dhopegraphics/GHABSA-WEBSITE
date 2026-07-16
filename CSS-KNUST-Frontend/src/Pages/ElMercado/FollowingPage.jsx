@@ -340,7 +340,7 @@ export function FollowingPage() {
     return (
       <>
         <Helmet>
-          <title>Following | El Mercado - CSS KNUST</title>
+          <title>Following | El Mercado - BIO-CHEM KNUST</title>
         </Helmet>
         <Navbar />
         <div className="min-h-screen bg-gray-50 pt-20">
@@ -370,7 +370,7 @@ export function FollowingPage() {
   return (
     <>
       <Helmet>
-        <title>Following | El Mercado - CSS KNUST</title>
+        <title>Following | El Mercado - BIO-CHEM KNUST</title>
         <meta
           name="description"
           content="View products from sellers you follow on El Mercado."

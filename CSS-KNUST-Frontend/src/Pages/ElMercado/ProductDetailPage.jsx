@@ -401,7 +401,7 @@ export function ProductDetailPage() {
     return (
       <>
         <Helmet>
-          <title>Product Not Found | El Mercado - CSS KNUST</title>
+          <title>Product Not Found | El Mercado - BIO-CHEM KNUST</title>
         </Helmet>
         <div className="min-h-screen bg-gray-50">
           <Navbar />
@@ -432,7 +432,7 @@ export function ProductDetailPage() {
   return (
     <>
       <Helmet>
-        <title>{product.title} | El Mercado - CSS KNUST</title>
+        <title>{product.title} | El Mercado - BIO-CHEM KNUST</title>
         <meta name="description" content={product.description?.substring(0, 160) || `Shop ${product.title} on El Mercado, KNUST's official marketplace.`} />
         
         {/* Open Graph / Facebook */}
@@ -441,7 +441,7 @@ export function ProductDetailPage() {
         <meta property="og:title" content={`${product.title} | El Mercado`} />
         <meta property="og:description" content={product.description?.substring(0, 160) || `Shop ${product.title} on El Mercado.`} />
         <meta property="og:image" content={product.main_image_url || product.main_image} />
-        <meta property="og:site_name" content="El Mercado - CSS KNUST" />
+        <meta property="og:site_name" content="El Mercado - BIO-CHEM KNUST" />
         
         {/* Product-specific Open Graph */}
         <meta property="product:price:amount" content={product.price} />

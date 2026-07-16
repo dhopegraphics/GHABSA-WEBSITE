@@ -728,7 +728,7 @@ export function SubmitProjectPage() {
                   name="title"
                   value={formData.title}
                   onChange={handleChange}
-                  placeholder="e.g., CSS KNUST Management System"
+                  placeholder="e.g., BIO-CHEM KNUST Management System"
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
                   required
                 />

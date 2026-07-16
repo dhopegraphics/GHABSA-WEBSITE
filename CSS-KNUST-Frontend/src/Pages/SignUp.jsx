@@ -400,7 +400,7 @@ const SignUp = ({ onClose, switchToLogin }) => {
               </h2>
               
               <p className="text-sm sm:text-base text-gray-600 mb-4 sm:mb-6 text-center px-2">
-                Join CSS KNUST community today
+                Join BIO-CHEM KNUST community today
               </p>
 
               {errors?.general && (

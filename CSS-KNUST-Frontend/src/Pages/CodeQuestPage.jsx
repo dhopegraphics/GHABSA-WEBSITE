@@ -362,7 +362,7 @@ const EventInfoSection = ({ event }) => {
                   <Users className="w-5 h-5 text-gray-400 mt-0.5" />
                   <div>
                     <p className="text-sm text-gray-500">Organized By</p>
-                    <p className="font-medium text-gray-900">{event?.organised_by || "CSS KNUST"}</p>
+                    <p className="font-medium text-gray-900">{event?.organised_by || "BIO-CHEM KNUST"}</p>
                   </div>
                 </div>
               </div>
@@ -573,7 +573,7 @@ const FAQAccordion = () => {
     {
       question: "What if I lose my access key?",
       answer:
-        "Contact the admin team at admin@thecssknust.com to recover your access key.",
+        "Contact the admin team at admin@biochemknust.com to recover your access key.",
     },
   ];
 

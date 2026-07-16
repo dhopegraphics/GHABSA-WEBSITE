@@ -1,9 +1,10 @@
 import  { useContext, useState } from "react";
 import { FaBars, FaTimes, FaChevronDown } from "react-icons/fa";
-import logo from "../assets/css.png";
+import logo from "../assets/logo.png";
 import { Link } from "react-router-dom";
 import { UserContext } from "../Context/UserContext";
 import { useAuthModals } from "../Context/AuthModalsContext";
+import { BRAND } from "../config/brand";
 
 function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -38,7 +39,7 @@ function Navbar() {
   return (
     <div className="w-full h-[60px] sm:h-[65px] md:h-[70px] lg:h-[75px] bg-[#ffffff80] fixed left-0 z-50 top-0 backdrop-blur-xl shadow px-3 sm:px-4 md:px-6 lg:px-8 xl:px-10 2xl:px-12 flex flex-row justify-between items-center">
       <Link to={"/"} className="w-[55px] sm:w-[65px] md:w-[75px] lg:w-[80px] flex-shrink-0">
-        <img src={logo} className="object-contain w-full h-auto" alt="CSS Logo" />
+        <img src={logo} className="object-contain w-full h-auto" alt={`${BRAND.shortName} Logo`} />
       </Link>
 
       <div className="hidden lg:flex xl:space-x-6 2xl:space-x-8 space-x-4 items-center flex-wrap justify-center">

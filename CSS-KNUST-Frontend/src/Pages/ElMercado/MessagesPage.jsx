@@ -256,7 +256,7 @@ export function MessagesPage() {
   return (
     <>
       <Helmet>
-        <title>Messages | El Mercado - CSS KNUST</title>
+        <title>Messages | El Mercado - BIO-CHEM KNUST</title>
         <meta name="description" content="View and manage your conversations with sellers on El Mercado." />
       </Helmet>
 

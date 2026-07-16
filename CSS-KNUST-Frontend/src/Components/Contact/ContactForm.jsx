@@ -200,7 +200,7 @@ export default function ContactForm() {
               )}
               <p className="text-gray-600 flex items-center gap-2 mt-3">
                 <Mail className="w-4 h-4 text-gray-600" />
-                info@thecssknust.com
+                info@biochemknust.com
               </p>
             </motion.li>
             <SocialLinks />

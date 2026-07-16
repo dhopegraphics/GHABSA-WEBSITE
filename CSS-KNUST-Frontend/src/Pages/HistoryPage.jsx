@@ -188,45 +188,45 @@ export default function HistoryPage() {
   return (
     <>
       <Helmet>
-        <title>History | CSS KNUST</title>
+        <title>History | BIO-CHEM KNUST</title>
         <meta
           name="description"
-          content="Explore the rich history of the Computer Science Society of KNUST. Journey through decades of excellence, innovation, and community. Learn about our founding, past administrations, milestones, and achievements."
+          content="Explore the rich history of the Biochemistry Society, KNUST. Journey through decades of excellence, innovation, and community. Learn about our founding, past administrations, milestones, and achievements."
         />
         <meta
           name="keywords"
-          content="CSS KNUST history, past administrations, founding members, milestones, achievements, historic events, past lecturers, KNUST CS legacy"
+          content="BIO-CHEM KNUST history, past administrations, founding members, milestones, achievements, historic events, past lecturers, KNUST CS legacy"
         />
-        <meta name="author" content="CSS KNUST" />
+        <meta name="author" content="BIO-CHEM KNUST" />
 
         {/* Open Graph / Facebook */}
         <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://cssknust.com/history" />
-        <meta property="og:title" content="History | CSS KNUST" />
+        <meta property="og:url" content="https://biochemknust.com/history" />
+        <meta property="og:title" content="History | BIO-CHEM KNUST" />
         <meta
           property="og:description"
-          content="Journey through the decades of excellence, innovation, and community that define the Computer Science Society of KNUST."
+          content="Journey through the decades of excellence, innovation, and community that define the Biochemistry Society, KNUST."
         />
         <meta
           property="og:image"
-          content="https://cssknust.com/og-history.jpg"
+          content="https://biochemknust.com/og-history.jpg"
         />
 
         {/* Twitter */}
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:url" content="https://cssknust.com/history" />
-        <meta name="twitter:title" content="History | CSS KNUST" />
+        <meta name="twitter:url" content="https://biochemknust.com/history" />
+        <meta name="twitter:title" content="History | BIO-CHEM KNUST" />
         <meta
           name="twitter:description"
-          content="Journey through the decades of excellence, innovation, and community that define CSS KNUST."
+          content="Journey through the decades of excellence, innovation, and community that define BIO-CHEM KNUST."
         />
         <meta
           name="twitter:image"
-          content="https://cssknust.com/og-history.jpg"
+          content="https://biochemknust.com/og-history.jpg"
         />
 
         {/* Additional Meta */}
-        <link rel="canonical" href="https://cssknust.com/history" />
+        <link rel="canonical" href="https://biochemknust.com/history" />
         <meta name="robots" content="index, follow" />
         <meta name="language" content="English" />
         <meta name="revisit-after" content="14 days" />
@@ -261,7 +261,7 @@ export default function HistoryPage() {
             </motion.h1>
             <p className="text-xl md:text-2xl text-gray-700 max-w-3xl mx-auto">
               Journey through the decades of excellence, innovation, and
-              community that define the Computer Science Society of KNUST
+              community that define the Biochemistry Society, KNUST
             </p>
           </div>
         </section>

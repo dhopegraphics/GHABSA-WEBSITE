@@ -338,54 +338,54 @@ export default function CurrentAdministrationPage() {
   return (
     <>
       <Helmet>
-        <title>Current Administration | CSS KNUST</title>
+        <title>Current Administration | BIO-CHEM KNUST</title>
         <meta
           name="description"
-          content="Meet the current executives and committee members of the Computer Science Society of KNUST. Discover the leadership steering our society towards excellence."
+          content="Meet the current executives and committee members of the Biochemistry Society, KNUST. Discover the leadership steering our society towards excellence."
         />
         <meta
           name="keywords"
-          content="CSS KNUST executives, current administration, committee members, student leadership, KNUST CS society, executive board, committee heads"
+          content="BIO-CHEM KNUST executives, current administration, committee members, student leadership, KNUST biochemistry society, executive board, committee heads"
         />
-        <meta name="author" content="CSS KNUST" />
+        <meta name="author" content="BIO-CHEM KNUST" />
 
         {/* Open Graph / Facebook */}
         <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://cssknust.com/administration" />
+        <meta property="og:url" content="https://biochemknust.com/administration" />
         <meta
           property="og:title"
-          content="Current Administration | CSS KNUST"
+          content="Current Administration | BIO-CHEM KNUST"
         />
         <meta
           property="og:description"
-          content="Meet the dedicated team leading CSS KNUST into the future. Executive board and committee members."
+          content="Meet the dedicated team leading BIO-CHEM KNUST into the future. Executive board and committee members."
         />
         <meta
           property="og:image"
-          content="https://cssknust.com/og-administration.jpg"
+          content="https://biochemknust.com/og-administration.jpg"
         />
 
         {/* Twitter */}
         <meta name="twitter:card" content="summary_large_image" />
         <meta
           name="twitter:url"
-          content="https://cssknust.com/administration"
+          content="https://biochemknust.com/administration"
         />
         <meta
           name="twitter:title"
-          content="Current Administration | CSS KNUST"
+          content="Current Administration | BIO-CHEM KNUST"
         />
         <meta
           name="twitter:description"
-          content="Meet the dedicated team leading CSS KNUST into the future."
+          content="Meet the dedicated team leading BIO-CHEM KNUST into the future."
         />
         <meta
           name="twitter:image"
-          content="https://cssknust.com/og-administration.jpg"
+          content="https://biochemknust.com/og-administration.jpg"
         />
 
         {/* Additional Meta */}
-        <link rel="canonical" href="https://cssknust.com/administration" />
+        <link rel="canonical" href="https://biochemknust.com/administration" />
         <meta name="robots" content="index, follow" />
         <meta name="language" content="English" />
         <meta name="revisit-after" content="3 days" />
@@ -419,7 +419,7 @@ export default function CurrentAdministrationPage() {
               </span>
             </motion.h1>
             <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-gray-700 max-w-3xl mx-auto px-4">
-              Meet the dedicated team leading CSS KNUST into the future
+              Meet the dedicated team leading BIO-CHEM KNUST into the future
             </p>
           </div>
         </section>

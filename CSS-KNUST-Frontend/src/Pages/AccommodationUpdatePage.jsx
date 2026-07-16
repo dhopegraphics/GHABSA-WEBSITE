@@ -396,7 +396,7 @@ const AccommodationUpdatePage = () => {
             </div>
             <div className="bg-yellow-50 border-l-4 border-yellow-500 p-4 rounded-r-lg mb-6 text-left">
               <p className="text-yellow-800 text-sm">
-                <strong>Note:</strong> {alreadySubmitted.help_text || "Each student can only submit once. If you need to make changes, please contact the President of the Computer Science Students' Society (CSS)."}
+                <strong>Note:</strong> {alreadySubmitted.help_text || "Each student can only submit once. If you need to make changes, please contact the President of the Biochemistry Society, KNUST."}
               </p>
             </div>
 
@@ -905,7 +905,7 @@ const AccommodationUpdatePage = () => {
             </li>
             <li className="flex items-start gap-2">
               <span className="text-red-500">•</span>
-              <strong>Need help?</strong> Contact the President of the Computer Science Students&apos; Society (CSS).
+              <strong>Need help?</strong> Contact the President of the Biochemistry Society, KNUST.
             </li>
           </ul>
         </div>

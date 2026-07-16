@@ -1,3 +1,3 @@
 User-agent: *
 Allow: /
-Sitemap: https://thecssknust.com/sitemap.xml
+Sitemap: https://biochemknust.com/sitemap.xml

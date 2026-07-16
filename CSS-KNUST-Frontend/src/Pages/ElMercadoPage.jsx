@@ -64,26 +64,26 @@ export function ElMercadoPage() {
   return (
     <>
       <Helmet>
-        <title>El Mercado | CSS KNUST</title>
+        <title>El Mercado | BIO-CHEM KNUST</title>
         <meta
           name="description"
           content="El Mercado - Your campus marketplace for buying and selling products within the KNUST community."
         />
         <meta
           name="keywords"
-          content="El Mercado, CSS KNUST marketplace, campus marketplace, KNUST buy and sell"
+          content="El Mercado, BIO-CHEM KNUST marketplace, campus marketplace, KNUST buy and sell"
         />
         <meta name="robots" content="index, nofollow" />
-        <meta property="og:title" content="CSS KNUST - El Mercado" />
+        <meta property="og:title" content="BIO-CHEM KNUST - El Mercado" />
         <meta
           property="og:description"
           content="Buy and sell products within the KNUST community on El Mercado."
         />
         <meta
           property="og:image"
-          content="https://thecssknust.com/images/css.png"
+          content="https://biochemknust.com/images/logo.png"
         />
-        <meta property="og:url" content="https://thecssknust.com/el-mercado" />
+        <meta property="og:url" content="https://biochemknust.com/el-mercado" />
       </Helmet>
 
       <div className="relative mt-[70px]">

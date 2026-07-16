@@ -194,7 +194,7 @@ export function ProfileCompletionOverlay({ incompleteFields, onClose }) {
                     Why Your Information Matters
                   </h3>
                   <p className="text-gray-700 text-sm leading-relaxed">
-                    The Computer Science Society uses your information to create
+                    The Biochemistry Society, KNUST uses your information to create
                     a personalized experience tailored just for you. From
                     relevant academic resources to timely exam notifications,
                     every piece of data helps us serve you better. Your privacy

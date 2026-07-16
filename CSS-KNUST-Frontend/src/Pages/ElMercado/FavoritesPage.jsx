@@ -382,7 +382,7 @@ export function FavoritesPage() {
   return (
     <>
       <Helmet>
-        <title>My Favorites | El Mercado - CSS KNUST</title>
+        <title>My Favorites | El Mercado - BIO-CHEM KNUST</title>
         <meta name="description" content="View and manage your favorite items on El Mercado" />
       </Helmet>
 

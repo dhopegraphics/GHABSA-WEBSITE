@@ -79,7 +79,7 @@ const CalendarTypeCard = ({
           <p className="text-xs text-gray-500">
             {type === "classes" && "Weekly class schedule with reminders"}
             {type === "exams" && "Exam dates with multiple reminders"}
-            {type === "events" && "All upcoming CSS KNUST events"}
+            {type === "events" && "All upcoming BIO-CHEM KNUST events"}
             {type === "full" && "Everything in one calendar"}
           </p>
         </div>

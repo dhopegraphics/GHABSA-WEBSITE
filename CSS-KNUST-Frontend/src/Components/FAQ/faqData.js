@@ -67,7 +67,7 @@ import {
       icon: ShoppingBag,
       questions: [
         {
-          question: "How can I purchase CS Society merchandise?",
+          question: "How can I purchase Biochem Society merchandise?",
           answer: "Browse our merchandise section, add items to your cart, and proceed to checkout. We accept various payment methods including credit cards and digital payments."
         },
         {
@@ -85,8 +85,8 @@ import {
       icon: Users,
       questions: [
         {
-          question: "How can I join the CS Society?",
-          answer: "Membership is open to all computer science students. Register through the 'Join Now' button on the homepage and follow the registration process."
+          question: "How can I join the Biochem Society?",
+          answer: "Membership is open to all biochemistry students. Register through the 'Join Now' button on the homepage and follow the registration process."
         },
         {
           question: "Are there regular meetups or events?",

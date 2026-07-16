@@ -1338,7 +1338,7 @@ export function BrowseProductsPage() {
   return (
     <>
       <Helmet>
-        <title>Browse Products | El Mercado - CSS KNUST</title>
+        <title>Browse Products | El Mercado - BIO-CHEM KNUST</title>
         <meta
           name="description"
           content="Browse and discover amazing products from sellers in the KNUST community. Find electronics, books, services, and more!"
@@ -1350,7 +1350,7 @@ export function BrowseProductsPage() {
         <meta property="og:title" content="El Mercado - KNUST's Official Marketplace" />
         <meta property="og:description" content="Browse and discover amazing products from sellers in the KNUST community. Find electronics, books, services, and more!" />
         <meta property="og:image" content={`${window.location.origin}/images/el-mercado-og.jpg`} />
-        <meta property="og:site_name" content="El Mercado - CSS KNUST" />
+        <meta property="og:site_name" content="El Mercado - BIO-CHEM KNUST" />
         
         {/* Twitter Card */}
         <meta name="twitter:card" content="summary_large_image" />

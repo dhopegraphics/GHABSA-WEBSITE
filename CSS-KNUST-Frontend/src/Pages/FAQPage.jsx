@@ -64,14 +64,14 @@ export function FAQPage() {
   return (
     <>
     <Helmet>
-  <title>FAQs | CSS KNUST</title>
-  <meta name="description" content="Got questions? Find quick answers about the Computer Science Society of KNUST, memberships, events and more." />
-  <meta name="keywords" content="FAQ CSS KNUST, CSS KNUST Questions, CSS KNUST Help, css knust, thecssknust" />
+  <title>FAQs | BIO-CHEM KNUST</title>
+  <meta name="description" content="Got questions? Find quick answers about the Biochemistry Society, KNUST, memberships, events and more." />
+  <meta name="keywords" content="FAQ BIO-CHEM KNUST, BIO-CHEM KNUST Questions, BIO-CHEM KNUST Help, biochem knust, biochemknust" />
   <meta name="robots" content="index, nofollow" />
-  <meta property="og:title" content="CSS KNUST - Frequently Asked Questions" />
-  <meta property="og:description" content="Everything you need to know about CSS KNUST!" />
-  <meta property="og:image" content="https://thecssknust.com/images/css.png" />
-  <meta property="og:url" content="https://thecssknust.com/faq" />
+  <meta property="og:title" content="BIO-CHEM KNUST - Frequently Asked Questions" />
+  <meta property="og:description" content="Everything you need to know about BIO-CHEM KNUST!" />
+  <meta property="og:image" content="https://biochemknust.com/images/logo.png" />
+  <meta property="og:url" content="https://biochemknust.com/faq" />
 </Helmet>
 
     <div className='relative mt-[70px] bg-gray-50'>

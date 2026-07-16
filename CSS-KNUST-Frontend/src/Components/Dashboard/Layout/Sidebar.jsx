@@ -21,7 +21,8 @@ import {
 } from "lucide-react";
 import { useCart } from "../../../Context/CartContext";
 import { UserContext } from "../../../Context/UserContext";
-import logo from "../../../assets/css.png";
+import logo from "../../../assets/logo.png";
+import { BRAND } from "../../../config/brand";
 
 export function Sidebar({ isOpen, onClose, isCollapsed, onToggleCollapse }) {
   const { getCartCount } = useCart();
@@ -118,12 +119,12 @@ export function Sidebar({ isOpen, onClose, isCollapsed, onToggleCollapse }) {
         <div className="flex items-center justify-between h-16 mx-4 border-b border-gray-200">
           {!isCollapsed && (
             <Link to={"/"} className="w-[80px] mt-2">
-              <img src={logo} className="object-contain" alt="CSS Logo" />
+              <img src={logo} className="object-contain" alt={`${BRAND.shortName} Logo`} />
             </Link>
           )}
           {isCollapsed && (
             <Link to={"/"} className="w-8 mx-auto mt-2">
-              <img src={logo} className="object-contain" alt="CSS Logo" />
+              <img src={logo} className="object-contain" alt={`${BRAND.shortName} Logo`} />
             </Link>
           )}
           <button

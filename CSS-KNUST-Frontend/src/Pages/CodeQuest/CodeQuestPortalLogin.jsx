@@ -161,7 +161,7 @@ const CodeQuestPortalLogin = () => {
                 <span>
                   Lost your access key?{" "}
                   <a
-                    href="mailto:admin@thecssknust.com"
+                    href="mailto:admin@biochemknust.com"
                     className="text-blue-600 hover:underline"
                   >
                     Contact support

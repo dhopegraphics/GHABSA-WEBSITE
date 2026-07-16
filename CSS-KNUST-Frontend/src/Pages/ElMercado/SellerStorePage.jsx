@@ -866,7 +866,7 @@ export function SellerStorePage() {
   return (
     <>
       <Helmet>
-        <title>{seller.display_name} | El Mercado - CSS KNUST</title>
+        <title>{seller.display_name} | El Mercado - BIO-CHEM KNUST</title>
         <meta
           name="description"
           content={seller.description || `Shop products from ${seller.display_name} on El Mercado, the official KNUST marketplace.`}
@@ -878,7 +878,7 @@ export function SellerStorePage() {
         <meta property="og:title" content={`${seller.display_name} | El Mercado`} />
         <meta property="og:description" content={seller.description || `Shop products from ${seller.display_name} on El Mercado, KNUST's official marketplace.`} />
         <meta property="og:image" content={bannerUrl || logoUrl || `${window.location.origin}/images/el-mercado-og.jpg`} />
-        <meta property="og:site_name" content="El Mercado - CSS KNUST" />
+        <meta property="og:site_name" content="El Mercado - BIO-CHEM KNUST" />
         
         {/* Profile-specific Open Graph */}
         <meta property="profile:username" content={seller.display_name} />

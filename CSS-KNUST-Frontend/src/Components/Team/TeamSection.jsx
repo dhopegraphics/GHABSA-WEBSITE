@@ -55,7 +55,7 @@ export function TeamSection() {
             </span>
           </motion.h1>
           <p className="text-gray-600 max-w-2xl mx-auto">
-            The dedicated individuals behind our Computer Science Society,
+            The dedicated individuals behind our Biochemistry Society, KNUST,
             working together to create opportunities and foster innovation.
           </p>
         </div>

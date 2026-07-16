@@ -278,7 +278,7 @@ Listing Price: GHS 111
           <h4>Example: T-Shirt with Sizes</h4>
           <div class="code-block">
             <code>
-Main Listing: CSS KNUST T-Shirt - GHS 80<br/>
+Main Listing: BIO-CHEM KNUST T-Shirt - GHS 80<br/>
 ├── Variant: Small - GHS 80 (Stock: 10)<br/>
 ├── Variant: Medium - GHS 80 (Stock: 15)<br/>
 ├── Variant: Large - GHS 85 (Stock: 12)<br/>
@@ -767,7 +767,7 @@ Your Earnings: GHS 90
 ✅ Good: "HP Pavilion 15 Laptop - Intel i5, 8GB RAM, 256GB SSD"
 
 ❌ Bad: "Nice shirt"
-✅ Good: "CSS KNUST Official Polo Shirt - Navy Blue - Large"
+✅ Good: "BIO-CHEM KNUST Official Polo Shirt - Navy Blue - Large"
             </code>
           </div>
           
@@ -966,7 +966,7 @@ Your Earnings: GHS 90
           
           <h4>Support Resources</h4>
           <ul>
-            <li><strong>Email:</strong> seller-support@cssknust.com</li>
+            <li><strong>Email:</strong> seller-support@biochemknust.com</li>
             <li><strong>Response Time:</strong> Within 24-48 hours</li>
             <li><strong>Office Hours:</strong> Mon-Fri, 9 AM - 5 PM</li>
           </ul>
@@ -1269,7 +1269,7 @@ export function SellerGuidePage() {
   return (
     <>
       <Helmet>
-        <title>Seller Guide | El Mercado - CSS KNUST</title>
+        <title>Seller Guide | El Mercado - BIO-CHEM KNUST</title>
         <meta
           name="description"
           content="Complete guide to selling on El Mercado. Learn how to manage your dashboard, create listings, handle orders, and grow your business."

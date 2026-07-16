@@ -1,14 +1,14 @@
 
 
 import { HeroContent } from "./HeroContent";
-import CssHero from "../../assets/cssHero.png";
+import HeroImage from "../../assets/hero.png";
 
 export default function Hero({ onSignupClick }) {
   return (
     <div
       className="min-h-screen mt-[70px] z-10 hero relative bg-cover  bg-center transition-all duration-1000 ease-in-out"
       style={{
-        backgroundImage: `url(${CssHero})`,
+        backgroundImage: `url(${HeroImage})`,
       }}
     >
       <div className="absolute inset-0 bg-gradient-to-b from-black/30 to-black/95" />

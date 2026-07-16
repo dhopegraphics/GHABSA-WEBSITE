@@ -391,7 +391,7 @@ export function VotingPage() {
   return (
     <>
       <Helmet>
-        <title>Voting & Elections | CSS KNUST</title>
+        <title>Voting & Elections | BIO-CHEM KNUST</title>
         <meta
           name="description"
           content="Participate in departmental elections, course rep voting, and awards. Make your voice heard in the CSS community."

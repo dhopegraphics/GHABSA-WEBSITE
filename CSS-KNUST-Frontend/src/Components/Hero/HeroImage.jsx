@@ -13,7 +13,7 @@ export function HeroImage() {
                         viewport={{ once: true, amount: 0 }} className="relative  rounded-full mx-auto bg-gradient-to-t from-blue-700 to-transparent aspect-square  overflow-hidden shadow-xl ">
         <img 
           src={cs}
-          alt="CS Society Members" 
+          alt="Biochem Society Members" 
           className="h-full w-full object-cover"
         />
       </motion.figure>

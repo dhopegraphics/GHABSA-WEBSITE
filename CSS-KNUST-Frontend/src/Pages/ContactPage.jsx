@@ -57,38 +57,38 @@ export function ContactPage() {
   return (
     <>
       <Helmet>
-        <title>Contact Us | CSS KNUST</title>
+        <title>Contact Us | BIO-CHEM KNUST</title>
         <meta
           name="description"
-          content="Have a question or collaboration in mind? Reach out to the Computer Science Society of KNUST today."
+          content="Have a question or collaboration in mind? Reach out to the Biochemistry Society, KNUST today."
         />
         <meta
           name="keywords"
-          content="Contact CSS KNUST, cssknust, thecssknust"
+          content="Contact BIO-CHEM KNUST, biochemknust, biochemknust"
         />
         <meta name="robots" content="index, nofollow" />
-        <meta property="og:title" content="CSS KNUST - Contact Us" />
+        <meta property="og:title" content="BIO-CHEM KNUST - Contact Us" />
         <meta
           property="og:description"
           content="Connect with the tech minds of KNUST!"
         />
         <meta
           property="og:image"
-          content="https://thecssknust.com/images/css.png"
+          content="https://biochemknust.com/images/logo.png"
         />
-        <meta property="og:url" content="https://thecssknust.com/contact-us" />
+        <meta property="og:url" content="https://biochemknust.com/contact-us" />
         <script type="application/ld+json">
           {JSON.stringify({
             "@context": "https://schema.org",
             "@type": "Organization",
-            name: "Computer Science Society, KNUST",
-            url: "https://thecssknust.com/contact-us",
-            logo: "https://thecssknust.com/images/css.png",
+            name: "Biochemistry Society, KNUST",
+            url: "https://biochemknust.com/contact-us",
+            logo: "https://biochemknust.com/images/logo.png",
             contactPoint: {
               "@type": "ContactPoint",
               telephone: "+233 59 795 9032",
               contactType: "Student Support",
-              email: "info@thecssknust.com",
+              email: "info@biochemknust.com",
               areaServed: "GH",
               availableLanguage: ["English"],
             },

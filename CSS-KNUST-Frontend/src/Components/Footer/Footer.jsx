@@ -1,8 +1,9 @@
 
 import { FooterColumn } from "./FooterColumn";
 import { SocialLinks } from "./SocialLinks";
-import logo from "../../assets/css.png";
+import logo from "../../assets/logo.png";
 import { Link } from "react-router-dom";
+import { BRAND, EMAILS } from "../../config/brand";
 
 export function Footer() {
   const currentYear = new Date().getFullYear();
@@ -36,14 +37,13 @@ export function Footer() {
           <div className="space-y-4">
             <div className="flex items-center space-x-2">
               <div className="w-[60px] mt-1">
-                <img src={logo} className="object-contain" alt="CSS Logo" />
+                <img src={logo} className="object-contain" alt={`${BRAND.shortName} Logo`} />
               </div>
-              <span className="text-xl font-bold">CS Society</span>
+              <span className="text-xl font-bold">{BRAND.shortLabel}</span>
               {/* <Code2 className="w-8 h-8 text-blue-500" /> */}
             </div>
             <p className="text-gray-400 text-sm">
-              Empowering students to explore, learn, and innovate in the world
-              of computer science.
+              {BRAND.tagline}
             </p>
             <SocialLinks />
           </div>
@@ -177,14 +177,14 @@ export function Footer() {
               <li>
                 <a
                   className="text-gray-300 hover:text-white transition-colors duration-200"
-                  href="mailto:info@thecssknust.com"
+                  href={`mailto:${EMAILS.info}`}
                 >
-                  info@thecssknust.com
+                  {EMAILS.info}
                 </a>
               </li>
               <li className="text-gray-400 mt-4">Location:</li>
               <li className="text-gray-300">
-                Computer Science Department
+                Biochemistry Department
                 <br />
                 University Campus
               </li>
@@ -196,7 +196,7 @@ export function Footer() {
         <div className="mt-12 pt-8 border-t border-gray-800">
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
             <p className="text-gray-400 text-sm">
-              © {currentYear} CS Society. All rights reserved.
+              © {currentYear} {BRAND.shortLabel}. All rights reserved.
             </p>
             {/* <div className="flex space-x-6 text-sm"> */}
             {/*   <a */}

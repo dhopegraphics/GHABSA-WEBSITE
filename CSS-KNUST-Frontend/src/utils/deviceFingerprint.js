@@ -2,10 +2,12 @@
  * Device Fingerprinting Utility
  * Generates a unique fingerprint based on browser and device characteristics
  * Used for preventing duplicate anonymous votes
- * 
+ *
  * IMPORTANT: Fingerprints must be DETERMINISTIC - same device should always
  * produce the same fingerprint for reliable duplicate detection.
  */
+
+import { FINGERPRINT_SEED } from "../config/brand";
 
 // Deterministic hash function - MUST NOT include random or timestamp values
 // Uses crypto.subtle if available (HTTPS), falls back to djb2 hash for HTTP/mobile
@@ -49,9 +51,9 @@ const getCanvasFingerprint = () => {
     ctx.fillStyle = '#f60';
     ctx.fillRect(125, 1, 62, 20);
     ctx.fillStyle = '#069';
-    ctx.fillText('CSS-KNUST-Voting', 2, 15);
+    ctx.fillText(FINGERPRINT_SEED,2, 15);
     ctx.fillStyle = 'rgba(102, 204, 0, 0.7)';
-    ctx.fillText('CSS-KNUST-Voting', 4, 17);
+    ctx.fillText(FINGERPRINT_SEED,4, 17);
     
     return canvas.toDataURL();
   } catch {

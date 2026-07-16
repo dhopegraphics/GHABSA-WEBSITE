@@ -152,7 +152,7 @@ export function WriteReviewPage() {
     return (
       <>
         <Helmet>
-          <title>Cannot Write Review | El Mercado - CSS KNUST</title>
+          <title>Cannot Write Review | El Mercado - BIO-CHEM KNUST</title>
         </Helmet>
         <div className="min-h-screen bg-gray-50">
           <Navbar />
@@ -216,7 +216,7 @@ export function WriteReviewPage() {
     return (
       <>
         <Helmet>
-          <title>Review Submitted | El Mercado - CSS KNUST</title>
+          <title>Review Submitted | El Mercado - BIO-CHEM KNUST</title>
         </Helmet>
         <div className="min-h-screen bg-gray-50">
           <Navbar />
@@ -245,7 +245,7 @@ export function WriteReviewPage() {
   return (
     <>
       <Helmet>
-        <title>Write Review for {product.title} | El Mercado - CSS KNUST</title>
+        <title>Write Review for {product.title} | El Mercado - BIO-CHEM KNUST</title>
       </Helmet>
 
       <div className="min-h-screen bg-gray-50">

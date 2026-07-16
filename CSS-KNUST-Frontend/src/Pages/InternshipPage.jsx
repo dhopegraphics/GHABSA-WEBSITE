@@ -80,38 +80,38 @@ export function InternshipPage() {
   return (
     <>
       <Helmet>
-        <title>Internships | CSS KNUST</title>
+        <title>Internships | BIO-CHEM KNUST</title>
         <meta
           name="description"
-          content="Find internship opportunities curated by the Computer Science Society of KNUST. Build experience and boost your career."
+          content="Find internship opportunities curated by the Biochemistry Society, KNUST. Build experience and boost your career."
         />
         <meta
           name="keywords"
-          content="CSS KNUST internships, KNUST tech internships, computer science internships Ghana"
+          content="BIO-CHEM KNUST internships, KNUST tech internships, computer science internships Ghana"
         />
         <meta name="robots" content="index, follow" />
-        <meta property="og:title" content="CSS KNUST - Internships" />
+        <meta property="og:title" content="BIO-CHEM KNUST - Internships" />
         <meta
           property="og:description"
-          content="Explore top internship opportunities for Computer Science students."
+          content="Explore top internship opportunities for Biochemistry students."
         />
         <meta
           property="og:image"
-          content="https://thecssknust.com/images/css.png"
+          content="https://biochemknust.com/images/logo.png"
         />
-        <meta property="og:url" content="https://thecssknust.com/internships" />
+        <meta property="og:url" content="https://biochemknust.com/internships" />
         <script type="application/ld+json">
           {JSON.stringify({
             "@context": "https://schema.org",
             "@type": "EducationalOccupationalProgram",
-            name: "CSS KNUST - Internships",
+            name: "BIO-CHEM KNUST - Internships",
             provider: {
               "@type": "CollegeOrUniversity",
-              name: "Computer Science Society, KNUST",
-              url: "https://thecssknust.com",
+              name: "Biochemistry Society, KNUST",
+              url: "https://biochemknust.com",
             },
             description:
-              "Curated internship listings and programs for KNUST Computer Science students.",
+              "Curated internship listings and programs for KNUST Biochemistry students.",
             educationalProgramMode: "online",
             occupationalCategory: "Information Technology",
           })}

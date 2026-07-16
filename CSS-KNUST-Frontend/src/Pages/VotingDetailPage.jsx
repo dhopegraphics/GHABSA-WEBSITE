@@ -848,7 +848,7 @@ export function VotingDetailPage() {
   return (
     <>
       <Helmet>
-        <title>{event.title} | CSS KNUST Voting</title>
+        <title>{event.title} | BIO-CHEM KNUST Voting</title>
         <meta
           name="description"
           content={event.description || "Vote in this event"}

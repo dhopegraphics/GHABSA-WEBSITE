@@ -304,7 +304,7 @@ export function VotingResultsPage() {
   return (
     <>
       <Helmet>
-        <title>{event.title} - Results | CSS KNUST Voting</title>
+        <title>{event.title} - Results | BIO-CHEM KNUST Voting</title>
         <meta name="description" content={`View results for ${event.title}`} />
       </Helmet>
 

@@ -161,45 +161,45 @@ export default function ProjectsPage() {
   return (
     <>
       <Helmet>
-        <title>Student Projects | CSS KNUST</title>
+        <title>Student Projects | BIO-CHEM KNUST</title>
         <meta
           name="description"
-          content="Explore innovative projects built by Computer Science students at KNUST. From web applications to AI systems, blockchain, IoT, and game development."
+          content="Explore innovative projects built by Biochemistry students at KNUST. From web applications to AI systems, blockchain, IoT, and game development."
         />
         <meta
           name="keywords"
           content="KNUST projects, student projects, CS projects, web development, mobile apps, AI projects, machine learning, blockchain, IoT, game development, KNUST innovation"
         />
-        <meta name="author" content="CSS KNUST" />
+        <meta name="author" content="BIO-CHEM KNUST" />
 
         {/* Open Graph / Facebook */}
         <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://cssknust.com/projects" />
-        <meta property="og:title" content="Student Projects | CSS KNUST" />
+        <meta property="og:url" content="https://biochemknust.com/projects" />
+        <meta property="og:title" content="Student Projects | BIO-CHEM KNUST" />
         <meta
           property="og:description"
-          content="Explore innovative projects built by Computer Science students at KNUST. Discover what our future tech leaders are creating."
+          content="Explore innovative projects built by Biochemistry students at KNUST. Discover what our future tech leaders are creating."
         />
         <meta
           property="og:image"
-          content="https://cssknust.com/og-projects.jpg"
+          content="https://biochemknust.com/og-projects.jpg"
         />
 
         {/* Twitter */}
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:url" content="https://cssknust.com/projects" />
-        <meta name="twitter:title" content="Student Projects | CSS KNUST" />
+        <meta name="twitter:url" content="https://biochemknust.com/projects" />
+        <meta name="twitter:title" content="Student Projects | BIO-CHEM KNUST" />
         <meta
           name="twitter:description"
-          content="Explore innovative projects built by Computer Science students at KNUST."
+          content="Explore innovative projects built by Biochemistry students at KNUST."
         />
         <meta
           name="twitter:image"
-          content="https://cssknust.com/og-projects.jpg"
+          content="https://biochemknust.com/og-projects.jpg"
         />
 
         {/* Additional Meta */}
-        <link rel="canonical" href="https://cssknust.com/projects" />
+        <link rel="canonical" href="https://biochemknust.com/projects" />
         <meta name="robots" content="index, follow" />
         <meta name="language" content="English" />
         <meta name="revisit-after" content="7 days" />

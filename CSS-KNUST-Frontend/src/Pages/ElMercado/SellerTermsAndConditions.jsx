@@ -18,7 +18,7 @@ export function SellerTermsAndConditions() {
       title: "1. Agreement to Terms",
       content: [
         "By registering as a seller on El Mercado, you agree to be bound by these Terms and Conditions.",
-        "These terms constitute a legally binding agreement between you and CSS KNUST El Mercado.",
+        "These terms constitute a legally binding agreement between you and BIO-CHEM KNUST El Mercado.",
         "You must be at least 18 years old and have the legal capacity to enter into contracts to become a seller.",
         "If you are registering as a business, you represent that you have the authority to bind that business to these terms."
       ]
@@ -77,7 +77,7 @@ export function SellerTermsAndConditions() {
       content: [
         "You retain ownership of the content you post, but grant El Mercado a license to use it.",
         "You warrant that you have the right to sell all items listed and use all content posted.",
-        "El Mercado's trademarks, logos, and branding remain the property of CSS KNUST.",
+        "El Mercado's trademarks, logos, and branding remain the property of BIO-CHEM KNUST.",
         "You may not use El Mercado's intellectual property without express written permission."
       ]
     },
@@ -150,8 +150,8 @@ export function SellerTermsAndConditions() {
   return (
     <>
       <Helmet>
-        <title>Seller Terms &amp; Conditions | El Mercado - CSS KNUST</title>
-        <meta name="description" content="Read the seller terms and conditions for El Mercado, the official CSS KNUST marketplace platform." />
+        <title>Seller Terms &amp; Conditions | El Mercado - BIO-CHEM KNUST</title>
+        <meta name="description" content="Read the seller terms and conditions for El Mercado, the official BIO-CHEM KNUST marketplace platform." />
       </Helmet>
 
       <div className="min-h-screen flex flex-col bg-gradient-to-br from-purple-50 via-white to-blue-50">
@@ -188,8 +188,8 @@ export function SellerTermsAndConditions() {
             >
               <h2 className="text-2xl font-bold text-gray-900 mb-4">Introduction</h2>
               <p className="text-gray-700 leading-relaxed mb-4">
-                Welcome to El Mercado, the official marketplace platform of the Computer Science Students&apos; 
-                Society (CSS) at Kwame Nkrumah University of Science and Technology (KNUST). These Seller 
+                Welcome to El Mercado, the official marketplace platform of the Biochemistry
+                Society, KNUST at Kwame Nkrumah University of Science and Technology (KNUST). These Seller
                 Terms and Conditions govern your use of El Mercado as a seller and establish the rights and 
                 responsibilities between you and the platform.
               </p>
@@ -242,9 +242,9 @@ export function SellerTermsAndConditions() {
                 If you have any questions about these Seller Terms and Conditions, please contact us:
               </p>
               <div className="space-y-2 text-purple-100">
-                <p><strong className="text-white">Email:</strong> info@thecssknust.com</p>
+                <p><strong className="text-white">Email:</strong> info@biochemknust.com</p>
                 <p><strong className="text-white">Support Portal:</strong> Available through your seller dashboard</p>
-                <p><strong className="text-white">Office:</strong> CSS KNUST Office, Department of Computer Science</p>
+                <p><strong className="text-white">Office:</strong> BIO-CHEM KNUST Office, Department of Biochemistry</p>
               </div>
             </motion.div>
 

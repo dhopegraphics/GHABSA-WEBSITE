@@ -93,7 +93,7 @@ export function StaffPage() {
   return (
     <>
       <Helmet>
-        <title>Department & Staff | CSS KNUST</title>
+        <title>Department & Staff | BIO-CHEM KNUST</title>
         <meta
           name="description"
           content="Meet our world-class educators and researchers driving innovation in computer science at KNUST. Browse our faculty of professors, lecturers, and research experts."
@@ -102,33 +102,33 @@ export function StaffPage() {
           name="keywords"
           content="KNUST staff, computer science professors, KNUST lecturers, CS faculty, research staff, associate professors, senior lecturers, KNUST educators"
         />
-        <meta name="author" content="CSS KNUST" />
+        <meta name="author" content="BIO-CHEM KNUST" />
 
         {/* Open Graph / Facebook */}
         <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://cssknust.com/staff" />
-        <meta property="og:title" content="Department & Staff | CSS KNUST" />
+        <meta property="og:url" content="https://biochemknust.com/staff" />
+        <meta property="og:title" content="Department & Staff | BIO-CHEM KNUST" />
         <meta
           property="og:description"
           content="Meet our world-class educators and researchers driving innovation in computer science at KNUST."
         />
-        <meta property="og:image" content="https://cssknust.com/og-staff.jpg" />
+        <meta property="og:image" content="https://biochemknust.com/og-staff.jpg" />
 
         {/* Twitter */}
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:url" content="https://cssknust.com/staff" />
-        <meta name="twitter:title" content="Department & Staff | CSS KNUST" />
+        <meta name="twitter:url" content="https://biochemknust.com/staff" />
+        <meta name="twitter:title" content="Department & Staff | BIO-CHEM KNUST" />
         <meta
           name="twitter:description"
           content="Meet our world-class educators and researchers driving innovation in computer science at KNUST."
         />
         <meta
           name="twitter:image"
-          content="https://cssknust.com/og-staff.jpg"
+          content="https://biochemknust.com/og-staff.jpg"
         />
 
         {/* Additional Meta */}
-        <link rel="canonical" href="https://cssknust.com/staff" />
+        <link rel="canonical" href="https://biochemknust.com/staff" />
         <meta name="robots" content="index, follow" />
         <meta name="language" content="English" />
         <meta name="revisit-after" content="7 days" />

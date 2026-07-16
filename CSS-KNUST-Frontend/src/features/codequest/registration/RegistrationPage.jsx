@@ -147,7 +147,7 @@ const FAQAccordion = () => {
     {
       question: "What if I lose my access key?",
       answer:
-        "Contact the admin team at admin@thecssknust.com to recover your access key.",
+        "Contact the admin team at admin@biochemknust.com to recover your access key.",
     },
   ];
 

@@ -23,40 +23,40 @@ function HomePage() {
   return (
     <>
       <Helmet>
-        <title>Home | CSS KNUST</title>
+        <title>Home | BIO-CHEM KNUST</title>
         <meta
           name="description"
-          content="Welcome to the official platform of the Computer Science Society of KNUST. Get updates on events, blogs, and more."
+          content="Welcome to the official platform of the Biochemistry Society, KNUST. Get updates on events, blogs, and more."
         />
         <meta
           name="keywords"
-          content="CSS KNUST, Computer Science KNUST, css knust, knust, thecssknust"
+          content="BIO-CHEM KNUST, Computer Science KNUST, biochem knust, knust, biochemknust"
         />
         <meta name="robots" content="index, nofollow" />
-        <meta property="og:title" content="CSS KNUST - Home" />
+        <meta property="og:title" content="BIO-CHEM KNUST - Home" />
         <meta
           property="og:description"
           content="Discover the tech heartbeat of KNUST!"
         />
         <meta
           property="og:image"
-          content="https://thecssknust.com/images/css.png"
+          content="https://biochemknust.com/images/logo.png"
         />
-        <meta property="og:url" content="https://thecssknust.com/" />
+        <meta property="og:url" content="https://biochemknust.com/" />
         <script type="application/ld+json">
           {JSON.stringify({
             "@context": "https://schema.org",
             "@type": "CollegeOrUniversity",
-            name: "Computer Science Society, KNUST",
-            url: "https://thecssknust.com",
-            logo: "https://thecssknust.com/images/css.png",
+            name: "Biochemistry Society, KNUST",
+            url: "https://biochemknust.com",
+            logo: "https://biochemknust.com/images/logo.png",
             description:
-              "The official Computer Science Society of KNUST. Empowering students through tech, innovation, and community.",
+              "The official Biochemistry Society, KNUST. Empowering students through tech, innovation, and community.",
             sameAs: [
-              "https://x.com/thecssknust",
-              "https://t.me/thecssknust",
-              "https://linkedin.com/in/thecssknust-original",
-              "https://instagram.com/thecssknust",
+              "https://x.com/thebiochemknust",
+              "https://t.me/thebiochemknust",
+              "https://linkedin.com/in/thebiochemknust",
+              "https://instagram.com/thebiochemknust",
             ],
             address: {
               "@type": "PostalAddress",

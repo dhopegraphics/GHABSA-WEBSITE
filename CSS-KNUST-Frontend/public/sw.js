@@ -23,7 +23,7 @@ self.addEventListener("push", function (event) {
     console.warn("⚠️ Push event has no data");
     // Show a notification anyway so user knows something was received
     event.waitUntil(
-      self.registration.showNotification("CSS KNUST - No Data", {
+      self.registration.showNotification("BIO-CHEM KNUST - No Data", {
         body: "Received push but no data attached",
         icon: "/logo.png",
         tag: "no-data",
@@ -39,7 +39,7 @@ self.addEventListener("push", function (event) {
     console.log("Title:", data.title);
     console.log("Body:", data.body);
 
-    const title = data.title || "CSS KNUST (no title)";
+    const title = data.title || "BIO-CHEM KNUST (no title)";
     const options = {
       body: data.body || "You have a new notification (no body)",
       icon: data.icon || "/logo.png",
@@ -71,7 +71,7 @@ self.addEventListener("push", function (event) {
 
     // Show a default notification if parsing fails
     event.waitUntil(
-      self.registration.showNotification("CSS KNUST - Parse Error", {
+      self.registration.showNotification("BIO-CHEM KNUST - Parse Error", {
         body: "Received notification but couldn't parse data: " + error.message,
         icon: "/logo.png",
         requireInteraction: true,

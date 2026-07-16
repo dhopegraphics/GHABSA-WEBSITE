@@ -154,34 +154,34 @@ export function BlogsPage() {
   return (
     <>
       <Helmet>
-        <title>Blogs | CSS KNUST</title>
+        <title>Blogs | BIO-CHEM KNUST</title>
         <meta
           name="description"
-          content="Explore tech articles, stories, and updates from the Computer Science Society of KNUST. Learn, grow, and stay informed."
+          content="Explore tech articles, stories, and updates from the Biochemistry Society, KNUST. Learn, grow, and stay informed."
         />
         <meta
           name="keywords"
-          content="CSS KNUST Blogs, KNUST Tech Blogs, Computer Science Articles, CSS KNUST Updates, thecssknust blogs"
+          content="BIO-CHEM KNUST Blogs, KNUST Tech Blogs, Computer Science Articles, BIO-CHEM KNUST Updates, biochemknust blogs"
         />
         <meta name="robots" content="index, nofollow" />
-        <meta property="og:title" content="CSS KNUST - Blogs" />
+        <meta property="og:title" content="BIO-CHEM KNUST - Blogs" />
         <meta
           property="og:description"
-          content="Tech insights and student stories from the CSS KNUST community."
+          content="Tech insights and student stories from the BIO-CHEM KNUST community."
         />
         <meta
           property="og:image"
-          content="https://thecssknust.com/images/css.png"
+          content="https://biochemknust.com/images/logo.png"
         />
-        <meta property="og:url" content="https://thecssknust.com/blogs" />
+        <meta property="og:url" content="https://biochemknust.com/blogs" />
         <script type="application/ld+json">
           {JSON.stringify({
             "@context": "https://schema.org",
             "@type": "CollectionPage",
-            name: "CSS KNUST Blogs",
+            name: "BIO-CHEM KNUST Blogs",
             description:
-              "A collection of tech stories, tutorials, and community highlights by CSS KNUST students.",
-            url: "https://thecssknust.com/blogs",
+              "A collection of tech stories, tutorials, and community highlights by BIO-CHEM KNUST students.",
+            url: "https://biochemknust.com/blogs",
           })}
         </script>
       </Helmet>

@@ -122,7 +122,7 @@ const NotificationPermissionPrompt = ({
                 <li className="flex items-start gap-2 text-sm text-gray-600 dark:text-gray-400">
                   <CheckCircle className="w-4 h-4 text-blue-500 mt-0.5 flex-shrink-0" />
                   <span>
-                    Download the <strong>CSS KNUST SMART app</strong> from the
+                    Download the <strong>BIO-CHEM KNUST SMART app</strong> from the
                     App Store - but <strong>NOT AVAILABLE YET!</strong>
                   </span>
                 </li>
@@ -137,7 +137,7 @@ const NotificationPermissionPrompt = ({
             </div>
 
             <a
-              href="https://apps.apple.com/app/css-knust"
+              href="https://apps.apple.com/app/biochem-knust"
               target="_blank"
               rel="noopener noreferrer"
               className="block w-full bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium text-center transition-colors"

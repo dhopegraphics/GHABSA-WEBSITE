@@ -512,9 +512,9 @@ export default function EventDetailPage() {
   return (
     <>
       <Helmet>
-        <title>{event.event_name} | CSS KNUST</title>
+        <title>{event.event_name} | BIO-CHEM KNUST</title>
         <meta name="description" content={event.description?.slice(0, 160)} />
-        <meta property="og:title" content={`${event.event_name} | CSS KNUST`} />
+        <meta property="og:title" content={`${event.event_name} | BIO-CHEM KNUST`} />
         <meta property="og:description" content={event.description?.slice(0, 160)} />
         {event.event_image_1 && <meta property="og:image" content={event.event_image_1} />}
       </Helmet>

@@ -38,7 +38,7 @@ export const Feature = () => {
         <Content
           heading="<Who We Are />"
           icon={<BsGlobe2 />}
-          description="The Computer Science Society is a hub for innovation and collaboration, bringing together students and professionals passionate about technology. Our mission is to inspire growth, learning, and real-world impact through projects, events, and community engagement."
+          description="The Biochemistry Society, KNUST is a hub for innovation and collaboration, bringing together students and professionals passionate about biochemistry. Our mission is to inspire growth, learning, and real-world impact through projects, events, and community engagement."
         />
       </TextParallaxContent>
       <TextParallaxContent

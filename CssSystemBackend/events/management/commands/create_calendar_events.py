@@ -6,7 +6,7 @@ from django.db import transaction
 
 
 class Command(BaseCommand):
-    help = 'Create all CSS events for 2025-26 academic year from the events calendar'
+    help = 'Create all BIO-CHEM events for 2025-26 academic year from the events calendar'
 
     def add_arguments(self, parser):
         parser.add_argument(
@@ -21,7 +21,7 @@ class Command(BaseCommand):
         )
 
     def handle(self, *args, **options):
-        self.stdout.write(self.style.SUCCESS('Creating CSS Events Calendar 2025-26...'))
+        self.stdout.write(self.style.SUCCESS('Creating BIO-CHEM Events Calendar 2025-26...'))
 
         # Define all events with their details
         events_data = [
@@ -34,7 +34,7 @@ class Command(BaseCommand):
                 'venue': 'NB LT1',
                 'description': 'Welcome session for new students to understand campus life, academic expectations, and available resources. Learn about student services, academic support, and how to navigate your first semester successfully.',
                 'emoji': '🎓',
-                'organised_by': 'CSS Executive Committee'
+                'organised_by': 'BIO-CHEM Executive Committee'
             },
             {
                 'name': 'Course Review / Photoshoot & Tour',
@@ -44,7 +44,7 @@ class Command(BaseCommand):
                 'venue': 'CS Department',
                 'description': 'Interactive course review session combined with campus photoshoot and guided tour of computer science facilities. Perfect opportunity to meet fellow students and familiarize yourself with the department.',
                 'emoji': '📸',
-                'organised_by': 'CSS Media Team'
+                'organised_by': 'BIO-CHEM Media Team'
             },
             {
                 'name': 'Mindshift',
@@ -54,7 +54,7 @@ class Command(BaseCommand):
                 'venue': 'NB LT2',
                 'description': 'Transformative session focused on developing the right mindset for academic and personal success. Learn about growth mindset, overcoming challenges, and building resilience in your tech journey.',
                 'emoji': '🧠',
-                'organised_by': 'CSS Mentorship Committee'
+                'organised_by': 'BIO-CHEM Mentorship Committee'
             },
             {
                 'name': 'Tech Industry Symposium',
@@ -64,7 +64,7 @@ class Command(BaseCommand):
                 'venue': 'Great Hall',
                 'description': 'Annual symposium bringing together industry leaders, alumni, and current students to discuss latest trends in technology, career opportunities, and industry insights. Features keynote speakers from top tech companies.',
                 'emoji': '🚀',
-                'organised_by': 'CSS Career Development'
+                'organised_by': 'BIO-CHEM Career Development'
             },
             {
                 'name': 'Unplug and Play (Games & Socials)',
@@ -74,7 +74,7 @@ class Command(BaseCommand):
                 'venue': 'CS Common Area',
                 'description': 'Fun-filled afternoon of board games, video games, and social activities. Take a break from academics and connect with fellow students in a relaxed, entertaining environment.',
                 'emoji': '🎮',
-                'organised_by': 'CSS Entertainment Committee'
+                'organised_by': 'BIO-CHEM Entertainment Committee'
             },
             {
                 'name': 'Val\'s Day Movie Night in Colab with Scisa',
@@ -84,7 +84,7 @@ class Command(BaseCommand):
                 'venue': 'Auditorium',
                 'description': 'Valentine\'s Day movie screening in collaboration with SCISA. Enjoy romantic comedies, snacks, and great company. Perfect date night or friends\' night out for the tech community.',
                 'emoji': '❤️',
-                'organised_by': 'CSS & SCISA'
+                'organised_by': 'BIO-CHEM & SCISA'
             },
             {
                 'name': 'Visual Rave with Septemba Degree',
@@ -94,7 +94,7 @@ class Command(BaseCommand):
                 'venue': 'Unity Hall',
                 'description': 'High-energy visual rave featuring live DJ performance by Septemba Degree. Experience cutting-edge visual effects, electronic music, and an unforgettable night of dancing and entertainment.',
                 'emoji': '🎵',
-                'organised_by': 'CSS Entertainment'
+                'organised_by': 'BIO-CHEM Entertainment'
             },
             {
                 'name': 'Fix It First',
@@ -104,17 +104,17 @@ class Command(BaseCommand):
                 'venue': 'CS Lab 1',
                 'description': 'Hands-on workshop focused on troubleshooting and fixing common technical problems. Learn debugging techniques, hardware troubleshooting, and problem-solving methodologies.',
                 'emoji': '🔧',
-                'organised_by': 'CSS Technical Team'
+                'organised_by': 'BIO-CHEM Technical Team'
             },
             {
-                'name': 'CSS Aerobic & Sports Day',
+                'name': 'BIO-CHEM Aerobic & Sports Day',
                 'date': '2026-02-28',
                 'time': '08:00',
                 'type': 'social',
                 'venue': 'Sports Complex',
-                'description': 'Annual sports and fitness day featuring aerobic sessions, football, basketball, and various sports competitions. Promote health, wellness, and team spirit within the CSS community.',
+                'description': 'Annual sports and fitness day featuring aerobic sessions, football, basketball, and various sports competitions. Promote health, wellness, and team spirit within the BIO-CHEM community.',
                 'emoji': '⚽',
-                'organised_by': 'CSS Sports Committee'
+                'organised_by': 'BIO-CHEM Sports Committee'
             },
             {
                 'name': 'WICS Week: Web3 & Blockchain "Zero to Dap"',
@@ -133,9 +133,9 @@ class Command(BaseCommand):
                 'time': '17:00',
                 'type': 'meeting',
                 'venue': 'Great Hall',
-                'description': 'Mid-semester general assembly to discuss CSS activities, budget updates, upcoming events, and address student concerns. All CSS members are encouraged to participate in decision-making.',
+                'description': 'Mid-semester general assembly to discuss BIO-CHEM activities, budget updates, upcoming events, and address student concerns. All BIO-CHEM members are encouraged to participate in decision-making.',
                 'emoji': '📋',
-                'organised_by': 'CSS Executive Committee'
+                'organised_by': 'BIO-CHEM Executive Committee'
             },
             {
                 'name': 'Financial Literacy',
@@ -145,7 +145,7 @@ class Command(BaseCommand):
                 'venue': 'NB LT1',
                 'description': 'Essential financial literacy session covering personal finance, budgeting, investment basics, and financial planning for students. Learn money management skills for your academic and professional journey.',
                 'emoji': '💰',
-                'organised_by': 'CSS Financial Committee'
+                'organised_by': 'BIO-CHEM Financial Committee'
             },
             {
                 'name': 'Emerging Tech with Teinc Solutions',
@@ -155,7 +155,7 @@ class Command(BaseCommand):
                 'venue': 'NB LT2',
                 'description': 'Industry talk by Teinc Solutions on emerging technologies and their impact on the tech industry. Explore AI, IoT, machine learning, and future tech trends with industry experts.',
                 'emoji': '🔬',
-                'organised_by': 'CSS & Teinc Solutions'
+                'organised_by': 'BIO-CHEM & Teinc Solutions'
             },
             {
                 'name': 'Game Development Bootcamp',
@@ -165,7 +165,7 @@ class Command(BaseCommand):
                 'venue': 'CS Lab 2',
                 'description': 'Intensive bootcamp on game development covering game engines, programming concepts, graphics, and game design principles. Build your first game from concept to completion.',
                 'emoji': '🎮',
-                'organised_by': 'CSS Game Dev Club'
+                'organised_by': 'BIO-CHEM Game Dev Club'
             },
             {
                 'name': 'DigiNovate Event',
@@ -175,7 +175,7 @@ class Command(BaseCommand):
                 'venue': 'Innovation Hub',
                 'description': 'Digital innovation conference showcasing student projects, startup pitches, and innovative tech solutions. Network with entrepreneurs, investors, and tech innovators.',
                 'emoji': '💡',
-                'organised_by': 'CSS Innovation Committee'
+                'organised_by': 'BIO-CHEM Innovation Committee'
             },
             
             # SECOND SEMESTER (MAY - SEPTEMBER 2026)
@@ -187,7 +187,7 @@ class Command(BaseCommand):
                 'venue': 'NB LT1',
                 'description': 'Educational bridge session with Greener Educational Consult focusing on scholarship opportunities, study abroad programs, and educational pathways for computer science students.',
                 'emoji': '🌍',
-                'organised_by': 'CSS & Greener Educational Consult'
+                'organised_by': 'BIO-CHEM & Greener Educational Consult'
             },
             {
                 'name': 'Behind the Lens',
@@ -197,7 +197,7 @@ class Command(BaseCommand):
                 'venue': 'Media Studio',
                 'description': 'Photography and videography workshop exploring the technical and creative aspects of digital media production. Learn camera techniques, editing, and visual storytelling.',
                 'emoji': '📷',
-                'organised_by': 'CSS Media Committee'
+                'organised_by': 'BIO-CHEM Media Committee'
             },
             {
                 'name': '2-Day Hackathon with Dr. Agyemang',
@@ -208,7 +208,7 @@ class Command(BaseCommand):
                 'venue': 'CS Labs',
                 'description': 'Intensive 2-day hackathon mentored by Dr. Agyemang. Teams compete to build innovative software solutions addressing real-world problems. Prizes awarded for best projects.',
                 'emoji': '💻',
-                'organised_by': 'CSS & Dr. Agyemang'
+                'organised_by': 'BIO-CHEM & Dr. Agyemang'
             },
             {
                 'name': 'Kalykap 4.0',
@@ -216,9 +216,9 @@ class Command(BaseCommand):
                 'time': '18:00',
                 'type': 'social',
                 'venue': 'Unity Hall',
-                'description': 'Fourth edition of the popular Kalykap social event. Evening of music, dance, networking, and entertainment celebrating the CSS community and African culture.',
+                'description': 'Fourth edition of the popular Kalykap social event. Evening of music, dance, networking, and entertainment celebrating the BIO-CHEM community and African culture.',
                 'emoji': '🎉',
-                'organised_by': 'CSS Entertainment Committee'
+                'organised_by': 'BIO-CHEM Entertainment Committee'
             },
             {
                 'name': 'Mobile Development Bootcamp',
@@ -228,7 +228,7 @@ class Command(BaseCommand):
                 'venue': 'CS Lab 1',
                 'description': 'Comprehensive mobile app development bootcamp covering iOS and Android development. Learn React Native, Flutter, and native app development from industry professionals.',
                 'emoji': '📱',
-                'organised_by': 'CSS Mobile Dev Team'
+                'organised_by': 'BIO-CHEM Mobile Dev Team'
             },
             {
                 'name': 'Prof. Acquah Byte Battle (TPABB) and Official Monday',
@@ -238,7 +238,7 @@ class Command(BaseCommand):
                 'venue': 'CS Department',
                 'description': 'Annual programming competition honoring Prof. Acquah. Students compete in algorithmic challenges and coding problems. Combined with official department activities.',
                 'emoji': '⚔️',
-                'organised_by': 'CSS Academic Committee'
+                'organised_by': 'BIO-CHEM Academic Committee'
             },
             {
                 'name': 'Jersey Day',
@@ -246,9 +246,9 @@ class Command(BaseCommand):
                 'time': '08:00',
                 'type': 'social',
                 'venue': 'Campus-wide',
-                'description': 'Annual CSS jersey day where all members wear their CSS jerseys to show unity and pride. Special photo sessions and community building activities throughout the day.',
+                'description': 'Annual BIO-CHEM jersey day where all members wear their BIO-CHEM jerseys to show unity and pride. Special photo sessions and community building activities throughout the day.',
                 'emoji': '👕',
-                'organised_by': 'CSS Executive Committee'
+                'organised_by': 'BIO-CHEM Executive Committee'
             },
             {
                 'name': 'Alumni Homecoming & Code Quest & "Tell Your Story" Event',
@@ -258,7 +258,7 @@ class Command(BaseCommand):
                 'venue': 'Great Hall',
                 'description': 'Triple event featuring alumni homecoming, coding competition, and storytelling session. Alumni share their career journeys while current students compete in coding challenges.',
                 'emoji': '🏆',
-                'organised_by': 'CSS Alumni Relations'
+                'organised_by': 'BIO-CHEM Alumni Relations'
             },
             {
                 'name': 'Outreach Program',
@@ -268,7 +268,7 @@ class Command(BaseCommand):
                 'venue': 'Various Schools',
                 'description': 'Community outreach program visiting local schools to introduce students to computer science and technology. Promote STEM education and inspire the next generation.',
                 'emoji': '🤝',
-                'organised_by': 'CSS Community Service'
+                'organised_by': 'BIO-CHEM Community Service'
             },
             {
                 'name': 'General Assembly and African Wear Day',
@@ -278,7 +278,7 @@ class Command(BaseCommand):
                 'venue': 'Great Hall',
                 'description': 'End-of-semester general assembly combined with African wear day celebration. Review semester achievements, elect new leaders, and celebrate African heritage and culture.',
                 'emoji': '🌍',
-                'organised_by': 'CSS Executive Committee'
+                'organised_by': 'BIO-CHEM Executive Committee'
             },
             {
                 'name': 'Hob Nob',
@@ -288,7 +288,7 @@ class Command(BaseCommand):
                 'venue': 'Unity Hall',
                 'description': 'Elegant networking and social event bringing together students, faculty, and industry professionals. Formal dress code with dinner, networking, and entertainment.',
                 'emoji': '🥂',
-                'organised_by': 'CSS Social Committee'
+                'organised_by': 'BIO-CHEM Social Committee'
             },
             {
                 'name': 'Industry X Campus',
@@ -298,7 +298,7 @@ class Command(BaseCommand):
                 'venue': 'Innovation Hub',
                 'description': 'Industry-academia collaboration event connecting students with tech companies. Features career fairs, company presentations, internship opportunities, and networking sessions.',
                 'emoji': '🏢',
-                'organised_by': 'CSS Career Services'
+                'organised_by': 'BIO-CHEM Career Services'
             },
             {
                 'name': 'Code Fest',
@@ -308,7 +308,7 @@ class Command(BaseCommand):
                 'venue': 'CS Labs',
                 'description': 'Final coding competition of the academic year featuring multiple programming challenges, algorithm contests, and project showcases. Celebration of coding excellence.',
                 'emoji': '🏆',
-                'organised_by': 'CSS Programming Club'
+                'organised_by': 'BIO-CHEM Programming Club'
             },
             {
                 'name': 'Fiesta y Premios (Grand Buffet Dinner) and Handing Over Ceremony',
@@ -318,7 +318,7 @@ class Command(BaseCommand):
                 'venue': 'Great Hall',
                 'description': 'Grand finale event of the academic year featuring awards ceremony, leadership handover, and elaborate buffet dinner. Celebrate achievements and welcome new leadership.',
                 'emoji': '🎊',
-                'organised_by': 'CSS Executive Committee'
+                'organised_by': 'BIO-CHEM Executive Committee'
             }
         ]
 
@@ -411,7 +411,7 @@ class Command(BaseCommand):
         if created_count > 0 or updated_count > 0:
             self.stdout.write(
                 self.style.SUCCESS(
-                    f'\n✅ CSS Events Calendar 2025-26 has been successfully loaded!'
+                    f'\n✅ BIO-CHEM Events Calendar 2025-26 has been successfully loaded!'
                 )
             )
             self.stdout.write(
